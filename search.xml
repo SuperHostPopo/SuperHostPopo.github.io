@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2022/02/17/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
+    <url>/2022/02/18/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>看朋友们都做了自己的blog，所以心血来潮学一下也来做一个…虽然不一定会经常写，但是先做了再说</p>
+<p>作为第一篇文章把整个搭建配置过程的坑什么的记录一下</p>
+<p>也正好作为网站的测试了</p>
+<p>为了省事直接用了GitHub pages和hexo的静态方案，虽然我自己有服务器，但是用经典的wp的话主题啊插件啊各种配置啊实在是麻烦的要死而且发文章也并不方便…还是得在本地用md写完了再去网站上上传</p>
+<p>干脆直接用免费的GitHub pages，然后解析到自己的域名，效果是一样的，GitHub的服务器免费还稳定，又不用担心忘了续费文章丢掉，写文也只需要在本地写完之后用一句命令部署到GitHub就可以自动更新了，倒也挺方便</p>
+<p>至于md的本地写作和图片的图床之类的问题，说起来就是另一个要解决的事了，之后再写文总结一下吧…总之来回来去踩了一堆坑看了一万篇文章试了各种办法，总算是找到了比较方便的写文章+配图+上传的方法了（但是以后会多写吗？大概还是…懒癌没得救 pia~</p>
+<p>总之我最后的整套方案是这样，本地用typora写文章，图片用picGo做自动处理，阿里云oss做图床储存，可以直接复制图片或者截图，然后在typora里粘贴图片，自动上传到图床并且替换图片链接，然后写完之后用hexo命令一键部署到GitHub pages就ok啦…总的来说还是比较方便的</p>
+<p>目前感觉不方便的地方就是新建文章还是需要用命令，然后写完之后还得敲命令部署上传…理论上可以用脚本解决，不过typora好像并不支持插件脚本之类的功能…之后再说啦</p>
+<p>网上查到的各种hexo的配置攻略版本新老不一，经常有一些新版本修改了的地方，所以也是遇到了不少麻烦，包括官方的文档好像也有一些更新不及时的地方…总归自己最后实际使用的可以工作的配置都列了出来，希望能作为参考吧</p>
+<p>那么这里的日期是2022年2月…这样</p>
+<h1 id="安装Node-js-Git"><a href="#安装Node-js-Git" class="headerlink" title="安装Node.js,Git"></a>安装Node.js,Git</h1><p>这部分比较简单 官网下载安装就好了</p>
+<p>然后配置一下Git的账户和自己的GitHub账号关联（上传GitHub的ssh密钥）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172054165.png" alt="image-20220217205417118"></p>
+<p>测试一下安装情况</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+<h1 id="安装Hexo框架"><a href="#安装Hexo框架" class="headerlink" title="安装Hexo框架"></a>安装Hexo框架</h1><p>直接用</p>
+<p><code>npm install -g hexo-cli</code></p>
+<p>（npm最好挂梯子 我这里用了clash的TUN模式全局规则代理 不然源很慢 或者你也可以把npm的源换成国内源）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172058745.png" alt=""></p>
+<p>（请无视这里的npm更新提示）</p>
+<p>然后初始化我们的网页</p>
+<p>创建一个网站的目录，cd过去，打开命令行，执行</p>
+<p><code>hexo init myBlog</code></p>
+<p>这里会从hexo的GitHub上下载代码文件 所以比较慢 和刚才一样 最好挂代理</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102227.png" alt="image-20220217210217187"></p>
+<p>初始化完成，这里我的文件夹就叫MyBlog</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102353.png" alt="image-20220217210252332"></p>
+<p>进去看一下 已经自动生成了hexo的文件结构</p>
+<p>然后cd进MyBlog这个文件夹，执行一下（不进入网站文件夹直接执行是没法启动的）</p>
+<p><code>hexo s</code></p>
+<p>这句代码是在本地启动服务器预览网站 Windows防火墙会跳联网提示，记得通过</p>
+<p>然后进浏览器访问localhost:4000就可以看到初始化的hexo页面啦（没加主题，很丑2333）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172105546.png" alt="image-20220217210548359"></p>
+<p>好了我们测试完按Ctrl+C退出来把本地服务器关掉</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172107794.png" alt="image-20220217210706763"></p>
+<h1 id="配置GitHub-Pages"><a href="#配置GitHub-Pages" class="headerlink" title="配置GitHub Pages"></a>配置GitHub Pages</h1><p>然后把blog部署到github上</p>
+<p>创建一个新的仓库</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172249059.png" alt="image-20220217224945020"></p>
+<p>名字：用户名.github.io 类型公开</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172251597.png" alt="image-20220217225111528"></p>
+<p>看一下设置下面的pages页 当前使用的分支是main 没有问题</p>
+<p>然后安装下hexo的github部署插件</p>
+<p>还是在刚才hexo项目的目录下面执行</p>
+<p><code>npm install hexo-deployer-git --save</code></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172253818.png" alt="image-20220217225314799"></p>
+<p>然后修改下目录下面的_config.yml文件 这个就是hexo全局的配置文件啦</p>
+<p>先改下最基础的GitHub部署设置 网站设置和主题插件啥的之后再说</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172256674.png" alt="image-20220217225604655"></p>
+<p>拉到最下面 加上这些内容</p>
+<p>branch就是刚才设置页面里面的分支（以前的默认都是master 但是现在GitHub的默认分支改成了main，所以这里也要填main…）</p>
+<p>中间那个地址就是刚才创建的GitHub仓库的地址 这里应该是用https格式的和ssh格式的都可以</p>
+<p>但是我发现用ssh链接的话我的代理似乎不能很好的运作…所以push会失败 于是改成用https格式之后部署成功</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172312712.png" alt="image-20220217231228688"></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172258859.png" alt="image-20220217225822828"></p>
+<p>链接在仓库主页面的code下面点ssh或者https然后直接复制就可以</p>
+<p>然后我们保存配置文件</p>
+<p>部署应该就配置好了</p>
+<p>运行一下试试</p>
+<p><code>hexo g -d</code></p>
+<p>这个命令是二合一指令，g是generate，意思是生成静态页面（用来上传到GitHub pages用来访问）然后-d是deploy自动部署到GitHub仓库中</p>
+<p>上传成功~</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313935.png" alt="image-20220217231308902"></p>
+<p>然后我们回到GitHub的仓库页面刷新一下 就可以看到网站文件被上传上去了</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313106.png" alt="image-20220217231359032"></p>
+<p>浏览器输入<a href="https://superhostpopo.github.io/尝试访问一下">https://superhostpopo.github.io/尝试访问一下</a></p>
+<p>ok，已经能够正常访问啦</p>
+<p>那么最后再把这个页面和我的个人域名做一下解析，就可以用自己的域名访问网站啦</p>
+<h1 id="解析个人域名"><a href="#解析个人域名" class="headerlink" title="解析个人域名"></a>解析个人域名</h1><p>这里我的域名在腾讯云购买的，所以进入腾讯云控制台，找到dns设置</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172318134.png" alt="image-20220217231824116"></p>
+<p>直接添加一条CNAME类型的记录，这里我是解析到了主域名下面的二级域名，也就是blog.superhostpopo.cn</p>
+<p>所以主机记录写的blog 记录值当然是指向我们的GitHub pages的链接</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172319272.png" alt="image-20220217231943252"></p>
+<p>如果要使用主域名的话可以直接添加www主机名和@主机名的解析都指向GitHub pages页面即可</p>
+<p>设置完dns解析，接下来要设置GitHub的页面设置把网址指向自己的域名，这里再进入settings页面，直接修改custom domain里面填入我们的个人域名然后save保存</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172322292.png" alt="image-20220217232248248"></p>
+<p>我这里把下面的强制https也打开了，这样访问时候都会使用https链接进行</p>
+<p>看到绿色的小箭头，说明域名指向已经成功了</p>
+<p>试试在浏览器里输入<a href="https://blog.superhostpopo.cn/，也可以成功访问了">https://blog.superhostpopo.cn/，也可以成功访问了</a></p>
+<p>但这里还有个小问题，也就是实际上这个设置，是自动在仓库文件里加入了一个CNAME文件说明了实际网址的指向，但当我们使用hexo g -d重新部署的时候，本地文件会覆盖GitHub仓库，导致cname文件失效，所以我们要把这个文件加入到本地hexo项目的source目录下面，这样在hexo重新生成和部署的时候也会照常将这个文件上传进来</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172326904.png" alt="image-20220217232619877"></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172328652.png" alt="image-20220217232847609"></p>
+<p>直接把这个文件下载保存在source目录下，或者在目录下直接新建一个CNAME文件，里面填上我们的个人域名地址，都是ok的，这样再次部署的时候就不会丢失cname了</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172330261.png" alt="image-20220217233048241"></p>
+<p>这文件里的内容很简单 只有一行</p>
+<h1 id="测试新建文章"><a href="#测试新建文章" class="headerlink" title="测试新建文章"></a>测试新建文章</h1><p>写一篇文章测试一下</p>
+<p><code>hexo n &quot;测试文章&quot;</code></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172332545.png" alt="image-20220217233250525"></p>
+<p>会自动在post目录下生成文章的md文件 然后就可以在里面加入内容啦</p>
+<p>保存一下，然后还是生成上传</p>
+<p><code>hexo g -d</code></p>
+<p>嗯…等了一会就能看到文章啦 不过好丑（</p>
+<p>PS：发现偷懒用GitHub图床的话不爬梯的话看不到图。。GitHub虽然能访问但是GitHub的图片文件就不行 奇奇怪怪的</p>
+<p>算了 明天换阿里云吧 也不省这点钱了</p>
+<p>PPS：尝试了下网上说的<a href="https://cdn.jsdelivr.net加速">https://cdn.jsdelivr.net加速</a> 然后发现这破玩意也得爬梯…这有个什么用啊（摔 反而更不稳定了</p>
+<p>果然还是用阿里云吧</p>
+<p>但是总之网站是部署成功啦 剩下的明天再研究了 摸了</p>
+<h1 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h1><p>氪了点金（9快qwq）换了阿里云oss的图床</p>
+<p>速度快的飞起</p>
+<p>然后开始配主题</p>
+<p>用的是GitHub上star最多的Next主题</p>
+<p>文档写的也很详细：</p>
+<p><a href="http://theme-next.iissnan.com/getting-started.html">http://theme-next.iissnan.com/getting-started.html</a></p>
+<p>这里直接用git安装</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181548371.png" alt="image-20220218154803339"></p>
+<p>直接进入网站目录执行这句</p>
+<p><code>git clone https://github.com/iissnan/hexo-theme-next themes/next</code></p>
+<p>编辑：</p>
+<p>草死 这个文档上写的是老版的next的库 next已经迁移到了新版仓库 这里</p>
+<p><a href="https://github.com/theme-next/hexo-theme-next">https://github.com/theme-next/hexo-theme-next</a></p>
+<p>命令要用这个</p>
+<p><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></p>
+<p>部署的时候才发现提示了一下已经迁移了…喂作者更新一下文档啦！</p>
+<p>然后再编辑根目录的config.yml文件</p>
+<p>把theme改成next就启用主题啦</p>
+<p>然后看一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+<p>然后刷新一下发现首页只有乱码了啥也没有…</p>
+<p>明明试了下<code>hexo s</code>本地看是可以正常显示的…</p>
+<p>翻了下配置文件，发现原来是没有改网站域名…导致访问不到正确的文件了</p>
+<p>改成自己的域名，再clean然后部署一遍，ok~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601323.png" alt="image-20220218160119297"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601410.png" alt="image-20220218160145161"></p>
+<p>主题很漂亮嘛~</p>
+<p><strong>然后再做一些细节的主题配置，自己的信息什么的啦</strong></p>
+<p>简单的网站信息设置，不细说了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181651763.png" alt="image-20220218165134738"></p>
+<p>坑：</p>
+<p>首先这里语言的问题</p>
+<p>按照文档上写的把语言改成zh-Hans（简体中文）</p>
+<p>然后发现更新之后语言变的乱七八糟了…草（三声</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181624145.png" alt="image-20220218162440121"></p>
+<p>去网上搜了一下发现…这是个常见问题，原因是…虽然作者在文档里写的都是zh-Hans，但是主题的目录下的语言文件却是zh-CN，所以找不到匹配的文件名自然就乱套啦</p>
+<p>所以我们进入\themes\next\languages目录下面，把zh-CN.yml的文件复制一份然后改名叫zh-Hans.yml，ok~</p>
+<p>（作者更新一下文档啊喂！！ x2）</p>
+<p><strong>然后改一下网站的logo图标</strong></p>
+<p>我们先做好180x180，32x32和16x16分辨率的图标，我在网上查到的教程都说要用ico格式的图标，但是这里其实直接用png格式就可以了，hexo默认的图标也是png的，直接用ps做出来就好了，存到\themes\next\source\images文件夹下面</p>
+<p>改下\themes\next_config.yml配置文件（这个是主题配置，虽然文件名一样，但是和网站配置是不一样的）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181645670.png" alt="image-20220218164535644"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">favicon:</span><br><span class="line">  small: /images/popo2-16x16.png</span><br><span class="line">  medium: /images/popo2-32x32.png</span><br><span class="line">  apple_touch_icon: /images/popo2.png</span><br></pre></td></tr></table></figure>
+<p>分别修改这三个图片文件就好了</p>
+<p><strong>主题的布局：</strong></p>
+<p>Next主题本身内置有三个子风格，可以用在主题配置里切换</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181712124.png" alt="image-20220218171216101"></p>
+<p>我个人比较喜欢比较简洁的这个啦</p>
+<p><strong>侧边栏的头像：</strong></p>
+<p>主题配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Sidebar Avatar</span><br><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/popo.png</span><br><span class="line">  # If true, the avatar will be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar will be rotated with the cursor.</span><br><span class="line">  rotated: false</span><br></pre></td></tr></table></figure>
+<p>把url改成头像文件就行了，这里把头像显示改成了圆形的</p>
+<p><strong>添加阅读量统计功能：</strong></p>
+<p>感谢下@不蒜子 大佬提供的统计api功能啦</p>
+<p>用起来很简单，在主题配置文件里找到这句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+<p>不需要任何配置，改成true，启用即可，真的非常的简单</p>
+<p>（查了一下其他各种网站提供的统计api真的是…一个比一个复杂，需要各种注册各种绑定id。麻烦死啦。dalao的api只需要一个开关就可以提供统计了，真的很感谢，太厉害啦）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181725782.png" alt="image-20220218172500760"></p>
+<p>效果也很不错嘛</p>
+<p><strong>加入本地搜索：</strong></p>
+<p>安装插件</p>
+<p><code>npm install hexo-generator-searchdb --save</code></p>
+<p>编辑网站配置文件，加入下面这段在最后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure>
+<p>编辑主题配置文件，搜索这句配置打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Local search</span><br><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+<p><strong>加入latex公式支持：</strong></p>
+<p>这真的是个大坑…坑了我好半天。查了各种资料 总算成功了</p>
+<p>首先吧我们编辑主题配置文件，打开mathjax选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mathjax:</span><br><span class="line">  enable: true</span><br><span class="line">  # See: https://mhchem.github.io/MathJax-mhchem/</span><br><span class="line">  mhchem: false</span><br></pre></td></tr></table></figure>
+<p>然后默认的渲染器并不能支持mathjax，所以卸载然后替换成另一个兼容的渲染器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
+<p>最后还得在编写的文章的头部加上math支持的开关</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181805704.png" alt="image-20220218180538675"></p>
+<p>然后重新部署运行下，总算可以正常显示latex公式啦~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181806545.png" alt="image-20220218180604350"></p>
+<p>关于其中的坑啊…首先配置文件里面有好几个mathjax的选项卡，但是只有math:下面的那个的enable才是有用的，别改错了</p>
+<p>然后网上的支持渲染器有很多，如果用mathjax的话，就是hexo-renderer-kramed或者hexo-renderer-pandoc，但是后者我用起来会报错，前者是可以成功的</p>
+<p>至于如果你用katex的话，需要选择其他的渲染器，这里我mathjax好不容易调成功了就不费劲去改其他的了所以不管了</p>
+<p>最后记得在文章里打开公式支持…哎，一言难尽啊</p>
+<p><strong>安装字数统计：</strong></p>
+<p>安装插件</p>
+<p><code>npm install hexo-symbols-count-time --save</code></p>
+<p>修改站点配置文件添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: true</span><br><span class="line">  item_text_post: true</span><br><span class="line">  item_text_total: true</span><br></pre></td></tr></table></figure>
+<p>ok啦可以看到阅读时长和文章字数</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181821845.png" alt="image-20220218182136822"></p>
+<p>ps：感觉这个阅读时长功能没个卵用…关掉，只留下了字数统计</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
+<p><strong>配置标签和关于：</strong></p>
+<p>hexo支持标签和分类两个文章分类功能…但是这俩我感觉，功能差不多，有点重复</p>
+<p>所以就只开了标签，分类就不用了</p>
+<p>先创建标签页面：</p>
+<p><code>hexo new page tags</code></p>
+<p>然后修改这个页面，在\source\tags\index.md</p>
+<p>里面改成这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: Tags</span><br><span class="line">date: 2022-02-18 19:03:24</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p>关掉保存</p>
+<p>再修改主题配置里面的menu部分，直接把tag行的注释取消即可</p>
+<p><code>tags: /tags/ || fa fa-tags</code></p>
+<p>然后在写文章的时候只要在文章头里打上标签</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 测试文章</span><br><span class="line">date: 2022-02-17 23:32:38</span><br><span class="line">tags:</span><br><span class="line">- 测试</span><br><span class="line">- 网站</span><br></pre></td></tr></table></figure>
+<p>注意这里的格式：</p>
+<p>短横线后面记得加空格</p>
+<p>每一个tag占一行</p>
+<p>一个文章可以有任意个标签</p>
+<p>然后就可以在网站的标签页面里按照标签对文章分类了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181925854.png" alt="image-20220218192525823"></p>
+<p>然后添加关于页面</p>
+<p>和标签页面相同，先创建about页面</p>
+<p><code>hexo new page about</code></p>
+<p>同样修改about目录下的index.md</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 关于我</span><br><span class="line">date: 2022-02-18 19:03:14</span><br><span class="line">type: &quot;about&quot;</span><br><span class="line">#这里写关于正文内容</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件，打开about行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || fa fa-home</span><br><span class="line">  about: /about/ || fa fa-user</span><br><span class="line">  tags: /tags/ || fa fa-tags</span><br></pre></td></tr></table></figure>
+<p>此时在主页点击关于就可以看到自己的关于页面了</p>
+<p><strong>修改代码高亮风格：</strong></p>
+<p>改成暗色模式，修改主题配置文件如下</p>
+<p>顺便把一键复制代码的功能也打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">codeblock:</span><br><span class="line">  # Code Highlight theme</span><br><span class="line">  # Available values: normal | night | night eighties | night blue | night bright | solarized | solarized dark | galactic</span><br><span class="line">  # See: https://github.com/chriskempson/tomorrow-theme</span><br><span class="line">  highlight_theme: night</span><br><span class="line">  # Add copy button on codeblock</span><br><span class="line">  copy_button:</span><br><span class="line">    enable: true</span><br><span class="line">    # Show text copy result.</span><br><span class="line">    show_result: false</span><br><span class="line">    # Available values: default | flat | mac</span><br><span class="line">    style:</span><br></pre></td></tr></table></figure>
+<p>效果不错~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181946779.png" alt="image-20220218194659745"></p>
+<p><strong>设置个人信息链接：</strong></p>
+<p>修改主题配置social部分</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  #GitHub: https://github.com/yourname || fab fa-github</span><br><span class="line">  #E-Mail: mailto:yourname@gmail.com || fa fa-envelope</span><br><span class="line">  #Weibo: https://weibo.com/yourname || fab fa-weibo</span><br><span class="line">  #Google: https://plus.google.com/yourname || fab fa-google</span><br><span class="line">  #Twitter: https://twitter.com/yourname || fab fa-twitter</span><br><span class="line">  #FB Page: https://www.facebook.com/yourname || fab fa-facebook</span><br><span class="line">  #StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow</span><br><span class="line">  #YouTube: https://youtube.com/yourname || fab fa-youtube</span><br><span class="line">  #Instagram: https://instagram.com/yourname || fab fa-instagram</span><br><span class="line">  #Skype: skype:yourname?call|chat || fab fa-skype</span><br></pre></td></tr></table></figure>
+<p>自行启用对应条目即可</p>
+<p>我这里设置的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-bilibili</span><br></pre></td></tr></table></figure>
+<p><strong>友情链接：</strong></p>
+<p>修改links部分</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">links:</span><br><span class="line">  #Title: http://yoursite.com</span><br><span class="line">  e萌工作室: https://www.emoe.xyz/</span><br></pre></td></tr></table></figure>
+<p>显示效果是这样的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181947887.png" alt="image-20220218194759860"></p>
+<p><strong>显示版权信息说明：</strong></p>
+<p>修改主题配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">creative_commons:</span><br><span class="line">  license: by-nc-sa</span><br><span class="line">  sidebar: true</span><br><span class="line">  post: true</span><br><span class="line">  language:</span><br></pre></td></tr></table></figure>
+<p>这是侧边栏和文章底部的版权信息，直接打开就好</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181948582.png" alt="image-20220218194824550"></p>
+<p>follow me功能 这里我和侧边栏信息写的相同的，也可以添加你的rss订阅之类的进去</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">follow_me:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-youtube</span><br><span class="line">  #Twitter: https://twitter.com/username || fab fa-twitter</span><br><span class="line">  #Telegram: https://t.me/channel_name || fab fa-telegram</span><br><span class="line">  #WeChat: /images/wechat_channel.jpg || fab fa-weixin</span><br><span class="line">  #RSS: /atom.xml || fa fa-rss</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182001445.png" alt="image-20220218200151416"></p>
+<p><strong>修改网站底部footer：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">footer:</span><br><span class="line">  # Specify the date when the site was setup. If not defined, current year will be used.</span><br><span class="line">  #since: 2015</span><br><span class="line"></span><br><span class="line">  # Icon between year and copyright info.</span><br><span class="line">  icon:</span><br><span class="line">    # Icon name in Font Awesome. See: https://fontawesome.com/icons</span><br><span class="line">    name: fa fa-terminal</span><br><span class="line">    # If you want to animate the icon, set it to true.</span><br><span class="line">    animated: false</span><br><span class="line">    # Change the color of icon, using Hex Code.</span><br><span class="line">    color: &quot;#000000&quot;</span><br></pre></td></tr></table></figure>
+<p>这里把底部的红色爱心图标修改了一下，感觉红心不是很好看。图标可以去这个网站找到代码<a href="https://fontawesome.com/icons">https://fontawesome.com/icons</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182019506.png" alt="image-20220218201952480"></p>
+<p>（无视那个访问量 这里因为本地预览所以抽掉了）</p>
+<p><strong>侧边栏：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sidebar:</span><br><span class="line">  # Sidebar Position.</span><br><span class="line">  position: left</span><br><span class="line">  #position: right</span><br><span class="line"></span><br><span class="line">  # Manual define the sidebar width. If commented, will be default for:</span><br><span class="line">  # Muse | Mist: 320</span><br><span class="line">  # Pisces | Gemini: 240</span><br><span class="line">  #width: 300</span><br><span class="line"></span><br><span class="line">  # Sidebar Display (only for Muse | Mist), available values:</span><br><span class="line">  #  - post    expand on posts automatically. Default.</span><br><span class="line">  #  - always  expand for all pages automatically.</span><br><span class="line">  #  - hide    expand only when click on the sidebar toggle icon.</span><br><span class="line">  #  - remove  totally remove sidebar including sidebar toggle.</span><br><span class="line">  display: post</span><br></pre></td></tr></table></figure>
+<p>这里可以修改显示位置（左右） 宽度 </p>
+<p>还有何时显示</p>
+<p>我就不改了都用了默认的</p>
+<p><strong>回到顶部滚动条和阅读进度显示</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">back2top:</span><br><span class="line">  enable: true</span><br><span class="line">  # Back to top in sidebar.</span><br><span class="line">  sidebar: false</span><br><span class="line">  # Scroll percent label in b2t button.</span><br><span class="line">  scrollpercent: true</span><br></pre></td></tr></table></figure>
+<p>把最后那个改成true就好</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182033245.png" alt="image-20220218203349221"></p>
+<p>好啦…这些都在本地调试完了，我这个博客大概就算搞定了~</p>
+<p>最后还是</p>
+<p><code>hexo clean &amp;&amp; hexo g -d</code></p>
+<p>搞定！desu</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2022/02/18/test/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+</search>
