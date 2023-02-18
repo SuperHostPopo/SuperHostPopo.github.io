@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>技巧</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
     <url>/2022/02/18/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>看朋友们都做了自己的blog，所以心血来潮学一下也来做一个…虽然不一定会经常写，但是先做了再说</p>
@@ -289,6 +268,27 @@
       </tags>
   </entry>
   <entry>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>测试文章</title>
     <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
     <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
@@ -297,6 +297,17 @@
       <tags>
         <tag>测试</tag>
         <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
       </tags>
   </entry>
   <entry>
