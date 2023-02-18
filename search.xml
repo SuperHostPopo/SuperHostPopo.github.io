@@ -279,6 +279,27 @@
       </tags>
   </entry>
   <entry>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
     <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
@@ -369,27 +390,6 @@
 ]]></content>
       <tags>
         <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
