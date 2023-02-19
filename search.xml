@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>我回来啦</title>
-    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
-    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
-<p>更新下已经落后了一年版本的hexo吧…</p>
-<p>就是这样~</p>
-]]></content>
-      <tags>
-        <tag>杂项</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
     <url>/2022/02/18/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>看朋友们都做了自己的blog，所以心血来潮学一下也来做一个…虽然不一定会经常写，但是先做了再说</p>
@@ -279,17 +268,6 @@
       </tags>
   </entry>
   <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>开启vsc自带的同步功能</title>
     <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
     <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
@@ -401,6 +379,29 @@
 ]]></content>
       <tags>
         <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
       </tags>
   </entry>
 </search>
