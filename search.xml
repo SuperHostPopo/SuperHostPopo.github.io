@@ -65,130 +65,26 @@
 <p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
 <p>总之目前还没跑完，先试试10轮的，很满意！</p>
 <p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h2 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h2><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
 <p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
 <p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
 <p>等我再研究研究明白再来说</p>
 <p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
 <h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
 <p>参考资料：几个dalao的教程，特别是这个，很详细</p>
 <p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
-    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
-<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
-<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
-<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
-<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
-<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
-<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
-<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
-<p>那么下面就是具体的配置过程啦~</p>
-<span id="more"></span>
-<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
-<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
-<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
-<blockquote>
-<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
-<ul>
-<li>支持拖拽图片上传</li>
-<li>支持快捷键上传剪贴板里第一张图片</li>
-<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
-<li>上传图片后自动复制链接到剪贴板</li>
-<li>支持自定义复制到剪贴板的链接格式</li>
-<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
-<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
-</ul>
-</blockquote>
-<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
-<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
-<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
-<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
-<ul>
-<li><p><code>七牛图床</code> v1.0</p>
-</li>
-<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
-</li>
-<li><p><code>又拍云</code> v1.2.0</p>
-</li>
-<li><p><code>GitHub</code> v1.5.0</p>
-</li>
-<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
-</li>
-<li><p><code>阿里云 OSS</code> v1.6.0</p>
-</li>
-<li><p><code>Imgur</code> v1.6.0</p>
-</li>
-</ul>
-<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
-<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
-<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
-<p>所以就产生了一些无法避免的槽点</p>
-<ul>
-<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
-<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
-</ul>
-<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
-<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
-<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
-<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
-<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
-<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
-<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
-<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
-<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
-<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
-<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
-<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
-<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
-<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
-<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
-<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
-<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
-<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
-<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
-<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
-<blockquote>
-<p>其实有个比较优雅的方案是这样</p>
-<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
-<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
-</blockquote>
-<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
-<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
-<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
-<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>技巧</tag>
-      </tags>
   </entry>
   <entry>
     <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
@@ -458,14 +354,117 @@
       </tags>
   </entry>
   <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
 ]]></content>
       <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
+    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
+<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
+<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
+<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
+<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
+<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
+<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
+<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
+<p>那么下面就是具体的配置过程啦~</p>
+<span id="more"></span>
+<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
+<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
+<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
+<blockquote>
+<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
+<ul>
+<li>支持拖拽图片上传</li>
+<li>支持快捷键上传剪贴板里第一张图片</li>
+<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
+<li>上传图片后自动复制链接到剪贴板</li>
+<li>支持自定义复制到剪贴板的链接格式</li>
+<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
+<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
+</ul>
+</blockquote>
+<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
+<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
+<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
+<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
+<ul>
+<li><p><code>七牛图床</code> v1.0</p>
+</li>
+<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
+</li>
+<li><p><code>又拍云</code> v1.2.0</p>
+</li>
+<li><p><code>GitHub</code> v1.5.0</p>
+</li>
+<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
+</li>
+<li><p><code>阿里云 OSS</code> v1.6.0</p>
+</li>
+<li><p><code>Imgur</code> v1.6.0</p>
+</li>
+</ul>
+<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
+<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
+<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
+<p>所以就产生了一些无法避免的槽点</p>
+<ul>
+<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
+<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
+</ul>
+<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
+<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
+<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
+<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
+<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
+<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
+<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
+<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
+<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
+<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
+<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
+<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
+<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
+<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
+<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
+<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
+<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
+<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
+<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
+<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
+<blockquote>
+<p>其实有个比较优雅的方案是这样</p>
+<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
+<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
+</blockquote>
+<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
+<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
+<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
+<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
       </tags>
   </entry>
   <entry>
@@ -478,6 +477,17 @@
 ]]></content>
       <tags>
         <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
       </tags>
   </entry>
 </search>
