@@ -7,6 +7,7 @@
 <p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
 <p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
 <p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+<span id="more"></span>
 <h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
 <p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
 <p>建个文件夹脚本git下来不多说</p>
@@ -85,6 +86,33 @@
 <p>参考资料：几个dalao的教程，特别是这个，很详细</p>
 <p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+<span id="more"></span>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
   </entry>
   <entry>
     <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
