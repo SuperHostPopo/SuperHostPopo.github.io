@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+<span id="more"></span>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
-        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
@@ -109,30 +115,24 @@
 ]]></content>
   </entry>
   <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
-<span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
+        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
