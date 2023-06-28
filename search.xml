@@ -1,6 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Lora训练学习笔记</title>
+    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
+<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
+<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
+<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+<span id="more"></span>
+<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
+<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
+<p>建个文件夹脚本git下来不多说</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
+<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
+<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
+<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
+<p>最后显示install compete就装完了。不得不说真大啊</p>
+<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
+<p>我真傻</p>
+<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
+<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
+<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
+<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
+<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
+<p>然后开webui，先切图。设好输入输出目录</p>
+<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
+<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
+<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
+<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
+<p>又要下一堆模型emmm 然后反推倒是很快</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
+<p>把反推完的tag扔到训练图的文件夹里去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
+<p>到这里训练集就处理完了。待用。</p>
+<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
+<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
+<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
+<p>然后改train.ps1训练脚本</p>
+<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
+<p>底模一般都推荐用full 7.2G原始大模型</p>
+<p>分辨率改一下</p>
+<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
+<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
+<p>dim就不改了 学习率这种进阶的东西也不改了</p>
+<p>优化器用了lion据说效果好一点</p>
+<p>locon没学明白，先不开</p>
+<p>好了保存然后开始训练</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
+<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
+<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
+<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
+<p>而且其实也不需要训练40轮这么多 </p>
+<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
+<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
+<p>我跑了40轮只是测试一下看看这样</p>
+<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
+<p>总之目前还没跑完，先试试10轮的，很满意！</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
+<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
+<p>等我再研究研究明白再来说</p>
+<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
+<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
+<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
+<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>PyQt入门笔记</title>
     <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>我不当鸽子啦！</p>
@@ -295,6 +382,27 @@
       </tags>
   </entry>
   <entry>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
     <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
@@ -385,27 +493,6 @@
 ]]></content>
       <tags>
         <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
@@ -552,20 +639,21 @@
 <p>发生了什么：</p>
 <p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
 <p>1-5 喵？喵？喵？(你在说什么我听不懂因为我只是只普通猫咪)<br>6-9 吓跑了(不给我吃的还冲我吼 喵！)<br>10 真不是平常猫？</p>
+<p>加班（哭） 只能稍微更一点了</p>
+<p><strong>话还没说完，黑猫就一溜烟跑不见了<br>虽然很遗憾，猫只是普通的猫而已。<br>不甘心的小爱朝着消失的方向一顿狂奔，理所当然地一无所获。</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/2cfe6338-1d38-48f1-9e64-f0026e0c5535.png" alt="00142-77213927.png" style="zoom:25%;" /></p>
+<p><strong>“什么嘛，果然漫画里都是骗人的”</strong><br>小爱的失望：</p>
+<p><strong>ROLL : 1d100</strong>=d100(14)=<strong>14</strong></p>
+<p><strong>这不是一点也不失望么！你还有点常识啊
+</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/1ed14888-c5b3-46e0-902a-f1deb52b4caf.png" alt="00140-1819914487.png" style="zoom:25%;" /></p>
+<p><strong>”事情总不会有这么容易啦…再想想办法吧“<br>一边努力把自己的思维切回正轨，小爱忽然发现</strong></p>
+<p><strong>ROLL : 1d10</strong>=d10(4)=<strong>4</strong></p>
+<p>1-3 跑太远没看路，迷路啦<br>4-6 闯入了电视剧的外景拍摄现场<br>7-9 某个著名偶像团体在开live(为什么会在这种乡下啊喂！)<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
 ]]></content>
       <tags>
         <tag>其他</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
       </tags>
   </entry>
   <entry>
@@ -581,90 +669,14 @@
       </tags>
   </entry>
   <entry>
-    <title>Lora训练学习笔记</title>
-    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
-<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
-<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
-<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
-<span id="more"></span>
-<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
-<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
-<p>建个文件夹脚本git下来不多说</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
-<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
-<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
-<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
-<p>最后显示install compete就装完了。不得不说真大啊</p>
-<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
-<p>我真傻</p>
-<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
-<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
-<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
-<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
-<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
-<p>然后开webui，先切图。设好输入输出目录</p>
-<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
-<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
-<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
-<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
-<p>又要下一堆模型emmm 然后反推倒是很快</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
-<p>把反推完的tag扔到训练图的文件夹里去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
-<p>到这里训练集就处理完了。待用。</p>
-<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
-<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
-<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
-<p>然后改train.ps1训练脚本</p>
-<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
-<p>底模一般都推荐用full 7.2G原始大模型</p>
-<p>分辨率改一下</p>
-<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
-<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
-<p>dim就不改了 学习率这种进阶的东西也不改了</p>
-<p>优化器用了lion据说效果好一点</p>
-<p>locon没学明白，先不开</p>
-<p>好了保存然后开始训练</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
-<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
-<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
-<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
-<p>而且其实也不需要训练40轮这么多 </p>
-<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
-<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
-<p>我跑了40轮只是测试一下看看这样</p>
-<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
-<p>总之目前还没跑完，先试试10轮的，很满意！</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
-<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
-<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
-<p>等我再研究研究明白再来说</p>
-<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
-<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
-<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
-<p>5.正则化 没看明白 待我以后再研究研究</p>
-<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
-<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
-<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
-<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
-<p>3.手动改标…真的好麻烦</p>
-<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
-<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
-<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
-<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
+      </tags>
   </entry>
 </search>
