@@ -151,13 +151,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -200,6 +200,161 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.superhostpopo.cn/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/popo.png">
+      <meta itemprop="name" content="最高主机泡泡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泡泡酱の秘密工作室">
+      <meta itemprop="description" content="一只菜鸡技术宅...修行中">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 泡泡酱の秘密工作室">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">esp32s3&arduino&PlatformIO环境配置&st7789点屏&lvgl学习笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-02-16 17:02:51" itemprop="dateCreated datePublished" datetime="2024-02-16T17:02:51+08:00">2024-02-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-02-17 19:00:07" itemprop="dateModified" datetime="2024-02-17T19:00:07+08:00">2024-02-17</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
+<!--moer-->
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a target="_blank" rel="noopener" href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -940,7 +1095,7 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">23k</span>
+    <span title="站点总字数">25k</span>
   </span>
 </div>
 <div class="busuanzi-count">
