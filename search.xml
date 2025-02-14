@@ -1,114 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
-<span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
-    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
-<p>想着行动力行动力但是下班之后就好想睡觉</p>
-<p>彻底变成了社畜的模样</p>
-<p>但是哪怕迷茫也要前进呀</p>
-<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
-<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
-<p>权当是复健咯</p>
-<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
-<span id="more"></span>
-<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
-<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
-<p>也确实是太久没玩什么新东西了</p>
-<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
-<p><del>乐鑫的产品线真够乱的（摔</del></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
-<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
-<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
-<p>原理图也很简单</p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
-<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
-<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
-<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
-<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
-<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
-<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
-<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
-<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
-<p>装完之后随便选一个esp32s3的板子</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
-<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
-<p>于是随便撸了一个hello world试一下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>插上usb，可以自动识别com号，编译，下载</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
-<p>闪灯ok，串口输出ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
-<p>第一步算是跑起来了</p>
-<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
-<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
-<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
-<p>没想着能成功的</p>
-<p>结果一遍就刷进去了 草</p>
-<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
-<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
-<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
-<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
-<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
-<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
-<p>没啥可说的 很简单的玩意</p>
-<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
-<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
-<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
-<p>嗯…这就为后面埋下了大坑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
-<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
-<p>还没有点亮呢 至少先驱动起来看看</p>
-<p>于是找个普通的st7789驱动库吧</p>
-<p>屏幕卖家自然是带了一些例程代码的</p>
-<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
-<p>都用arduino了，图的不就是不用自己写库么</p>
-<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
-<p>去arduino上搜一搜好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
-<p>果然出来了一大堆</p>
-<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
-<p>第一个看着就ok，装来试一下吧</p>
-<hr>
-<p>未完待续…</p>
-]]></content>
-      <tags>
-        <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Lora训练学习笔记</title>
     <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
@@ -196,93 +88,156 @@
 ]]></content>
   </entry>
   <entry>
-    <title>lora训练学习笔记续_2024</title>
-    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
-    <content><![CDATA[<p>好久没摸了</p>
-<p>快一年了技术迭代很快啊</p>
-<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
-<p>但是也会遇到冷门到模型都找不出的（悲</p>
-<p>所以还是捡起来重新学一遍吧…</p>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
 <span id="more"></span>
-<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
-<p>全网找不到几张图</p>
-<p>真的是深刻感受到炼丹最难的就是数据集</p>
-<p>数据集处理真是最耗时的事情</p>
-<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
-<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
-<p>于是去找资料…总结几个小tips</p>
-<ul>
-<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
-</li>
-<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
-</li>
-<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
-</li>
-<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
-</li>
-<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
-</li>
-<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
-</li>
-</ul>
-<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
-<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
-<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
-<p>打标阈值0.35什么的 不多说了都老传统</p>
-<p>推荐下标签编辑的小软件</p>
-<p>BooruDatasetTagManager</p>
-<p>超好用 用过的都说好 还有自动翻译标签功能</p>
-<p>比插件的那个编辑器好用多了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
-<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
-<ul>
-<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
-</ul>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
-<p>参考秋叶的说明</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
-<ul>
-<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
-<p>为什么呢 我也不知道呢 </p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
-<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
-</li>
-<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
-<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
-<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
-</li>
-<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
-</li>
-<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
-</li>
-</ul>
-<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
-<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
-<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
-<p>都是很棒的教程</p>
-<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
-        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VtuberStudio配置选择和模型调参</title>
+    <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
+    <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
+<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
+<span id="more"></span>
+<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
+<p><a href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
+<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
+<ul>
+<li>obs游戏采集vts进程</li>
+<li>obs采集vts虚拟摄像头</li>
+<li>spout2插件输出</li>
+<li>NDI网络接口推流（没用过）</li>
+</ul>
+<p>前面俩比较常用，都是老方法了</p>
+<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
+<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
+<p>用法参考wiki，b站也介绍很多</p>
+<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
+<p>看起来很棒</p>
+<p>不过需要手动给obs装一个插件</p>
+<p>官方的安装指南：<a href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
+<ol>
+<li><p>关掉obs</p>
+</li>
+<li><p>下载最新版本：<a href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
+</li>
+<li><p>一路next结束</p>
+</li>
+<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
+</li>
+</ol>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
+<ol>
+<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
+    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
+<span id="more"></span>
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
+]]></content>
+      <tags>
+        <tag>嵌入式</tag>
       </tags>
   </entry>
   <entry>
@@ -553,26 +508,101 @@
       </tags>
   </entry>
   <entry>
-    <title>我回来啦</title>
-    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
-    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
-<p>更新下已经落后了一年版本的hexo吧…</p>
-<p>就是这样~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+    <title>lora训练学习笔记续_2024</title>
+    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
+    <content><![CDATA[<p>好久没摸了</p>
+<p>快一年了技术迭代很快啊</p>
+<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
+<p>但是也会遇到冷门到模型都找不出的（悲</p>
+<p>所以还是捡起来重新学一遍吧…</p>
+<span id="more"></span>
+<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
+<p>全网找不到几张图</p>
+<p>真的是深刻感受到炼丹最难的就是数据集</p>
+<p>数据集处理真是最耗时的事情</p>
+<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
+<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
+<p>于是去找资料…总结几个小tips</p>
+<ul>
+<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
+</li>
+<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
+</li>
+<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
+</li>
+<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
+</li>
+<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
+</li>
+<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
+</li>
+</ul>
+<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
+<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
+<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
+<p>打标阈值0.35什么的 不多说了都老传统</p>
+<p>推荐下标签编辑的小软件</p>
+<p>BooruDatasetTagManager</p>
+<p>超好用 用过的都说好 还有自动翻译标签功能</p>
+<p>比插件的那个编辑器好用多了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
+<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
+<ul>
+<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
+</ul>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
+<p>参考秋叶的说明</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
+<ul>
+<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
+<p>为什么呢 我也不知道呢 </p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
+<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
+</li>
+<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
+<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
+<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
+</li>
+<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
+</li>
+<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
+</li>
+</ul>
+<p>更新：</p>
+<p>嗯。。实际用我这十几张图练了一下 发现了比较明显的过拟合，出图烂掉了（很糊的那种图）</p>
+<p>反复试了试也不知道是优化器的问题还是底模的问题还是训练方法问题还是我训练集太烂</p>
+<p>总之是烂掉了</p>
+<p>回到秋叶训练器用最传统的方法练了下，反而还好一些…（默认参数 传统adam优化器 lora算法，1batch size+5 repeat 50个epoch）真难啊</p>
+<p>重新开始学习。。</p>
+<p>嗯。看到个说法说这个和神童优化器会冲突 或许吧。。有空试试看吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405212353286.png" alt="image-20240521235316257"></p>
+<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
+<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
+<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
+<p>都是很棒的教程</p>
+<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
 ]]></content>
-      <tags>
-        <tag>杂项</tag>
-      </tags>
   </entry>
   <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
 ]]></content>
       <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
+        <tag>软件</tag>
+        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
@@ -827,6 +857,29 @@
 ]]></content>
       <tags>
         <tag>其他</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
       </tags>
   </entry>
 </search>

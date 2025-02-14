@@ -19,25 +19,32 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.superhostpopo.cn","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="一只菜鸡技术宅...修行中">
-<meta property="og:type" content="website">
-<meta property="og:title" content="泡泡酱の秘密工作室">
-<meta property="og:url" content="https://blog.superhostpopo.cn/archives/2023/03/index.html">
+    <meta name="description" content="好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing 这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VtuberStudio配置选择和模型调参">
+<meta property="og:url" content="https://blog.superhostpopo.cn/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/index.html">
 <meta property="og:site_name" content="泡泡酱の秘密工作室">
-<meta property="og:description" content="一只菜鸡技术宅...修行中">
+<meta property="og:description" content="好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing 这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧">
 <meta property="og:locale">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png">
+<meta property="article:published_time" content="2025-02-14T11:25:18.000Z">
+<meta property="article:modified_time" content="2025-02-14T11:55:46.081Z">
 <meta property="article:author" content="最高主机泡泡">
+<meta property="article:tag" content="软件">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png">
 
 
-<link rel="canonical" href="https://blog.superhostpopo.cn/archives/2023/03/">
+<link rel="canonical" href="https://blog.superhostpopo.cn/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-Hans","comments":"","permalink":"","path":"archives/2023/03/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"https://blog.superhostpopo.cn/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/","path":"2025/02/14/VtuberStudio配置选择和模型调参/","title":"VtuberStudio配置选择和模型调参"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>归档 | 泡泡酱の秘密工作室</title>
+<title>VtuberStudio配置选择和模型调参 | 泡泡酱の秘密工作室</title>
   
 
 
@@ -70,7 +77,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">泡泡酱の秘密工作室</h1>
+      <p class="site-title">泡泡酱の秘密工作室</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">超绝可爱技术宅泡泡酱desu⭐</p>
@@ -124,7 +131,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -137,6 +144,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-OBS%E8%BE%93%E5%85%A5%E6%BA%90%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">1. OBS输入源选择</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -199,49 +207,196 @@
 
     </div>
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
-  
-  
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 11 篇日志。 继续努力。</span>
-      </div>
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://blog.superhostpopo.cn/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/popo.png">
+      <meta itemprop="name" content="最高主机泡泡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泡泡酱の秘密工作室">
+      <meta itemprop="description" content="一只菜鸡技术宅...修行中">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="VtuberStudio配置选择和模型调参 | 泡泡酱の秘密工作室">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VtuberStudio配置选择和模型调参
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+
+      <time title="创建时间：2025-02-14 19:25:18 / 修改时间：19:55:46" itemprop="dateCreated datePublished" datetime="2025-02-14T19:25:18+08:00">2025-02-14</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>809</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
+<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
+<span id="more"></span>
+<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
+<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
+<ul>
+<li>obs游戏采集vts进程</li>
+<li>obs采集vts虚拟摄像头</li>
+<li>spout2插件输出</li>
+<li>NDI网络接口推流（没用过）</li>
+</ul>
+<p>前面俩比较常用，都是老方法了</p>
+<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
+<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
+<p>用法参考wiki，b站也介绍很多</p>
+<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
+<p>看起来很棒</p>
+<p>不过需要手动给obs装一个插件</p>
+<p>官方的安装指南：<a target="_blank" rel="noopener" href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
+<ol>
+<li><p>关掉obs</p>
+</li>
+<li><p>下载最新版本：<a target="_blank" rel="noopener" href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
+</li>
+<li><p>一路next结束</p>
+</li>
+<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
+</li>
+</ol>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
+<ol>
+<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
+</li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-03-19T21:46:52+08:00"
-              content="2023-03-19">
-          03-19
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url">
-            <span itemprop="name">Lora训练学习笔记</span>
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>最高主机泡泡
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.superhostpopo.cn/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/" title="VtuberStudio配置选择和模型调参">https://blog.superhostpopo.cn/2025/02/14/VtuberStudio配置选择和模型调参/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/SuperHostPopo">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
           </a>
       </div>
 
-      
-    </header>
-  </article>
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://space.bilibili.com/4023159">
+            <span class="icon">
+              <i class="fab fa-youtube"></i>
+            </span>
 
+            <span class="label">bilibili</span>
+          </a>
+      </div>
 
-    </div>
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi">
+            <span class="icon">
+              <i class="fab fa-qq"></i>
+            </span>
+
+            <span class="label">交流QQ群853376692</span>
+          </a>
+      </div>
   </div>
-  
-  
-  
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"># 软件</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/" rel="prev" title="lora训练学习笔记续_2024">
+                  <i class="fa fa-chevron-left"></i> lora训练学习笔记续_2024
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
 
 </div>
   </main>
