@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+<span id="more"></span>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Lora训练学习笔记</title>
     <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
@@ -88,33 +115,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
-<span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>VtuberStudio配置选择和模型调参</title>
     <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
     <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
@@ -146,14 +146,15 @@
 <li><p>一路next结束</p>
 </li>
 <li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
-</li>
-</ol>
 <p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
-<ol>
+</li>
 <li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
 <p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
 </li>
 </ol>
+<h1 id="2-小技巧"><a href="#2-小技巧" class="headerlink" title="2. 小技巧"></a>2. 小技巧</h1><p>给vts设置为管理员启动（对steam打开也生效）</p>
+<p>wiki说可以增加进程优先级，降低延迟和卡顿（谁知道呢）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502150012000.png" alt="image-20250215001240940"></p>
 ]]></content>
       <tags>
         <tag>软件</tag>
@@ -238,6 +239,132 @@
 ]]></content>
       <tags>
         <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2025最新STM32G4DFU升级实现与各种坑</title>
+    <url>/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/</url>
+    <content><![CDATA[<p>因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。</p>
+<p>姑且记录一下实现的方法和遇到的各种坑点吧，仅供参考。</p>
+<span id="more"></span>
+<p>首先大家知道stm32的新型号一般是内置dfu bootloader的，通过一些boot引脚配置是可以上电引导到内置的dfu bl然后通过usb用cube programmer去下载。但是这种做法不太灵活，必须关机上电拉引脚才能实现升级，所以还是自己实现一个dfu固件，这样可以自由的通过软件代码切换如何进入dfu模式进行下载，实现诸如在线ota推送固件之类的功能。</p>
+<p>然后现在st的cube programmer也是可以直接支持自己实现的dfu固件的下载烧录的，所以一些老教程里面说的efuse之类的工具都可以不要用了，这玩意st官方页面已经说明停止更新了，听说bug也挺多的。</p>
+<p>那么我们开始。</p>
+<h2 id="flash空间和地址分配"><a href="#flash空间和地址分配" class="headerlink" title="flash空间和地址分配"></a>flash空间和地址分配</h2><p>用的芯片是STM32G431CBT6，产品页可以看到flash大小是128k</p>
+<p><img src="https://www.st.com.cn/content/ccc/fragment/product_related/line_information/line_level_diagram/group0/7f/fd/bb/1f/31/4d/43/db/obn_stm32g4x1_ln2128/files/obn_stm32g4x1_ln2128.jpg/jcr:content/translations/en.obn_stm32g4x1_ln2128.jpg" alt="img"></p>
+<p>stm32的flash区地址默认是0x08000000，128k的结束地址是0x08020000</p>
+<p>我们这里给dfu固件分配16k地址，差不多刚好能放下，也就是把dfu固件放在flash区起始这一块，0x08000000到0x08004000这一段空间里，上电默认就会先运行dfu固件，然后在dfu固件里面判断是否进入dfu下载模式或者直接跳转到用户app。</p>
+<p>128k去掉16k剩下的用户app空间是112k，也就是0x1c000，从0x08004000到0x08020000这段空间。这些地址之后需要用到。</p>
+<p>很多教程里给dfu固件分配的空间是0xc000也就是48k，是可以的但是因为我的mcu本身flash区比较小，就省着点用了。</p>
+<p>下面这个图来自RM0440，STM32G4的 Reference manual</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171209178.png" alt="image-20250317120944129"></p>
+<p>也就是说默认情况下我们这片G431的128k flash是64个2k的page，一个bank，看下代码</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171211034.png" alt="image-20250317121116005">    </p>
+<p>page size这里是2k</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171214396.png" alt="image-20250317121428350"></p>
+<p>一些老教程里有这张图，这个我查了下是F4的 Reference manual里的，同样的章节G4已经没有这个了，也搜不到sector相关的描述了，包括老教程里的一些sector擦除写入之类的函数接口库里也都找不到了，官方给的例程只有按page擦除了。所以我们也不管这个sector相关的东西。</p>
+<h2 id="DFU固件生成"><a href="#DFU固件生成" class="headerlink" title="DFU固件生成"></a>DFU固件生成</h2><p><strong>先配置cube</strong></p>
+<p>先用cube创建一个空工程，配置时钟树，swd调试接口，打开你需要的IO（比如指示灯，进DFU模式的按键）</p>
+<p>打开USB设备，勾上就行，默认。</p>
+<p>在中间件里打开usb设备里的DFU，然后重点是下面的配置</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171219021.png" alt="image-20250317121953974">        </p>
+<p>第一行是DFU程序占用的地址，也就是用户app的起始地址，之前已经说过了，占用16k也就是改成0x08004000</p>
+<p>第二行描述的是flash的内存组织方法</p>
+<p>因为我们的前16k是dfu固件不应该被操作，后面112k是用户app，需要通过dfu程序在线擦写。</p>
+<p>每段flash的page是2k。</p>
+<p>所以修改基地址后面的内存空间描述，也就是8个2k的只读地址（Ka代表不可写）后面56个2k的可读写（Kg代表可读写）空间，一共128k</p>
+<p><code>@Internal Flash   /0x08000000/08*02Ka,56*02Kg</code></p>
+<p>以前的教程包括cube默认都会给你按照0116Ka，0316Kg这种写法来写，这个应该是基于之前的sector的写法，但是根据ST官方G4系列的demo板例程里面给的配置，确实是按照2k一页来组织的，实际来看也可以正常工作。</p>
+<p><strong>然后生成工程，开始改代码。</strong></p>
+<p>最核心的代码在usbd_dfu_flash.c里面，需要实现flash擦写等接口的代码。</p>
+<p>这个文件似乎也改过名字。。以前教程的名字是找不到的=-=</p>
+<p>但是内容基本是类似的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171228469.png" alt="image-20250317122816428"></p>
+<p>里面是一些flash读写，初始化，擦除之类的函数实现，以下代码是从ST官方的demo里复制来的，直接替换里面原有的函数即可，实测验证可用。</p>
+<p>在flash描述符下面加入两个宏定义</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_DESC_STR      <span class="string">&quot;@Internal Flash   /0x08000000/08*02Ka,56*02Kg&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* USER CODE BEGIN PRIVATE_DEFINES */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_ERASE_TIME    (uint16_t)50</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_PROGRAM_TIME  (uint16_t)50</span></span><br><span class="line"><span class="comment">/* USER CODE END PRIVATE_DEFINES */</span></span><br></pre></td></tr></table></figure>
+<p>加入自定义函数声明</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */</span></span><br><span class="line"><span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetPage</span><span class="params">(<span class="type">uint32_t</span> Address)</span>;</span><br><span class="line"><span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetBank</span><span class="params">(<span class="type">uint32_t</span> Address)</span>;</span><br><span class="line"><span class="comment">/* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */</span></span><br></pre></td></tr></table></figure>
+<p>注意检查下描述符是不是对的，cube似乎有个bug，有时候不会正确更新这里的描述符，需要重新生成一下。</p>
+<p>从FLASH_If_Init的实现开始改，一直到文件末尾全部直接改成下面的代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Private functions ---------------------------------------------------------*/</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @brief  Memory initialization routine.</span></span><br><span class="line"><span class="comment">  * @retval USBD_OK if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 0 */</span></span><br><span class="line">   <span class="comment">/* Unlock the internal flash */</span></span><br><span class="line">   HAL_FLASH_Unlock();</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 0 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  De-Initializes Memory</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful, MAL_FAIL else</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_DeInit</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 1 */</span></span><br><span class="line">   <span class="comment">/* Lock the internal flash */</span></span><br><span class="line">   HAL_FLASH_Lock();</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 1 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Erase sector.</span></span><br><span class="line"><span class="comment">   * @param  Add: Address of sector to be erased.</span></span><br><span class="line"><span class="comment">   * @retval 0 if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Erase</span><span class="params">(<span class="type">uint32_t</span> Add)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 2 */</span></span><br><span class="line">   FLASH_EraseInitTypeDef eraseinitstruct;</span><br><span class="line">   <span class="type">uint32_t</span> PageError = <span class="number">0U</span>;</span><br><span class="line">   HAL_StatusTypeDef status;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Unlock the Flash to enable the flash control register access */</span></span><br><span class="line">   HAL_FLASH_Unlock();</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Clear OPTVERR bit set on virgin samples */</span></span><br><span class="line">   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Get the number of sector to erase from 1st sector */</span></span><br><span class="line">   eraseinitstruct.TypeErase = FLASH_TYPEERASE_PAGES;</span><br><span class="line">   eraseinitstruct.Banks = GetBank(Add);</span><br><span class="line">   eraseinitstruct.Page = GetPage(Add);</span><br><span class="line">   eraseinitstruct.NbPages = <span class="number">1U</span>;</span><br><span class="line">   status = HAL_FLASHEx_Erase(&amp;eraseinitstruct, &amp;PageError);</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (status != HAL_OK)</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">1U</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0U</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 2 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Memory write routine.</span></span><br><span class="line"><span class="comment">   * @param  src: Pointer to the source buffer. Address to be written to.</span></span><br><span class="line"><span class="comment">   * @param  dest: Pointer to the destination buffer.</span></span><br><span class="line"><span class="comment">   * @param  Len: Number of data to be written (in bytes).</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Write</span><span class="params">(<span class="type">uint8_t</span> *src, <span class="type">uint8_t</span> *dest, <span class="type">uint32_t</span> Len)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 3 */</span></span><br><span class="line">   <span class="type">uint32_t</span> i = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Clear OPTVERR bit set on virgin samples */</span></span><br><span class="line">   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; Len; i += <span class="number">8</span>)</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Device voltage range supposed to be [2.7V to 3.6V], the operation will</span></span><br><span class="line"><span class="comment">      * be done by byte */</span></span><br><span class="line">     <span class="keyword">if</span> (HAL_FLASH_Program</span><br><span class="line">         (FLASH_TYPEPROGRAM_DOUBLEWORD, (<span class="type">uint32_t</span>) (dest + i),</span><br><span class="line">          *(<span class="type">uint64_t</span> *) (src + i)) == HAL_OK)</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">/* Check the written value */</span></span><br><span class="line">       <span class="keyword">if</span> (*(<span class="type">uint64_t</span> *) (src + i) != *(<span class="type">uint64_t</span> *) (dest + i))</span><br><span class="line">       &#123;</span><br><span class="line">         <span class="comment">/* Flash content doesn&#x27;t match SRAM content */</span></span><br><span class="line">         <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">else</span></span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">/* Error occurred while writing data in Flash memory */</span></span><br><span class="line">       <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 3 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Memory read routine.</span></span><br><span class="line"><span class="comment">   * @param  src: Pointer to the source buffer. Address to be written to.</span></span><br><span class="line"><span class="comment">   * @param  dest: Pointer to the destination buffer.</span></span><br><span class="line"><span class="comment">   * @param  Len: Number of data to be read (in bytes).</span></span><br><span class="line"><span class="comment">   * @retval Pointer to the physical address where data should be read.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint8_t</span> *<span class="title function_">FLASH_If_Read</span><span class="params">(<span class="type">uint8_t</span> *src, <span class="type">uint8_t</span> *dest, <span class="type">uint32_t</span> Len)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* Return a valid address to avoid HardFault */</span></span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 4 */</span></span><br><span class="line">   <span class="type">uint32_t</span> i = <span class="number">0</span>;</span><br><span class="line">   <span class="type">uint8_t</span> *psrc = src;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; Len; i++)</span><br><span class="line">   &#123;</span><br><span class="line">     dest[i] = *psrc++;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">/* Return a valid address to avoid HardFault */</span></span><br><span class="line">   <span class="keyword">return</span> (<span class="type">uint8_t</span> *) (dest);</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* USER CODE END 4 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Get status routine</span></span><br><span class="line"><span class="comment">   * @param  Add: Address to be read from</span></span><br><span class="line"><span class="comment">   * @param  Cmd: Number of data to be read (in bytes)</span></span><br><span class="line"><span class="comment">   * @param  buffer: used for returning the time necessary for a program or an erase operation</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_GetStatus</span><span class="params">(<span class="type">uint32_t</span> Add, <span class="type">uint8_t</span> Cmd, <span class="type">uint8_t</span> *buffer)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 5 */</span></span><br><span class="line">   <span class="keyword">switch</span> (Cmd)</span><br><span class="line">   &#123;</span><br><span class="line">   <span class="keyword">case</span> DFU_MEDIA_PROGRAM:</span><br><span class="line">     buffer[<span class="number">1</span>] = (<span class="type">uint8_t</span>)FLASH_PROGRAM_TIME;</span><br><span class="line">     buffer[<span class="number">2</span>] = (<span class="type">uint8_t</span>)(FLASH_PROGRAM_TIME &lt;&lt; <span class="number">8</span>);</span><br><span class="line">     buffer[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">break</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">case</span> DFU_MEDIA_ERASE:</span><br><span class="line">   <span class="keyword">default</span>:</span><br><span class="line">     buffer[<span class="number">1</span>] = (<span class="type">uint8_t</span>)FLASH_ERASE_TIME;</span><br><span class="line">     buffer[<span class="number">2</span>] = (<span class="type">uint8_t</span>)(FLASH_ERASE_TIME &lt;&lt; <span class="number">8</span>);</span><br><span class="line">     buffer[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">break</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> (USBD_OK);</span><br><span class="line">   <span class="comment">/* USER CODE END 5 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */</span></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Gets the page of a given address</span></span><br><span class="line"><span class="comment">   * @param  Address: Address of the FLASH Memory</span></span><br><span class="line"><span class="comment">   * @retval The page of a given address</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetPage</span><span class="params">(<span class="type">uint32_t</span> Address)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="type">uint32_t</span> page = <span class="number">0U</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (Address &lt; (FLASH_BASE + FLASH_BANK_SIZE))</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 1 */</span></span><br><span class="line">     page = (Address - FLASH_BASE) / FLASH_PAGE_SIZE;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 2 */</span></span><br><span class="line">     page = (Address - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> page;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Gets the Bank of a given address</span></span><br><span class="line"><span class="comment">   * @param  Address: Address of the FLASH Memory</span></span><br><span class="line"><span class="comment">   * @retval The Flash bank of a given address</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetBank</span><span class="params">(<span class="type">uint32_t</span> Address)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="type">uint32_t</span> bank = <span class="number">0U</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (Address &lt; (FLASH_BASE + FLASH_BANK_SIZE))</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 1 */</span></span><br><span class="line">     bank = FLASH_BANK_1;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 2 */</span></span><br><span class="line">     <span class="comment">//bank = FLASH_BANK_2;</span></span><br><span class="line">     bank=<span class="number">2</span>;</span><br><span class="line">     <span class="comment">//应该没有用，bank2没有定义</span></span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> bank;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @&#125;</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @&#125;</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<p>注意到这部分代码，因为的型号没有定义flash bank2，所以编译会过不去，我就把这里注释掉了，反正不会走到这里，不影响功能。</p>
+<p>如果你的单片机flash比较大可以考虑把这里注释去掉看看能不能正常编译</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171238186.png" alt="image-20250317123847162"></p>
+<p>原始代码是这样</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* Bank 2 */</span></span><br><span class="line">  bank = FLASH_BANK_2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有几个坑点。</p>
+<p>首先这里面的接口函数名字全都是改过的，网上的教程基本上都是老版本，MEM_If_Init_HS之类的函数名字（哭</p>
+<p>然后很多以前可用的函数调用现在都没有了，比如Sector Erase根本没这个模式了，只能用page擦除</p>
+<p>还有program flash函数也没法用word模式写了，最小就是DWORD，一次写64bit，这里我之前尝试了好久用以前的代码的word模式手动改成DWORD写入，但是一直不成功，每次都报校验失败，用STLINK读内存区一看，偶数地址全都是0没有写入，也就是DWORD的64bit只写了前32bit（哭</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171245691.png" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171247270.png" alt="img"></p>
+<p>ps：后面对比官方代码看应该是32bit指针和64bit指针导致的问题，我对于C的指针理解还是太不熟练了，这玩意太容易搞出问题了</p>
+<p>总之无视上面这一堆话，<strong>直接copy官方的代码就能稳定跑起来了</strong>，让人感叹天下代码一大抄，自己写永远不如找官方例程抄（乐</p>
+<p><strong>最后实现main里的用户程序跳转逻辑和自己的代码功能</strong></p>
+<p>实际上dfu的部分是不需要对main做任何修改的，以上的代码改完就可以实现dfu下载的功能了</p>
+<p>但是这样上电会永远默认进入DFU模式，也没法跳转进入自己的app，就一直卡在dfu模式了。</p>
+<p>所以我们需要在main里加入判断是否进入DFU升级模式的代码和不进入DFU时候直接跳转到用户app代码执行的功能。</p>
+<p>首先一点，<strong>如果上电时候执行了 MX_USB_Device_Init();函数（cube自动生成的）就会直接进usb dfu</strong>，电脑会识别到dfu接口</p>
+<p>所以我们把cube自动生成的函数调用注释掉，手动加入判断逻辑来决定是否初始化usb dfu</p>
+<p>在main函数里定义跳转变量</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* USER CODE BEGIN 1 */</span></span><br><span class="line">  <span class="keyword">typedef</span> <span class="title function_">void</span> <span class="params">(*pFunction)</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line">  pFunction JumpToApplication;</span><br><span class="line">  <span class="type">uint32_t</span> JumpAddress;</span><br><span class="line">  <span class="comment">/* USER CODE END 1 */</span></span><br></pre></td></tr></table></figure>
+<p>在主循环前加入判断是否进入DFU的代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"> <span class="comment">/* USER CODE BEGIN 2 */</span></span><br><span class="line"> <span class="keyword">if</span>(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2))  <span class="comment">//上电时PA2 key按下 进入DFU模式</span></span><br><span class="line"> &#123;</span><br><span class="line">   MX_USB_Device_Init(); <span class="comment">//初始化DFU USB</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>)  <span class="comment">//DFU程序</span></span><br><span class="line">   &#123;</span><br><span class="line">     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);</span><br><span class="line">     <span class="comment">//如果进入了dfu程序，绿灯闪烁</span></span><br><span class="line">     HAL_Delay(<span class="number">500</span>);</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">//没有进DFU就直接跳到用户程序</span></span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span> (((*(__IO <span class="type">uint32_t</span> *) USBD_DFU_APP_DEFAULT_ADD) &amp; <span class="number">0x2FFC0000</span>) == <span class="number">0x20000000</span>)</span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* Jump to user application */</span></span><br><span class="line">   JumpAddress = *(__IO <span class="type">uint32_t</span> *) (USBD_DFU_APP_DEFAULT_ADD + <span class="number">4</span>);</span><br><span class="line">   JumpToApplication = (pFunction) JumpAddress;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Initialize user application&#x27;s Stack Pointer */</span></span><br><span class="line">HAL_RCC_DeInit();</span><br><span class="line">   HAL_DeInit();	<span class="comment">//关掉你在dfu里初始化的所有外设，防止重新初始化冲突导致程序死掉</span></span><br><span class="line">   __set_MSP(*(__IO <span class="type">uint32_t</span> *) USBD_DFU_APP_DEFAULT_ADD);</span><br><span class="line">   JumpToApplication();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/* USER CODE END 2 */</span></span><br></pre></td></tr></table></figure>
+<p>如果上电时候按着PA2的按键，就会执行usb初始化，识别到dfu usb设备，然后进入死循环，不再执行下面的跳转代码</p>
+<p>这里的循环里可以实现自己想要的dfu固件功能，想写点啥都可以。</p>
+<p>也可以自己改进dfu的逻辑，比如通过用户程序复位重新初始化和读写某个存储器里的标志位判断进入dfu来实现代码控制自动升级。</p>
+<p>如果没有按下按键，就会往下走，执行跳转用户程序代码。</p>
+<p>这部分代码主要是把栈指针和PC程序指针都跳转到用户程序区开始的位置，也就是之前在Cube里定义的那个DFU区结束地址。</p>
+<p>注意关掉外设那两句，必须要加，我之前就总是莫名其妙的在跳转进用户程序后单片机死掉，大概是因为冲突导致死进错误中断里了。</p>
+<p>到这里DFU固件就改完了，可以编译生成hex</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171311237.png" alt="image-20250317131141208"></p>
+<p>注意改一下代码空间限制，防止写爆了超出DFU固件区。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171312986.png" alt="image-20250317131215950"></p>
+<p>因为usb代码还挺大的，为了省空间塞进16k里面，我开了这个。</p>
+<p>当然如果你的单片机flash够大可以直接给dfu区开个32k或者48k啥的。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171314849.png" alt="image-20250317131431826"></p>
+<p>空间不太富裕。</p>
+<p><strong>然后直接用stlink把dfu固件烧进去就ok了</strong></p>
+<p>如果你安装好了cube programmer的驱动，这时候按住按键，插入usb给单片机上电，应该就能看到LED闪烁，并且设备管理器里可以识别出dfu设备了。说明已经正确进入dfu固件。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171317078.png" alt="image-20250317131737051"></p>
+<p>下面就是编写用户app，需要做一些小修改。</p>
+<h2 id="编写用户程序"><a href="#编写用户程序" class="headerlink" title="编写用户程序"></a>编写用户程序</h2><p>正常创建一个工程，随便写你正常需要用的功能</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171434053.png" alt="image-20250317143429029"></p>
+<p>我这里让红绿两个LED都闪烁</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171436729.png" alt="image-20250317143633705"></p>
+<p>然后修改下程序起始地址和空间大小（还剩112k，之前算过，填进去）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171438547.png" alt="image-20250317143845503"></p>
+<p>最后修改下中断向量表偏移，也就是偏移掉DFU的16k地址区，<strong>记得把前面那行取消注释，不然不会生效</strong>。</p>
+<p>编译，生成hex文件。</p>
+<h2 id="DFU下载"><a href="#DFU下载" class="headerlink" title="DFU下载"></a>DFU下载</h2><p>进到dfu模式，打开cube programmer</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442192.png" alt="image-20250317144225144"></p>
+<p>选usb，刷新一下选你找到的端口，连接</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442007.png" alt="image-20250317144245980"></p>
+<p>这是正常连接的样子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443286.png" alt="image-20250317144316240"></p>
+<p>选刚才编译的用户程序hex文件，正常下载即可。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443285.png" alt="image-20250317144344243"></p>
+<p>下载成功。因为选了运行程序，所以会自动复位跳转到用户程序，usb连接会丢失。</p>
+<p>此时已经可以看到用户程序正常运行，两个led灯都在闪烁。</p>
+<h2 id="一些测试"><a href="#一些测试" class="headerlink" title="一些测试"></a>一些测试</h2><p>连stlink读一下内存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171446034.png" alt="image-20250317144650962"></p>
+<p>DFU固件的代码大概到了3900这个位置，也就是14k的代码大小</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171447893.png" alt="image-20250317144759822"></p>
+<p>4000开始是用户程序代码，可以看到第一个数就是我们MSP堆栈指针的值</p>
+<p>我在cube programmer里用stlink重新刷写了一遍用户程序，对比了下内存空间，发现是一致的，说明DFU烧录的代码是正确的。</p>
+<p>并且也不会覆盖掉前面的DFU代码（用cube prog重新烧写dfu固件也不会覆盖用户程序）</p>
+<p><strong>所以依然可以正常使用stlink进行用户程序的调试和下载，不影响正常的编写调试</strong></p>
+<p>尝试用DFU升级DFU固件，会报错失败，而且把程序写坏掉，不要这么做（前面16k地址空间是不可写的）</p>
+<h2 id="待续"><a href="#待续" class="headerlink" title="待续"></a>待续</h2><ul>
+<li>使用CubeIDE实现（需要改链接脚本来控制地址偏移）</li>
+<li>程序控制的自动重启OTA</li>
+<li>自定义的DFU上位机集成</li>
+<li>…</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>软件,嵌入式</tag>
       </tags>
   </entry>
   <entry>

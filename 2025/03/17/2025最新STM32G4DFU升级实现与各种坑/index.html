@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/popo2.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/popo2-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/popo2-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.superhostpopo.cn","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。 姑且记录一下实现的方法和遇到的各种坑点吧，仅供参考。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2025最新STM32G4DFU升级实现与各种坑">
+<meta property="og:url" content="https://blog.superhostpopo.cn/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/index.html">
+<meta property="og:site_name" content="泡泡酱の秘密工作室">
+<meta property="og:description" content="因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。 姑且记录一下实现的方法和遇到的各种坑点吧，仅供参考。">
+<meta property="og:locale">
+<meta property="og:image" content="https://www.st.com.cn/content/ccc/fragment/product_related/line_information/line_level_diagram/group0/7f/fd/bb/1f/31/4d/43/db/obn_stm32g4x1_ln2128/files/obn_stm32g4x1_ln2128.jpg/jcr:content/translations/en.obn_stm32g4x1_ln2128.jpg">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171209178.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171211034.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171214396.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171219021.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171228469.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171238186.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171245691.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171247270.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171311237.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171312986.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171314849.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171317078.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171434053.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171436729.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171438547.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442192.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442007.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443286.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443285.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171446034.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171447893.png">
+<meta property="article:published_time" content="2025-03-16T18:18:17.000Z">
+<meta property="article:modified_time" content="2025-03-17T07:01:20.601Z">
+<meta property="article:author" content="最高主机泡泡">
+<meta property="article:tag" content="软件,嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.st.com.cn/content/ccc/fragment/product_related/line_information/line_level_diagram/group0/7f/fd/bb/1f/31/4d/43/db/obn_stm32g4x1_ln2128/files/obn_stm32g4x1_ln2128.jpg/jcr:content/translations/en.obn_stm32g4x1_ln2128.jpg">
+
+
+<link rel="canonical" href="https://blog.superhostpopo.cn/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"https://blog.superhostpopo.cn/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/","path":"2025/03/17/2025最新STM32G4DFU升级实现与各种坑/","title":"2025最新STM32G4DFU升级实现与各种坑"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2025最新STM32G4DFU升级实现与各种坑 | 泡泡酱の秘密工作室</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">泡泡酱の秘密工作室</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">超绝可爱技术宅泡泡酱desu⭐</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#flash%E7%A9%BA%E9%97%B4%E5%92%8C%E5%9C%B0%E5%9D%80%E5%88%86%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">flash空间和地址分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DFU%E5%9B%BA%E4%BB%B6%E7%94%9F%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">DFU固件生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F"><span class="nav-number">3.</span> <span class="nav-text">编写用户程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DFU%E4%B8%8B%E8%BD%BD"><span class="nav-number">4.</span> <span class="nav-text">DFU下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">5.</span> <span class="nav-text">一些测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%85%E7%BB%AD"><span class="nav-number">6.</span> <span class="nav-text">待续</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="最高主机泡泡"
+      src="/images/popo.png">
+  <p class="site-author-name" itemprop="name">最高主机泡泡</p>
+  <div class="site-description" itemprop="description">一只菜鸡技术宅...修行中</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SuperHostPopo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SuperHostPopo" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/4023159" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;4023159" rel="noopener me" target="_blank"><i class="fab fa-youtube fa-fw"></i>bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi" title="交流QQ群853376692 → https:&#x2F;&#x2F;qm.qq.com&#x2F;cgi-bin&#x2F;qm&#x2F;qr?k&#x3D;5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&amp;jump_from&#x3D;webapi" rel="noopener me" target="_blank"><i class="fab fa-qq fa-fw"></i>交流QQ群853376692</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.emoe.xyz/" title="https:&#x2F;&#x2F;www.emoe.xyz&#x2F;" rel="noopener" target="_blank">e萌工作室</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://blog.superhostpopo.cn/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/popo.png">
+      <meta itemprop="name" content="最高主机泡泡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泡泡酱の秘密工作室">
+      <meta itemprop="description" content="一只菜鸡技术宅...修行中">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2025最新STM32G4DFU升级实现与各种坑 | 泡泡酱の秘密工作室">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2025最新STM32G4DFU升级实现与各种坑
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-03-17 02:18:17 / 修改时间：15:01:20" itemprop="dateCreated datePublished" datetime="2025-03-17T02:18:17+08:00">2025-03-17</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.6k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。</p>
+<p>姑且记录一下实现的方法和遇到的各种坑点吧，仅供参考。</p>
+<span id="more"></span>
+<p>首先大家知道stm32的新型号一般是内置dfu bootloader的，通过一些boot引脚配置是可以上电引导到内置的dfu bl然后通过usb用cube programmer去下载。但是这种做法不太灵活，必须关机上电拉引脚才能实现升级，所以还是自己实现一个dfu固件，这样可以自由的通过软件代码切换如何进入dfu模式进行下载，实现诸如在线ota推送固件之类的功能。</p>
+<p>然后现在st的cube programmer也是可以直接支持自己实现的dfu固件的下载烧录的，所以一些老教程里面说的efuse之类的工具都可以不要用了，这玩意st官方页面已经说明停止更新了，听说bug也挺多的。</p>
+<p>那么我们开始。</p>
+<h2 id="flash空间和地址分配"><a href="#flash空间和地址分配" class="headerlink" title="flash空间和地址分配"></a>flash空间和地址分配</h2><p>用的芯片是STM32G431CBT6，产品页可以看到flash大小是128k</p>
+<p><img src="https://www.st.com.cn/content/ccc/fragment/product_related/line_information/line_level_diagram/group0/7f/fd/bb/1f/31/4d/43/db/obn_stm32g4x1_ln2128/files/obn_stm32g4x1_ln2128.jpg/jcr:content/translations/en.obn_stm32g4x1_ln2128.jpg" alt="img"></p>
+<p>stm32的flash区地址默认是0x08000000，128k的结束地址是0x08020000</p>
+<p>我们这里给dfu固件分配16k地址，差不多刚好能放下，也就是把dfu固件放在flash区起始这一块，0x08000000到0x08004000这一段空间里，上电默认就会先运行dfu固件，然后在dfu固件里面判断是否进入dfu下载模式或者直接跳转到用户app。</p>
+<p>128k去掉16k剩下的用户app空间是112k，也就是0x1c000，从0x08004000到0x08020000这段空间。这些地址之后需要用到。</p>
+<p>很多教程里给dfu固件分配的空间是0xc000也就是48k，是可以的但是因为我的mcu本身flash区比较小，就省着点用了。</p>
+<p>下面这个图来自RM0440，STM32G4的 Reference manual</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171209178.png" alt="image-20250317120944129"></p>
+<p>也就是说默认情况下我们这片G431的128k flash是64个2k的page，一个bank，看下代码</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171211034.png" alt="image-20250317121116005">    </p>
+<p>page size这里是2k</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171214396.png" alt="image-20250317121428350"></p>
+<p>一些老教程里有这张图，这个我查了下是F4的 Reference manual里的，同样的章节G4已经没有这个了，也搜不到sector相关的描述了，包括老教程里的一些sector擦除写入之类的函数接口库里也都找不到了，官方给的例程只有按page擦除了。所以我们也不管这个sector相关的东西。</p>
+<h2 id="DFU固件生成"><a href="#DFU固件生成" class="headerlink" title="DFU固件生成"></a>DFU固件生成</h2><p><strong>先配置cube</strong></p>
+<p>先用cube创建一个空工程，配置时钟树，swd调试接口，打开你需要的IO（比如指示灯，进DFU模式的按键）</p>
+<p>打开USB设备，勾上就行，默认。</p>
+<p>在中间件里打开usb设备里的DFU，然后重点是下面的配置</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171219021.png" alt="image-20250317121953974">        </p>
+<p>第一行是DFU程序占用的地址，也就是用户app的起始地址，之前已经说过了，占用16k也就是改成0x08004000</p>
+<p>第二行描述的是flash的内存组织方法</p>
+<p>因为我们的前16k是dfu固件不应该被操作，后面112k是用户app，需要通过dfu程序在线擦写。</p>
+<p>每段flash的page是2k。</p>
+<p>所以修改基地址后面的内存空间描述，也就是8个2k的只读地址（Ka代表不可写）后面56个2k的可读写（Kg代表可读写）空间，一共128k</p>
+<p><code>@Internal Flash   /0x08000000/08*02Ka,56*02Kg</code></p>
+<p>以前的教程包括cube默认都会给你按照0116Ka，0316Kg这种写法来写，这个应该是基于之前的sector的写法，但是根据ST官方G4系列的demo板例程里面给的配置，确实是按照2k一页来组织的，实际来看也可以正常工作。</p>
+<p><strong>然后生成工程，开始改代码。</strong></p>
+<p>最核心的代码在usbd_dfu_flash.c里面，需要实现flash擦写等接口的代码。</p>
+<p>这个文件似乎也改过名字。。以前教程的名字是找不到的=-=</p>
+<p>但是内容基本是类似的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171228469.png" alt="image-20250317122816428"></p>
+<p>里面是一些flash读写，初始化，擦除之类的函数实现，以下代码是从ST官方的demo里复制来的，直接替换里面原有的函数即可，实测验证可用。</p>
+<p>在flash描述符下面加入两个宏定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_DESC_STR      <span class="string">&quot;@Internal Flash   /0x08000000/08*02Ka,56*02Kg&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* USER CODE BEGIN PRIVATE_DEFINES */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_ERASE_TIME    (uint16_t)50</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FLASH_PROGRAM_TIME  (uint16_t)50</span></span><br><span class="line"><span class="comment">/* USER CODE END PRIVATE_DEFINES */</span></span><br></pre></td></tr></table></figure>
+<p>加入自定义函数声明</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */</span></span><br><span class="line"><span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetPage</span><span class="params">(<span class="type">uint32_t</span> Address)</span>;</span><br><span class="line"><span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetBank</span><span class="params">(<span class="type">uint32_t</span> Address)</span>;</span><br><span class="line"><span class="comment">/* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */</span></span><br></pre></td></tr></table></figure>
+<p>注意检查下描述符是不是对的，cube似乎有个bug，有时候不会正确更新这里的描述符，需要重新生成一下。</p>
+<p>从FLASH_If_Init的实现开始改，一直到文件末尾全部直接改成下面的代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Private functions ---------------------------------------------------------*/</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @brief  Memory initialization routine.</span></span><br><span class="line"><span class="comment">  * @retval USBD_OK if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 0 */</span></span><br><span class="line">   <span class="comment">/* Unlock the internal flash */</span></span><br><span class="line">   HAL_FLASH_Unlock();</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 0 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  De-Initializes Memory</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful, MAL_FAIL else</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_DeInit</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 1 */</span></span><br><span class="line">   <span class="comment">/* Lock the internal flash */</span></span><br><span class="line">   HAL_FLASH_Lock();</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 1 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Erase sector.</span></span><br><span class="line"><span class="comment">   * @param  Add: Address of sector to be erased.</span></span><br><span class="line"><span class="comment">   * @retval 0 if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Erase</span><span class="params">(<span class="type">uint32_t</span> Add)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 2 */</span></span><br><span class="line">   FLASH_EraseInitTypeDef eraseinitstruct;</span><br><span class="line">   <span class="type">uint32_t</span> PageError = <span class="number">0U</span>;</span><br><span class="line">   HAL_StatusTypeDef status;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Unlock the Flash to enable the flash control register access */</span></span><br><span class="line">   HAL_FLASH_Unlock();</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Clear OPTVERR bit set on virgin samples */</span></span><br><span class="line">   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Get the number of sector to erase from 1st sector */</span></span><br><span class="line">   eraseinitstruct.TypeErase = FLASH_TYPEERASE_PAGES;</span><br><span class="line">   eraseinitstruct.Banks = GetBank(Add);</span><br><span class="line">   eraseinitstruct.Page = GetPage(Add);</span><br><span class="line">   eraseinitstruct.NbPages = <span class="number">1U</span>;</span><br><span class="line">   status = HAL_FLASHEx_Erase(&amp;eraseinitstruct, &amp;PageError);</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (status != HAL_OK)</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">1U</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0U</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 2 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Memory write routine.</span></span><br><span class="line"><span class="comment">   * @param  src: Pointer to the source buffer. Address to be written to.</span></span><br><span class="line"><span class="comment">   * @param  dest: Pointer to the destination buffer.</span></span><br><span class="line"><span class="comment">   * @param  Len: Number of data to be written (in bytes).</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful, MAL_FAIL else.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_Write</span><span class="params">(<span class="type">uint8_t</span> *src, <span class="type">uint8_t</span> *dest, <span class="type">uint32_t</span> Len)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 3 */</span></span><br><span class="line">   <span class="type">uint32_t</span> i = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Clear OPTVERR bit set on virgin samples */</span></span><br><span class="line">   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; Len; i += <span class="number">8</span>)</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Device voltage range supposed to be [2.7V to 3.6V], the operation will</span></span><br><span class="line"><span class="comment">      * be done by byte */</span></span><br><span class="line">     <span class="keyword">if</span> (HAL_FLASH_Program</span><br><span class="line">         (FLASH_TYPEPROGRAM_DOUBLEWORD, (<span class="type">uint32_t</span>) (dest + i),</span><br><span class="line">          *(<span class="type">uint64_t</span> *) (src + i)) == HAL_OK)</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">/* Check the written value */</span></span><br><span class="line">       <span class="keyword">if</span> (*(<span class="type">uint64_t</span> *) (src + i) != *(<span class="type">uint64_t</span> *) (dest + i))</span><br><span class="line">       &#123;</span><br><span class="line">         <span class="comment">/* Flash content doesn&#x27;t match SRAM content */</span></span><br><span class="line">         <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">else</span></span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">/* Error occurred while writing data in Flash memory */</span></span><br><span class="line">       <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   <span class="comment">/* USER CODE END 3 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Memory read routine.</span></span><br><span class="line"><span class="comment">   * @param  src: Pointer to the source buffer. Address to be written to.</span></span><br><span class="line"><span class="comment">   * @param  dest: Pointer to the destination buffer.</span></span><br><span class="line"><span class="comment">   * @param  Len: Number of data to be read (in bytes).</span></span><br><span class="line"><span class="comment">   * @retval Pointer to the physical address where data should be read.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint8_t</span> *<span class="title function_">FLASH_If_Read</span><span class="params">(<span class="type">uint8_t</span> *src, <span class="type">uint8_t</span> *dest, <span class="type">uint32_t</span> Len)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* Return a valid address to avoid HardFault */</span></span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 4 */</span></span><br><span class="line">   <span class="type">uint32_t</span> i = <span class="number">0</span>;</span><br><span class="line">   <span class="type">uint8_t</span> *psrc = src;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; Len; i++)</span><br><span class="line">   &#123;</span><br><span class="line">     dest[i] = *psrc++;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">/* Return a valid address to avoid HardFault */</span></span><br><span class="line">   <span class="keyword">return</span> (<span class="type">uint8_t</span> *) (dest);</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* USER CODE END 4 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Get status routine</span></span><br><span class="line"><span class="comment">   * @param  Add: Address to be read from</span></span><br><span class="line"><span class="comment">   * @param  Cmd: Number of data to be read (in bytes)</span></span><br><span class="line"><span class="comment">   * @param  buffer: used for returning the time necessary for a program or an erase operation</span></span><br><span class="line"><span class="comment">   * @retval USBD_OK if operation is successful</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">uint16_t</span> <span class="title function_">FLASH_If_GetStatus</span><span class="params">(<span class="type">uint32_t</span> Add, <span class="type">uint8_t</span> Cmd, <span class="type">uint8_t</span> *buffer)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* USER CODE BEGIN 5 */</span></span><br><span class="line">   <span class="keyword">switch</span> (Cmd)</span><br><span class="line">   &#123;</span><br><span class="line">   <span class="keyword">case</span> DFU_MEDIA_PROGRAM:</span><br><span class="line">     buffer[<span class="number">1</span>] = (<span class="type">uint8_t</span>)FLASH_PROGRAM_TIME;</span><br><span class="line">     buffer[<span class="number">2</span>] = (<span class="type">uint8_t</span>)(FLASH_PROGRAM_TIME &lt;&lt; <span class="number">8</span>);</span><br><span class="line">     buffer[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">break</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">case</span> DFU_MEDIA_ERASE:</span><br><span class="line">   <span class="keyword">default</span>:</span><br><span class="line">     buffer[<span class="number">1</span>] = (<span class="type">uint8_t</span>)FLASH_ERASE_TIME;</span><br><span class="line">     buffer[<span class="number">2</span>] = (<span class="type">uint8_t</span>)(FLASH_ERASE_TIME &lt;&lt; <span class="number">8</span>);</span><br><span class="line">     buffer[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">break</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> (USBD_OK);</span><br><span class="line">   <span class="comment">/* USER CODE END 5 */</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */</span></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Gets the page of a given address</span></span><br><span class="line"><span class="comment">   * @param  Address: Address of the FLASH Memory</span></span><br><span class="line"><span class="comment">   * @retval The page of a given address</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetPage</span><span class="params">(<span class="type">uint32_t</span> Address)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="type">uint32_t</span> page = <span class="number">0U</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (Address &lt; (FLASH_BASE + FLASH_BANK_SIZE))</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 1 */</span></span><br><span class="line">     page = (Address - FLASH_BASE) / FLASH_PAGE_SIZE;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 2 */</span></span><br><span class="line">     page = (Address - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> page;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @brief  Gets the Bank of a given address</span></span><br><span class="line"><span class="comment">   * @param  Address: Address of the FLASH Memory</span></span><br><span class="line"><span class="comment">   * @retval The Flash bank of a given address</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> <span class="type">static</span> <span class="type">uint32_t</span> <span class="title function_">GetBank</span><span class="params">(<span class="type">uint32_t</span> Address)</span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="type">uint32_t</span> bank = <span class="number">0U</span>;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">if</span> (Address &lt; (FLASH_BASE + FLASH_BANK_SIZE))</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 1 */</span></span><br><span class="line">     bank = FLASH_BANK_1;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="comment">/* Bank 2 */</span></span><br><span class="line">     <span class="comment">//bank = FLASH_BANK_2;</span></span><br><span class="line">     bank=<span class="number">2</span>;</span><br><span class="line">     <span class="comment">//应该没有用，bank2没有定义</span></span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">return</span> bank;</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @&#125;</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @&#125;</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<p>注意到这部分代码，因为的型号没有定义flash bank2，所以编译会过不去，我就把这里注释掉了，反正不会走到这里，不影响功能。</p>
+<p>如果你的单片机flash比较大可以考虑把这里注释去掉看看能不能正常编译</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171238186.png" alt="image-20250317123847162"></p>
+<p>原始代码是这样</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">/* Bank 2 */</span></span><br><span class="line">  bank = FLASH_BANK_2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有几个坑点。</p>
+<p>首先这里面的接口函数名字全都是改过的，网上的教程基本上都是老版本，MEM_If_Init_HS之类的函数名字（哭</p>
+<p>然后很多以前可用的函数调用现在都没有了，比如Sector Erase根本没这个模式了，只能用page擦除</p>
+<p>还有program flash函数也没法用word模式写了，最小就是DWORD，一次写64bit，这里我之前尝试了好久用以前的代码的word模式手动改成DWORD写入，但是一直不成功，每次都报校验失败，用STLINK读内存区一看，偶数地址全都是0没有写入，也就是DWORD的64bit只写了前32bit（哭</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171245691.png" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171247270.png" alt="img"></p>
+<p>ps：后面对比官方代码看应该是32bit指针和64bit指针导致的问题，我对于C的指针理解还是太不熟练了，这玩意太容易搞出问题了</p>
+<p>总之无视上面这一堆话，<strong>直接copy官方的代码就能稳定跑起来了</strong>，让人感叹天下代码一大抄，自己写永远不如找官方例程抄（乐</p>
+<p><strong>最后实现main里的用户程序跳转逻辑和自己的代码功能</strong></p>
+<p>实际上dfu的部分是不需要对main做任何修改的，以上的代码改完就可以实现dfu下载的功能了</p>
+<p>但是这样上电会永远默认进入DFU模式，也没法跳转进入自己的app，就一直卡在dfu模式了。</p>
+<p>所以我们需要在main里加入判断是否进入DFU升级模式的代码和不进入DFU时候直接跳转到用户app代码执行的功能。</p>
+<p>首先一点，<strong>如果上电时候执行了 MX_USB_Device_Init();函数（cube自动生成的）就会直接进usb dfu</strong>，电脑会识别到dfu接口</p>
+<p>所以我们把cube自动生成的函数调用注释掉，手动加入判断逻辑来决定是否初始化usb dfu</p>
+<p>在main函数里定义跳转变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* USER CODE BEGIN 1 */</span></span><br><span class="line">  <span class="keyword">typedef</span> <span class="title function_">void</span> <span class="params">(*pFunction)</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line">  pFunction JumpToApplication;</span><br><span class="line">  <span class="type">uint32_t</span> JumpAddress;</span><br><span class="line">  <span class="comment">/* USER CODE END 1 */</span></span><br></pre></td></tr></table></figure>
+<p>在主循环前加入判断是否进入DFU的代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/* USER CODE BEGIN 2 */</span></span><br><span class="line"> <span class="keyword">if</span>(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2))  <span class="comment">//上电时PA2 key按下 进入DFU模式</span></span><br><span class="line"> &#123;</span><br><span class="line">   MX_USB_Device_Init(); <span class="comment">//初始化DFU USB</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>)  <span class="comment">//DFU程序</span></span><br><span class="line">   &#123;</span><br><span class="line">     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_14);</span><br><span class="line">     <span class="comment">//如果进入了dfu程序，绿灯闪烁</span></span><br><span class="line">     HAL_Delay(<span class="number">500</span>);</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">//没有进DFU就直接跳到用户程序</span></span><br><span class="line"> </span><br><span class="line"> <span class="keyword">if</span> (((*(__IO <span class="type">uint32_t</span> *) USBD_DFU_APP_DEFAULT_ADD) &amp; <span class="number">0x2FFC0000</span>) == <span class="number">0x20000000</span>)</span><br><span class="line"> &#123;</span><br><span class="line">   <span class="comment">/* Jump to user application */</span></span><br><span class="line">   JumpAddress = *(__IO <span class="type">uint32_t</span> *) (USBD_DFU_APP_DEFAULT_ADD + <span class="number">4</span>);</span><br><span class="line">   JumpToApplication = (pFunction) JumpAddress;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">/* Initialize user application&#x27;s Stack Pointer */</span></span><br><span class="line">HAL_RCC_DeInit();</span><br><span class="line">   HAL_DeInit();	<span class="comment">//关掉你在dfu里初始化的所有外设，防止重新初始化冲突导致程序死掉</span></span><br><span class="line">   __set_MSP(*(__IO <span class="type">uint32_t</span> *) USBD_DFU_APP_DEFAULT_ADD);</span><br><span class="line">   JumpToApplication();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">/* USER CODE END 2 */</span></span><br></pre></td></tr></table></figure>
+<p>如果上电时候按着PA2的按键，就会执行usb初始化，识别到dfu usb设备，然后进入死循环，不再执行下面的跳转代码</p>
+<p>这里的循环里可以实现自己想要的dfu固件功能，想写点啥都可以。</p>
+<p>也可以自己改进dfu的逻辑，比如通过用户程序复位重新初始化和读写某个存储器里的标志位判断进入dfu来实现代码控制自动升级。</p>
+<p>如果没有按下按键，就会往下走，执行跳转用户程序代码。</p>
+<p>这部分代码主要是把栈指针和PC程序指针都跳转到用户程序区开始的位置，也就是之前在Cube里定义的那个DFU区结束地址。</p>
+<p>注意关掉外设那两句，必须要加，我之前就总是莫名其妙的在跳转进用户程序后单片机死掉，大概是因为冲突导致死进错误中断里了。</p>
+<p>到这里DFU固件就改完了，可以编译生成hex</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171311237.png" alt="image-20250317131141208"></p>
+<p>注意改一下代码空间限制，防止写爆了超出DFU固件区。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171312986.png" alt="image-20250317131215950"></p>
+<p>因为usb代码还挺大的，为了省空间塞进16k里面，我开了这个。</p>
+<p>当然如果你的单片机flash够大可以直接给dfu区开个32k或者48k啥的。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171314849.png" alt="image-20250317131431826"></p>
+<p>空间不太富裕。</p>
+<p><strong>然后直接用stlink把dfu固件烧进去就ok了</strong></p>
+<p>如果你安装好了cube programmer的驱动，这时候按住按键，插入usb给单片机上电，应该就能看到LED闪烁，并且设备管理器里可以识别出dfu设备了。说明已经正确进入dfu固件。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171317078.png" alt="image-20250317131737051"></p>
+<p>下面就是编写用户app，需要做一些小修改。</p>
+<h2 id="编写用户程序"><a href="#编写用户程序" class="headerlink" title="编写用户程序"></a>编写用户程序</h2><p>正常创建一个工程，随便写你正常需要用的功能</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171434053.png" alt="image-20250317143429029"></p>
+<p>我这里让红绿两个LED都闪烁</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171436729.png" alt="image-20250317143633705"></p>
+<p>然后修改下程序起始地址和空间大小（还剩112k，之前算过，填进去）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171438547.png" alt="image-20250317143845503"></p>
+<p>最后修改下中断向量表偏移，也就是偏移掉DFU的16k地址区，<strong>记得把前面那行取消注释，不然不会生效</strong>。</p>
+<p>编译，生成hex文件。</p>
+<h2 id="DFU下载"><a href="#DFU下载" class="headerlink" title="DFU下载"></a>DFU下载</h2><p>进到dfu模式，打开cube programmer</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442192.png" alt="image-20250317144225144"></p>
+<p>选usb，刷新一下选你找到的端口，连接</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171442007.png" alt="image-20250317144245980"></p>
+<p>这是正常连接的样子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443286.png" alt="image-20250317144316240"></p>
+<p>选刚才编译的用户程序hex文件，正常下载即可。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171443285.png" alt="image-20250317144344243"></p>
+<p>下载成功。因为选了运行程序，所以会自动复位跳转到用户程序，usb连接会丢失。</p>
+<p>此时已经可以看到用户程序正常运行，两个led灯都在闪烁。</p>
+<h2 id="一些测试"><a href="#一些测试" class="headerlink" title="一些测试"></a>一些测试</h2><p>连stlink读一下内存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171446034.png" alt="image-20250317144650962"></p>
+<p>DFU固件的代码大概到了3900这个位置，也就是14k的代码大小</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503171447893.png" alt="image-20250317144759822"></p>
+<p>4000开始是用户程序代码，可以看到第一个数就是我们MSP堆栈指针的值</p>
+<p>我在cube programmer里用stlink重新刷写了一遍用户程序，对比了下内存空间，发现是一致的，说明DFU烧录的代码是正确的。</p>
+<p>并且也不会覆盖掉前面的DFU代码（用cube prog重新烧写dfu固件也不会覆盖用户程序）</p>
+<p><strong>所以依然可以正常使用stlink进行用户程序的调试和下载，不影响正常的编写调试</strong></p>
+<p>尝试用DFU升级DFU固件，会报错失败，而且把程序写坏掉，不要这么做（前面16k地址空间是不可写的）</p>
+<h2 id="待续"><a href="#待续" class="headerlink" title="待续"></a>待续</h2><ul>
+<li>使用CubeIDE实现（需要改链接脚本来控制地址偏移）</li>
+<li>程序控制的自动重启OTA</li>
+<li>自定义的DFU上位机集成</li>
+<li>…</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>最高主机泡泡
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.superhostpopo.cn/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/" title="2025最新STM32G4DFU升级实现与各种坑">https://blog.superhostpopo.cn/2025/03/17/2025最新STM32G4DFU升级实现与各种坑/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/SuperHostPopo">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://space.bilibili.com/4023159">
+            <span class="icon">
+              <i class="fab fa-youtube"></i>
+            </span>
+
+            <span class="label">bilibili</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi">
+            <span class="icon">
+              <i class="fab fa-qq"></i>
+            </span>
+
+            <span class="label">交流QQ群853376692</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6-%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag"># 软件,嵌入式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/" rel="prev" title="VtuberStudio配置选择和模型调参">
+                  <i class="fa fa-chevron-left"></i> VtuberStudio配置选择和模型调参
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-terminal"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">最高主机泡泡</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">37k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
