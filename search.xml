@@ -1,120 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Lora训练学习笔记</title>
-    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
-<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
-<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
-<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
-<span id="more"></span>
-<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
-<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
-<p>建个文件夹脚本git下来不多说</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
-<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
-<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
-<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
-<p>最后显示install compete就装完了。不得不说真大啊</p>
-<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
-<p>我真傻</p>
-<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
-<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
-<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
-<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
-<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
-<p>然后开webui，先切图。设好输入输出目录</p>
-<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
-<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
-<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
-<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
-<p>又要下一堆模型emmm 然后反推倒是很快</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
-<p>把反推完的tag扔到训练图的文件夹里去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
-<p>到这里训练集就处理完了。待用。</p>
-<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
-<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
-<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
-<p>然后改train.ps1训练脚本</p>
-<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
-<p>底模一般都推荐用full 7.2G原始大模型</p>
-<p>分辨率改一下</p>
-<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
-<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
-<p>dim就不改了 学习率这种进阶的东西也不改了</p>
-<p>优化器用了lion据说效果好一点</p>
-<p>locon没学明白，先不开</p>
-<p>好了保存然后开始训练</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
-<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
-<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
-<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
-<p>而且其实也不需要训练40轮这么多 </p>
-<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
-<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
-<p>我跑了40轮只是测试一下看看这样</p>
-<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
-<p>总之目前还没跑完，先试试10轮的，很满意！</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
-<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
-<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
-<p>等我再研究研究明白再来说</p>
-<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
-<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
-<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
-<p>5.正则化 没看明白 待我以后再研究研究</p>
-<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
-<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
-<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
-<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
-<p>3.手动改标…真的好麻烦</p>
-<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
-<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
-<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
-<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
-<span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2025最新STM32G4DFU升级实现与各种坑</title>
     <url>/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/</url>
     <content><![CDATA[<p>因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。</p>
@@ -242,162 +128,118 @@
       </tags>
   </entry>
   <entry>
-    <title>lora训练学习笔记续_2024</title>
-    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
-    <content><![CDATA[<p>好久没摸了</p>
-<p>快一年了技术迭代很快啊</p>
-<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
-<p>但是也会遇到冷门到模型都找不出的（悲</p>
-<p>所以还是捡起来重新学一遍吧…</p>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
 <span id="more"></span>
-<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
-<p>全网找不到几张图</p>
-<p>真的是深刻感受到炼丹最难的就是数据集</p>
-<p>数据集处理真是最耗时的事情</p>
-<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
-<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
-<p>于是去找资料…总结几个小tips</p>
-<ul>
-<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
-</li>
-<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
-</li>
-<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
-</li>
-<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
-</li>
-<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
-</li>
-<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
-</li>
-</ul>
-<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
-<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
-<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
-<p>打标阈值0.35什么的 不多说了都老传统</p>
-<p>推荐下标签编辑的小软件</p>
-<p>BooruDatasetTagManager</p>
-<p>超好用 用过的都说好 还有自动翻译标签功能</p>
-<p>比插件的那个编辑器好用多了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
-<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
-<ul>
-<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
-</ul>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
-<p>参考秋叶的说明</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
-<ul>
-<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
-<p>为什么呢 我也不知道呢 </p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
-<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
-</li>
-<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
-<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
-<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
-</li>
-<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
-</li>
-<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
-</li>
-</ul>
-<p>更新：</p>
-<p>嗯。。实际用我这十几张图练了一下 发现了比较明显的过拟合，出图烂掉了（很糊的那种图）</p>
-<p>反复试了试也不知道是优化器的问题还是底模的问题还是训练方法问题还是我训练集太烂</p>
-<p>总之是烂掉了</p>
-<p>回到秋叶训练器用最传统的方法练了下，反而还好一些…（默认参数 传统adam优化器 lora算法，1batch size+5 repeat 50个epoch）真难啊</p>
-<p>重新开始学习。。</p>
-<p>嗯。看到个说法说这个和神童优化器会冲突 或许吧。。有空试试看吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405212353286.png" alt="image-20240521235316257"></p>
-<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
-<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
-<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
-<p>都是很棒的教程</p>
-<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
-    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
-<p>想着行动力行动力但是下班之后就好想睡觉</p>
-<p>彻底变成了社畜的模样</p>
-<p>但是哪怕迷茫也要前进呀</p>
-<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
-<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
-<p>权当是复健咯</p>
-<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
-<span id="more"></span>
-<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
-<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
-<p>也确实是太久没玩什么新东西了</p>
-<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
-<p><del>乐鑫的产品线真够乱的（摔</del></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
-<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
-<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
-<p>原理图也很简单</p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
-<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
-<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
-<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
-<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
-<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
-<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
-<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
-<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
-<p>装完之后随便选一个esp32s3的板子</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
-<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
-<p>于是随便撸了一个hello world试一下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>插上usb，可以自动识别com号，编译，下载</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
-<p>闪灯ok，串口输出ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
-<p>第一步算是跑起来了</p>
-<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
-<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
-<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
-<p>没想着能成功的</p>
-<p>结果一遍就刷进去了 草</p>
-<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
-<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
-<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
-<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
-<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
-<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
-<p>没啥可说的 很简单的玩意</p>
-<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
-<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
-<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
-<p>嗯…这就为后面埋下了大坑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
-<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
-<p>还没有点亮呢 至少先驱动起来看看</p>
-<p>于是找个普通的st7789驱动库吧</p>
-<p>屏幕卖家自然是带了一些例程代码的</p>
-<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
-<p>都用arduino了，图的不就是不用自己写库么</p>
-<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
-<p>去arduino上搜一搜好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
-<p>果然出来了一大堆</p>
-<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
-<p>第一个看着就ok，装来试一下吧</p>
-<hr>
-<p>未完待续…</p>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
 ]]></content>
       <tags>
-        <tag>嵌入式</tag>
+        <tag>软件</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Lora训练学习笔记</title>
+    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
+<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
+<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
+<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+<span id="more"></span>
+<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
+<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
+<p>建个文件夹脚本git下来不多说</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
+<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
+<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
+<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
+<p>最后显示install compete就装完了。不得不说真大啊</p>
+<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
+<p>我真傻</p>
+<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
+<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
+<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
+<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
+<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
+<p>然后开webui，先切图。设好输入输出目录</p>
+<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
+<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
+<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
+<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
+<p>又要下一堆模型emmm 然后反推倒是很快</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
+<p>把反推完的tag扔到训练图的文件夹里去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
+<p>到这里训练集就处理完了。待用。</p>
+<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
+<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
+<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
+<p>然后改train.ps1训练脚本</p>
+<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
+<p>底模一般都推荐用full 7.2G原始大模型</p>
+<p>分辨率改一下</p>
+<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
+<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
+<p>dim就不改了 学习率这种进阶的东西也不改了</p>
+<p>优化器用了lion据说效果好一点</p>
+<p>locon没学明白，先不开</p>
+<p>好了保存然后开始训练</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
+<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
+<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
+<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
+<p>而且其实也不需要训练40轮这么多 </p>
+<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
+<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
+<p>我跑了40轮只是测试一下看看这样</p>
+<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
+<p>总之目前还没跑完，先试试10轮的，很满意！</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
+<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
+<p>等我再研究研究明白再来说</p>
+<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
+<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
+<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
+<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+]]></content>
   </entry>
   <entry>
     <title>VtuberStudio配置选择和模型调参</title>
@@ -524,108 +366,258 @@
       </tags>
   </entry>
   <entry>
-    <title>我回来啦</title>
-    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
-    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
-<p>更新下已经落后了一年版本的hexo吧…</p>
-<p>就是这样~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
+    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
+<span id="more"></span>
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
 ]]></content>
       <tags>
-        <tag>杂项</tag>
+        <tag>嵌入式</tag>
       </tags>
   </entry>
   <entry>
-    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
-    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
-<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
-<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
-<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
-<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
-<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
-<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
-<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
-<p>那么下面就是具体的配置过程啦~</p>
+    <title>ZYNQ入门日记</title>
+    <url>/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/</url>
+    <content><![CDATA[<p>所谓成长，大概也是跨越曾经无法挑战的困难吧…</p>
+<p>所以在大学失败一次，毕业后失败一次，失败了n次之后，再一次尝试学习fpga来啦…</p>
+<p>我得说真的是丢人到爆了（</p>
+<p>虽然很不想碰，但是还是避不开的玩意啊这东西</p>
+<p>其实我一直还挺喜欢zynq这玩意的设计理念的，集成度高，性能强，还贼便宜（在国内环境下）</p>
+<p>你妹小黄鱼的7010已经到了4块拆机带板的程度了…翻新好的也就七块</p>
+<p>我买个G431还要10块呢（摔</p>
+<p>所以重新来挑战一下吧…</p>
+<p>屎山无边，回头是岸，努力攀登吧</p>
+<blockquote>
+<p>参考：</p>
+<ul>
+<li>教程系列<a href="http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/">http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/</a></li>
+<li>正点原子领航者zynq教程文档</li>
+<li>其他网络资料、群友们和deepseek的帮助</li>
+</ul>
+<p>感谢相关教程</p>
+</blockquote>
 <span id="more"></span>
-<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
-<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
-<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
-<blockquote>
-<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
+<h1 id="day1-找硬件，矿板改造，装开发环境"><a href="#day1-找硬件，矿板改造，装开发环境" class="headerlink" title="day1 找硬件，矿板改造，装开发环境"></a>day1 找硬件，矿板改造，装开发环境</h1><h2 id="改板子"><a href="#改板子" class="headerlink" title="改板子"></a>改板子</h2><p>首先我们需要一个开发板对吧<img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301934452.jpg" alt="ebaz4205"></p>
+<p>在之前某次尝试的时候凑热闹买了个咸鱼爆火的矿板，就这玩意（那时候zynq还没降价到现在这样，四五十的7010核心板已经很便宜的夸张了），一直没怎么玩，先拿来入门下吧</p>
+<p>没去用正经的开发板也是想更多的体验下对硬件的探索，熟悉这玩意的外围电路，毕竟是想要拿来做系统的软硬件都得学习吧</p>
+<p>另外就是群友的大作jlc开源核心板，非常的强大。这东西应该也已经很火了吧</p>
+<p>已经在准备啦，感谢立创的免费打板，正在采购备料中…打算等熟悉一点之后拿来替换这个矿板</p>
+<p>这里是链接：<a href="https://oshwhub.com/z_star/zynq7020-core-board-and-various-rf-modules">https://oshwhub.com/z_star/zynq7020-core-board-and-various-rf-modules</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301933249.png" alt="img"></p>
+<p>关于矿板，在网上找到了很不错的资源汇总教程，我也姑且先按照这个来探索一下</p>
+<p><a href="http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/">http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/</a></p>
+<p>先是过一遍电路图，pcb，熟悉下布局（这玩意竟然是protel的…用ad可以导入就是）</p>
+<p>参考文章做一下改造：引出电源接口，焊jtag排针，串口排针，sd卡槽，pl端晶振</p>
+<p><a href="http://www.hellofpga.com/index.php/2024/02/01/ebaz4205_re/">http://www.hellofpga.com/index.php/2024/02/01/ebaz4205_re/</a></p>
+<p>改完长这样，调试器是某宝买的烂大街兼容品（拆开看下里面没有意外是一颗ft232，标准方案，做这么大实在是属于撑的…）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301938654.jpeg" alt="img"></p>
+<h2 id="装软件"><a href="#装软件" class="headerlink" title="装软件"></a>装软件</h2><p>IDE的话在群友的建议下装了vivido 2018.3，比较经典的版本，bug少，轻便，占空间小（新版vivado一下就一两百G尼玛…比小而美还吓人）</p>
+<p>网上教程一堆，不多说</p>
+<p>然后推荐一下偶然发现的vscode插件，Digital IDE。感觉功能挺丰富的，用vsc编辑代码感觉就现代多了（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301944788.png" alt="image-20250330194432704"></p>
+<p>还能提供原语补全啊语法检查之类一坨东西，对vivado支持也不错</p>
+<p>这里是官网，推荐一下：<a href="https://nc-ai.cn/">https://nc-ai.cn/</a></p>
+<p>以及感谢群友的blog文章和提供的帮助</p>
+<p><a href="https://badboy2002.xyz/2025/03/06/note/fpga-kai-fa-gong-ju-lian/">https://badboy2002.xyz/2025/03/06/note/fpga-kai-fa-gong-ju-lian/</a></p>
+<h1 id="day2-hello-world-and-？"><a href="#day2-hello-world-and-？" class="headerlink" title="day2 hello world and ？"></a>day2 hello world and ？</h1><h2 id="LED闪灯"><a href="#LED闪灯" class="headerlink" title="LED闪灯"></a>LED闪灯</h2><p>这里主要是熟悉下新建工程，怎么用vivado</p>
+<p>这IDE其实还挺像人的…就选芯片型号然后加.v文件就行了</p>
+<p>代码没啥可说的，就计数器</p>
+<p>这里的综合和实现（是叫这个吗？）有啥区别，没搞懂</p>
+<p>只知道必须先综合然后跑实现</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302009142.png" alt="image-20250330200905124"></p>
+<p>让我们问下大d老师</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302011790.png" alt="image-20250330201135769"></p>
+<p>综合完了就能看原理图了</p>
+<p>闪个灯这么一坨东西？</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302012888.png" alt="image-20250330201221831"></p>
+<p>然后做管脚约束，原理图里有两个LED，接一个（W13）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302014237.png" alt="image-20250330201446217"></p>
+<p>时钟输入接晶振（N18）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302015557.png" alt="image-20250330201503537"></p>
+<p>因为所有的IO都是3.3V供电，所以这里都选LVCMOS33。改一下约束然后点保存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302021459.png" alt="image-20250330202155395"></p>
+<p>其实约束文件长这样，也可以手写（大概</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302022426.png" alt="image-20250330202237404"></p>
+<p>理论上还应该有时序约束。但是这个工程太简单先懒得管了</p>
+<p>然后再综合，实现，生成bit流（好慢。。这么点工程这么慢。。）</p>
+<p>自动连接然后右键program device</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302111247.png" alt="image-20250330211142199"></p>
+<p>这里遇到了问题，给我报错Launch Error: Unable to launch local hw_server executable.</p>
+<p>本来以为是下载器固件或者驱动有问题，折腾了半天</p>
+<p>最后其实是win的防火墙把vivado的调试器服务拦了，重启电脑然后重新开vivado,允许访问网络就ok了</p>
+<p>ok，闪灯了</p>
+<p>就这样</p>
+<p>看起来只用fpga其实也不用配arm那边的东西就是（但是这样没法固化引导，掉电就没了，据我所知如果要引导还算必须依赖ps那边的）</p>
+<p>总之算是熟悉了一遍工作流吧。软件界面，创建工程，写代码，约束引脚，综合，下载。</p>
+<p>先这样。</p>
+<p>todo：</p>
+<p>仿真，在线调试，固化程序。</p>
+<p>ps：发现矿板上的美光内存可以用官网的这个工具从丝印查到型号</p>
+<p><a href="https://www.micron.com/sales-support/design-tools/fbga-parts-decoder">https://www.micron.com/sales-support/design-tools/fbga-parts-decoder</a></p>
+<p>我这个D9PTK似乎是MT41K128M16JT-125这玩意 也就是256M的16bit DDR3内存</p>
+<h1 id="day3-PS端-AXI-GPIO闪灯"><a href="#day3-PS端-AXI-GPIO闪灯" class="headerlink" title="day3 PS端 AXI GPIO闪灯"></a>day3 PS端 AXI GPIO闪灯</h1><p>然后熟悉下ps是吧</p>
+<p>其实正常来说是应该用mio的控制吧。。这教程咋上来就用axi总线的gpio ip核了</p>
+<p>算了试试也行</p>
+<p><a href="http://www.hellofpga.com/index.php/2021/08/02/zynq_ps_to_pl_led_test/">http://www.hellofpga.com/index.php/2021/08/02/zynq_ps_to_pl_led_test/</a></p>
+<p>复杂一点 照着做也就好了</p>
+<p>也算是熟悉一下开发流程</p>
+<p>有几个点吧…</p>
+<p>这个vivado sdk（ps的开发工具，应该是个eclipse）里面按Ctrl+s保存代码会自动重新编译（</p>
+<p>然后就是这个例程</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010131899.png" alt="image-20250401013120870"></p>
+<p>他这个write函数是 直接写入IO的状态寄存器，也就是你写对应位是0就是输出低，对应位是1是输出高。</p>
+<p>并不是按照mask给对应位置高，0的位不操作…</p>
+<p>他这个例程也是有点误导性，下面是个clear，我还以为一个是置位一个是复位</p>
+<p>实际上clear确实是对mask标志的位进行复位（写0）</p>
+<p>但是write不是只对mask对应位写1啊….他会把其他位也写进去啊…</p>
+<p>结果发现另一个led也被操作了</p>
+<p>折腾半天没明白为啥会这样（我的bit0和bit1分别是一个led）</p>
+<p>所以你要想只操作bit0，就要手动把bit1的状态也写上保证不会被误操作（因为我led是低点亮。。。）</p>
+<p>好吧怪我没读api手册照着例程断章取义咯（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010143135.png" alt="image-20250401014352108"></p>
+<p>好吧大d老师nb。。。竟然有专用的函数（</p>
+<p>ps：关于address editior怎么开</p>
+<p>在block design里找window菜单里面有</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011612161.png" alt="image-20250401161225085"></p>
+<h1 id="day4-PS-GPIO方法2（EMIO）-程序固化"><a href="#day4-PS-GPIO方法2（EMIO）-程序固化" class="headerlink" title="day4 PS GPIO方法2（EMIO） 程序固化"></a>day4 PS GPIO方法2（EMIO） 程序固化</h1><p>MIO或者EMIO其实是比较正常的GPIO用法吧…</p>
+<p>MIO是固定的PS IO</p>
+<p>EMIO就是用PL做IO的mux，随便定义IO接在哪个pin</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011653373.png" alt="image-20250401165313332"></p>
+<p>所以MIO的IO号是0~53，EMIO的号是54~117</p>
+<p>这里是AXI的GPIO和EMIO的区别</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011735759.png" alt="image-20250401173513731"></p>
+<p>这篇文章不错：<a href="https://adaptivesupport.amd.com/s/article/1012484?language=zh_CN">https://adaptivesupport.amd.com/s/article/1012484?language=zh_CN</a></p>
+<h2 id="程序固化"><a href="#程序固化" class="headerlink" title="程序固化"></a>程序固化</h2><p>zynq的程序固化必须依赖ps（从ps的fsbl也就是主boot loader引导再加载bit文件）</p>
+<p>所以必须建一个fsbl工程</p>
+<p>然后就是实测必须改nand的时序参数（可能是矿板这块8位nand的特殊吧）不然能烧录但是没法引导起来</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020059932.png" alt="img"></p>
+<p>ps：改完vivado的配置之后，需要重新综合，实现，生成bit流，导出硬件描述文件，开sdk，重新编译。。</p>
+<p>第一次开sdk好像还可能挂，还得重开一遍</p>
+<p>总之是相当的麻烦</p>
+<p>难道ps和pl联调时候pl改一点都得这么鼓捣一遍吗（干</p>
+<p>还有就是下载的话必须先跳线到jtag模式，烧录，然后再关机，跳线到nand模式，再开机…不进jtag模式还没法烧录。难绷。。。</p>
+<p>pss：小寄巧</p>
+<p>这个向导好像也可以用来创建管脚约束（另一个方法是综合完开sch然后点那些io，在下面的边栏选按结构显示，然后一个个改）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020118337.png" alt="image-20250402011845280"></p>
+<p><strong>这个办法可以更快自动生成boot（不用手动去加三个文件）</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020119757.png" alt="image-20250402011951733"></p>
+<p>todo：</p>
+<p>sd卡启动，网卡</p>
+<h1 id="day5-sd卡启动-uart-工程结构和添加verilog文件"><a href="#day5-sd卡启动-uart-工程结构和添加verilog文件" class="headerlink" title="day5 sd卡启动 uart 工程结构和添加verilog文件"></a>day5 sd卡启动 uart 工程结构和添加verilog文件</h1><p>先说下sd卡启动</p>
+<p>其实没啥可说的</p>
+<p>我折腾了一晚上纯粹是因为sd卡不兼容 两个看着一样的卡，就是有一个不能用…</p>
+<p>鼓捣了半天boot模式，外设配置啥的</p>
+<p>另外必须用MIO40~45这一组SD接口去启动，格式化成fat32</p>
+<p>串口，也没啥可说的，默认的波特率是115200。默认用哪个串口print可以在这里直接改（如果你有两个串口）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022316294.png" alt="image-20250402231629262"></p>
+<p>他几个print xil_print和printf，标准的printf是支持的功能最全的。</p>
+<p>如果你用printf，其实可以不用写初始化函数啥的，自动都给你做好了</p>
+<p>但是如果你要调用他的底层函数，配中断啥的，那还得初始化一遍就是了。</p>
+<p>然后我就突然想看下这vivado生成出来的是个什么东西</p>
+<p>深坑似海啊…</p>
+<p>首先他自动生成的顶层模块，这里面的暴露的接口就是在约束文件里写的接口</p>
+<p>连接到下一层（也就是block design那一层）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022327214.png" alt="image-20250402232725169"></p>
+<p>然后这个design1就是block design生成的verilog文件</p>
+<p>里面把上一层的模块连接到ps核里</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329874.png" alt="image-20250402232918830"></p>
+<p>这个就是ps核的例化</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329969.png" alt="image-20250402232947937"></p>
+<p>再下层，里面都是ps核里的axi什么乱七八糟的描述，看不懂，不看了</p>
+<p>总之大概是这么个层次吧。</p>
+<p>那么我们知道，zynq是没法单独启动pl（fpga部分）的，必须用ps引导pl</p>
+<p>所以我直接开个.v文件，写点自己的逻辑，然后综合进去，像day2那样，是可以跑，但是没法固化，只能用编译器下载到内存里（只能调试用）</p>
+<p>如果想要启动，就必须加一个ps核，然后用ps的启动镜像（包含fsbl）来引导加载pl的bitstream文件</p>
+<p>于是我就想，如果我ps不做事，只用来引导pl，我的pl怎么做呢？</p>
+<p>首先必须用block design建立一个ps核，然后配好ddr和nand（或者sd卡），这还是跑不掉，不然fsbl引导不了，下面的都走不下去。</p>
+<p>然后直接把.v添加到工程里，再给拖进block design里…然后手动给这个模块的输入输出端口右键make external创建连接，然后综合，添加约束…这样竟然是ok的（（（（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030119659.png" alt="image-20250403011950624"></p>
+<p>于是他就变成了这样，ps和pl没什么关系，但是是可以这么跑的…</p>
+<p>原来zynq是这种奇妙的结构吗…真是绝了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121488.png" alt="image-20250403012112469"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121773.png" alt="image-20250403012122749"></p>
+<p>然后我们发现vivado自动生成了一大堆东西，把这个加进去的模块给放在了整个顶层设计里，并且引出端口…</p>
+<p>真奇妙啊，zynq</p>
+<p>todo：</p>
 <ul>
-<li>支持拖拽图片上传</li>
-<li>支持快捷键上传剪贴板里第一张图片</li>
-<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
-<li>上传图片后自动复制链接到剪贴板</li>
-<li>支持自定义复制到剪贴板的链接格式</li>
-<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
-<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
+<li>串口中断接收</li>
+<li>网口测试</li>
 </ul>
-</blockquote>
-<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
-<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
-<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
-<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
-<ul>
-<li><p><code>七牛图床</code> v1.0</p>
-</li>
-<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
-</li>
-<li><p><code>又拍云</code> v1.2.0</p>
-</li>
-<li><p><code>GitHub</code> v1.5.0</p>
-</li>
-<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
-</li>
-<li><p><code>阿里云 OSS</code> v1.6.0</p>
-</li>
-<li><p><code>Imgur</code> v1.6.0</p>
-</li>
-</ul>
-<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
-<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
-<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
-<p>所以就产生了一些无法避免的槽点</p>
-<ul>
-<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
-<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
-</ul>
-<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
-<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
-<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
-<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
-<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
-<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
-<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
-<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
-<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
-<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
-<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
-<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
-<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
-<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
-<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
-<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
-<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
-<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
-<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
-<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
-<blockquote>
-<p>其实有个比较优雅的方案是这样</p>
-<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
-<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
-</blockquote>
-<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
-<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
-<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
-<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
+        <tag>嵌入式</tag>
       </tags>
   </entry>
   <entry>
@@ -917,6 +909,188 @@
       </tags>
   </entry>
   <entry>
+    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
+    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
+<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
+<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
+<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
+<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
+<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
+<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
+<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
+<p>那么下面就是具体的配置过程啦~</p>
+<span id="more"></span>
+<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
+<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
+<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
+<blockquote>
+<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
+<ul>
+<li>支持拖拽图片上传</li>
+<li>支持快捷键上传剪贴板里第一张图片</li>
+<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
+<li>上传图片后自动复制链接到剪贴板</li>
+<li>支持自定义复制到剪贴板的链接格式</li>
+<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
+<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
+</ul>
+</blockquote>
+<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
+<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
+<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
+<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
+<ul>
+<li><p><code>七牛图床</code> v1.0</p>
+</li>
+<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
+</li>
+<li><p><code>又拍云</code> v1.2.0</p>
+</li>
+<li><p><code>GitHub</code> v1.5.0</p>
+</li>
+<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
+</li>
+<li><p><code>阿里云 OSS</code> v1.6.0</p>
+</li>
+<li><p><code>Imgur</code> v1.6.0</p>
+</li>
+</ul>
+<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
+<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
+<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
+<p>所以就产生了一些无法避免的槽点</p>
+<ul>
+<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
+<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
+</ul>
+<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
+<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
+<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
+<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
+<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
+<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
+<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
+<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
+<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
+<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
+<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
+<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
+<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
+<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
+<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
+<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
+<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
+<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
+<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
+<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
+<blockquote>
+<p>其实有个比较优雅的方案是这样</p>
+<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
+<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
+</blockquote>
+<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
+<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
+<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
+<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>lora训练学习笔记续_2024</title>
+    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
+    <content><![CDATA[<p>好久没摸了</p>
+<p>快一年了技术迭代很快啊</p>
+<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
+<p>但是也会遇到冷门到模型都找不出的（悲</p>
+<p>所以还是捡起来重新学一遍吧…</p>
+<span id="more"></span>
+<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
+<p>全网找不到几张图</p>
+<p>真的是深刻感受到炼丹最难的就是数据集</p>
+<p>数据集处理真是最耗时的事情</p>
+<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
+<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
+<p>于是去找资料…总结几个小tips</p>
+<ul>
+<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
+</li>
+<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
+</li>
+<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
+</li>
+<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
+</li>
+<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
+</li>
+<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
+</li>
+</ul>
+<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
+<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
+<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
+<p>打标阈值0.35什么的 不多说了都老传统</p>
+<p>推荐下标签编辑的小软件</p>
+<p>BooruDatasetTagManager</p>
+<p>超好用 用过的都说好 还有自动翻译标签功能</p>
+<p>比插件的那个编辑器好用多了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
+<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
+<ul>
+<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
+</ul>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
+<p>参考秋叶的说明</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
+<ul>
+<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
+<p>为什么呢 我也不知道呢 </p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
+<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
+</li>
+<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
+<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
+<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
+</li>
+<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
+</li>
+<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
+</li>
+</ul>
+<p>更新：</p>
+<p>嗯。。实际用我这十几张图练了一下 发现了比较明显的过拟合，出图烂掉了（很糊的那种图）</p>
+<p>反复试了试也不知道是优化器的问题还是底模的问题还是训练方法问题还是我训练集太烂</p>
+<p>总之是烂掉了</p>
+<p>回到秋叶训练器用最传统的方法练了下，反而还好一些…（默认参数 传统adam优化器 lora算法，1batch size+5 repeat 50个epoch）真难啊</p>
+<p>重新开始学习。。</p>
+<p>嗯。看到个说法说这个和神童优化器会冲突 或许吧。。有空试试看吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405212353286.png" alt="image-20240521235316257"></p>
+<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
+<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
+<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
+<p>都是很棒的教程</p>
+<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>不当爱抖露了！星野爱的重启人生</title>
     <url>/2023/06/28/%E5%AE%89%E7%A7%91/</url>
     <content><![CDATA[<blockquote>
@@ -1075,104 +1249,6 @@
 ]]></content>
       <tags>
         <tag>其他</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>配置VSCode的Clangd语言服务支持STM32开发</title>
-    <url>/2025/03/17/%E9%85%8D%E7%BD%AEVSCode%E7%9A%84Clangd%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%94%AF%E6%8C%81STM32%E5%BC%80%E5%8F%91/</url>
-    <content><![CDATA[<p>众所周知STM32开发一般使用Keil或者CubeIDE来管理工程和编译，但是这俩玩意的编辑器都不太现代化，用起来不太爽，所以也有很多人用VSCode来编写代码，只使用IDE来进行编译和调试（当然也有使用VSCode+全套开源工具链打包进行编写+编译+调试的，但是在win下实现起来尤为的不方便以前尝试过这里先按下不表）</p>
-<p>然而vsc虽然很好用，但是他默认的C/C++插件功能就很难说是强大了，自动补全和语法检查经常傻傻的。一直也就这么凑合着用下来，今天一不小心给vsc的补全又玩炸了，调配置的时候突然想起这事，于是去搜了一下，说vsc其实是可以支持强大的clangd语言服务的…</p>
-<p>谁想到这就是坠入大坑的开始…</p>
-<span id="more"></span>
-<p>懒得多介绍了，网上一堆，简单说clangd应该是通用的最强大的C/C++语言服务（有没有之一？）</p>
-<p>性能和特性都比vsc默认的微软工具强很多</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172321392.png" alt="image-20250317232135358"></p>
-<p>安装clangd其实很简单，在拓展商店里直接装就行了，他还会提醒你本地没有语言服务，选择自动安装就可以给你配好了，没啥难度</p>
-<p>然后按照网上的教程配置clangd的特性</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172328540.png" alt="image-20250317232844513"></p>
-<p>打开vsc的配置json</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;C_Cpp.errorSquiggles&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngineFallback&quot;: &quot;Disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngine&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.autocomplete&quot;: &quot;disabled&quot;, // So you don&#x27;t get autocomplete from both extensions.</span><br></pre></td></tr></table></figure>
-<p>这些代码用来禁用原来的拓展的语言服务，防止冲突。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172330675.png" alt="image-20250317233034654"></p>
-<p>clangd路径已经被自动配置好了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;clangd.arguments&quot;: [</span><br><span class="line">// 让 Clangd 生成更详细的日志</span><br><span class="line">&quot;--log=verbose&quot;,</span><br><span class="line">// 输出的 JSON 文件更美观</span><br><span class="line">&quot;--pretty&quot;,</span><br><span class="line">// 全局补全(输入时弹出的建议将会提供 CMakeLists.txt 里配置的所有文件中可能的符号，会自动补充头文件)</span><br><span class="line">&quot;--all-scopes-completion&quot;,</span><br><span class="line">// 建议风格：打包(重载函数只会给出一个建议）</span><br><span class="line">// 相反可以设置为detailed</span><br><span class="line">&quot;--completion-style=bundled&quot;,</span><br><span class="line">// 跨文件重命名变量</span><br><span class="line">&quot;--cross-file-rename&quot;,</span><br><span class="line">// 允许补充头文件</span><br><span class="line">&quot;--header-insertion=iwyu&quot;,</span><br><span class="line">// 输入建议中，已包含头文件的项与还未包含头文件的项会以圆点加以区分</span><br><span class="line">&quot;--header-insertion-decorators&quot;,</span><br><span class="line">// 在后台自动分析文件(基于 complie_commands，我们用CMake生成)</span><br><span class="line">&quot;--background-index&quot;,</span><br><span class="line">// 启用 Clang-Tidy 以提供「静态检查」</span><br><span class="line">&quot;--clang-tidy&quot;,</span><br><span class="line">// Clang-Tidy 静态检查的参数，指出按照哪些规则进行静态检查，详情见「与按照官方文档配置好的 VSCode 相比拥有的优势」</span><br><span class="line">// 参数后部分的*表示通配符</span><br><span class="line">// 在参数前加入-，如-modernize-use-trailing-return-type，将会禁用某一规则</span><br><span class="line">&quot;--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*&quot;,</span><br><span class="line">// 默认格式化风格: 谷歌开源项目代码指南</span><br><span class="line">// &quot;--fallback-style=file&quot;,</span><br><span class="line">// 同时开启的任务数量</span><br><span class="line">&quot;-j=2&quot;,</span><br><span class="line">// pch优化的位置(memory 或 disk，选择memory会增加内存开销，但会提升性能) 推荐在板子上使用disk</span><br><span class="line">&quot;--pch-storage=memory&quot;,</span><br><span class="line">// 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末</span><br><span class="line">// 我选择禁用</span><br><span class="line">&quot;--function-arg-placeholders=false&quot;,</span><br><span class="line">// compelie_commands.json 文件的目录位置(相对于工作区，由于 CMake 生成的该文件默认在 build 文件夹中，故设置为 build)</span><br><span class="line">&quot;--compile-commands-dir=build&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>加入这一坨clangd的特性配置</p>
-<p>好了，搞定，看起来不难是吧…</p>
-<p>但是你用这个配置打开一个工程目录…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172344994.png" alt="image-20250317234441904"></p>
-<p>满眼一片红啊，啥都认不出来</p>
-<p>原因也很简单，就是clangd没法正确检索工程的库文件。</p>
-<p>vsc默认的C插件也有这个问题，所以一般会让你改成tag praser，然后就好了（</p>
-<p>但是在clangd这里，坑就深了…</p>
-<p>真正的折磨才刚刚开始</p>
-<p>查阅资料发现，这玩意必须依赖一个叫做compile_commands.json的文件，里面记录了工程的目录结构，引用的库文件等，clangd依赖他来提供语言服务</p>
-<p>这玩意咋生成呢？如果你的项目用的是cmake，那一切都很美好，</p>
-<p><code>cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1</code></p>
-<p>用这句就行了</p>
-<p>然而很显然不管是keil还是cubeide用的都不是cmake（哭</p>
-<p>keil是自己的编译器和管理方式，cubeide用的是make和makefile</p>
-<p>那么这里有两个办法</p>
-<h2 id="如果你用的是keil"><a href="#如果你用的是keil" class="headerlink" title="如果你用的是keil"></a>如果你用的是keil</h2><p>装一坨叫做arm keil studio pack的玩意</p>
-<p>里面提供了一个插件可以直接导入keil的uvprojx文件，然后自动生成clangd所需的compile_commands.json文件</p>
-<p>其实因为keil设计的这套方案本来就是配合的clangd语言服务嘛，自然给你都解决好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172350650.png" alt="image-20250317235020611"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172355766.png" alt="image-20250317235556732"></p>
-<p>看起来一切都很美好，没毛病，除了这坨插件有点臃肿之外</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172358312.png" alt="image-20250317235820190"></p>
-<h2 id="但是如果你用的是CubeIDE…"><a href="#但是如果你用的是CubeIDE…" class="headerlink" title="但是如果你用的是CubeIDE…"></a>但是如果你用的是CubeIDE…</h2><p>首先，我们需要从makefile手动生成compile_commands.json</p>
-<p>搜到有一个工具，叫做bear，可以通过make来生成compile_commands.json</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180005004.png" alt="image-20250318000509964"></p>
-<p>但是很遗憾，这玩意只支持linux版本（</p>
-<p>本来打算放弃了，但是又发现这玩意有个windows的替代品（from clangd官网）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006545.png" alt="image-20250318000613523"></p>
-<p>那么我们安装这个玩意</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006519.png" alt="image-20250318000630479"></p>
-<p>在makefile的路径下面试一试</p>
-<p><code>python -m compiledb make all</code></p>
-<p>很遗憾呢，Windows下面没有make…CubeIDE自己的make和gcc啥的是封在他的安装路径里面的，外面也调用不到</p>
-<p>那么我们装一个make（此处过程省略，总之不管你用mingw还是Chocolatey还是啥…反正确保make命令是可用的就行了</p>
-<p>然后再试一下…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017040.png" alt="image-20250318001737010"></p>
-<p>似乎成功了是吧，然后也生成了对应的compile_commands.json文件</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017939.png" alt="image-20250318001758910"></p>
-<p>当然，我们可以把命令改成</p>
-<p><code>python -m compiledb -n make all</code></p>
-<p>不执行实际的make动作，只进行配置文件输出，防止影响工程实际代码（毕竟你的path里不一定有正确的gcc，鬼知道编译出什么玩意来）</p>
-<p>然后把compile_commands.json这玩意放到工程的根目录下面，用vsc打开…</p>
-<p>大功告成了…吗？</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180022868.png" alt="image-20250318002223851"></p>
-<p>事情往往没那么简单。。还是有报错。。</p>
-<p>只能继续搜索，问google，问大d老师</p>
-<p>看起来是因为cubeide的gcc使用了一个自定义的编译参数，clangd并不认识这玩意…</p>
-<p>解决方法嘛</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180024351.png" alt="image-20250318002439292"></p>
-<p>手动修改compile_commands.json文件，把”-fcyclomatic-complexity”,都替换成空行</p>
-<p>然后重新打开</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180027654.png" alt="image-20250318002716568"></p>
-<p>好吧…终于，你成功了=-=</p>
-<p>但是 我不知道 这一切值得吗…</p>
-<h2 id="结"><a href="#结" class="headerlink" title="结"></a>结</h2><p>最终，我删掉了clangd，删掉了上面的那一大坨东西，重新把配置改回了C/C++插件…</p>
-<p>可能唯一的意义就是，确实熟悉了一坨编译方法和Windows下配置环境的过程吧</p>
-<p>谁知道呢</p>
-<p>姑且放在这里吧，或者如果真的有人对这些闲的蛋疼的鼓捣有兴趣的话，可以来看看</p>
-<p>以及，发现了一个项目可以自动把cubeide转成clangd的支持</p>
-<p><a href="https://github.com/alex-schulster/stm_lsp_nvim">https://github.com/alex-schulster/stm_lsp_nvim</a></p>
-<p>很不错，满足了我的一切想象，但是…这玩意依然只支持linux（摔</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180030564.png" alt="image-20250318003024543"></p>
-]]></content>
-      <tags>
-        <tag>软件,嵌入式</tag>
       </tags>
   </entry>
   <entry>
@@ -1358,6 +1434,104 @@
 ]]></content>
       <tags>
         <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>配置VSCode的Clangd语言服务支持STM32开发</title>
+    <url>/2025/03/17/%E9%85%8D%E7%BD%AEVSCode%E7%9A%84Clangd%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%94%AF%E6%8C%81STM32%E5%BC%80%E5%8F%91/</url>
+    <content><![CDATA[<p>众所周知STM32开发一般使用Keil或者CubeIDE来管理工程和编译，但是这俩玩意的编辑器都不太现代化，用起来不太爽，所以也有很多人用VSCode来编写代码，只使用IDE来进行编译和调试（当然也有使用VSCode+全套开源工具链打包进行编写+编译+调试的，但是在win下实现起来尤为的不方便以前尝试过这里先按下不表）</p>
+<p>然而vsc虽然很好用，但是他默认的C/C++插件功能就很难说是强大了，自动补全和语法检查经常傻傻的。一直也就这么凑合着用下来，今天一不小心给vsc的补全又玩炸了，调配置的时候突然想起这事，于是去搜了一下，说vsc其实是可以支持强大的clangd语言服务的…</p>
+<p>谁想到这就是坠入大坑的开始…</p>
+<span id="more"></span>
+<p>懒得多介绍了，网上一堆，简单说clangd应该是通用的最强大的C/C++语言服务（有没有之一？）</p>
+<p>性能和特性都比vsc默认的微软工具强很多</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172321392.png" alt="image-20250317232135358"></p>
+<p>安装clangd其实很简单，在拓展商店里直接装就行了，他还会提醒你本地没有语言服务，选择自动安装就可以给你配好了，没啥难度</p>
+<p>然后按照网上的教程配置clangd的特性</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172328540.png" alt="image-20250317232844513"></p>
+<p>打开vsc的配置json</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;C_Cpp.errorSquiggles&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngineFallback&quot;: &quot;Disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngine&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.autocomplete&quot;: &quot;disabled&quot;, // So you don&#x27;t get autocomplete from both extensions.</span><br></pre></td></tr></table></figure>
+<p>这些代码用来禁用原来的拓展的语言服务，防止冲突。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172330675.png" alt="image-20250317233034654"></p>
+<p>clangd路径已经被自动配置好了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;clangd.arguments&quot;: [</span><br><span class="line">// 让 Clangd 生成更详细的日志</span><br><span class="line">&quot;--log=verbose&quot;,</span><br><span class="line">// 输出的 JSON 文件更美观</span><br><span class="line">&quot;--pretty&quot;,</span><br><span class="line">// 全局补全(输入时弹出的建议将会提供 CMakeLists.txt 里配置的所有文件中可能的符号，会自动补充头文件)</span><br><span class="line">&quot;--all-scopes-completion&quot;,</span><br><span class="line">// 建议风格：打包(重载函数只会给出一个建议）</span><br><span class="line">// 相反可以设置为detailed</span><br><span class="line">&quot;--completion-style=bundled&quot;,</span><br><span class="line">// 跨文件重命名变量</span><br><span class="line">&quot;--cross-file-rename&quot;,</span><br><span class="line">// 允许补充头文件</span><br><span class="line">&quot;--header-insertion=iwyu&quot;,</span><br><span class="line">// 输入建议中，已包含头文件的项与还未包含头文件的项会以圆点加以区分</span><br><span class="line">&quot;--header-insertion-decorators&quot;,</span><br><span class="line">// 在后台自动分析文件(基于 complie_commands，我们用CMake生成)</span><br><span class="line">&quot;--background-index&quot;,</span><br><span class="line">// 启用 Clang-Tidy 以提供「静态检查」</span><br><span class="line">&quot;--clang-tidy&quot;,</span><br><span class="line">// Clang-Tidy 静态检查的参数，指出按照哪些规则进行静态检查，详情见「与按照官方文档配置好的 VSCode 相比拥有的优势」</span><br><span class="line">// 参数后部分的*表示通配符</span><br><span class="line">// 在参数前加入-，如-modernize-use-trailing-return-type，将会禁用某一规则</span><br><span class="line">&quot;--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*&quot;,</span><br><span class="line">// 默认格式化风格: 谷歌开源项目代码指南</span><br><span class="line">// &quot;--fallback-style=file&quot;,</span><br><span class="line">// 同时开启的任务数量</span><br><span class="line">&quot;-j=2&quot;,</span><br><span class="line">// pch优化的位置(memory 或 disk，选择memory会增加内存开销，但会提升性能) 推荐在板子上使用disk</span><br><span class="line">&quot;--pch-storage=memory&quot;,</span><br><span class="line">// 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末</span><br><span class="line">// 我选择禁用</span><br><span class="line">&quot;--function-arg-placeholders=false&quot;,</span><br><span class="line">// compelie_commands.json 文件的目录位置(相对于工作区，由于 CMake 生成的该文件默认在 build 文件夹中，故设置为 build)</span><br><span class="line">&quot;--compile-commands-dir=build&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>加入这一坨clangd的特性配置</p>
+<p>好了，搞定，看起来不难是吧…</p>
+<p>但是你用这个配置打开一个工程目录…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172344994.png" alt="image-20250317234441904"></p>
+<p>满眼一片红啊，啥都认不出来</p>
+<p>原因也很简单，就是clangd没法正确检索工程的库文件。</p>
+<p>vsc默认的C插件也有这个问题，所以一般会让你改成tag praser，然后就好了（</p>
+<p>但是在clangd这里，坑就深了…</p>
+<p>真正的折磨才刚刚开始</p>
+<p>查阅资料发现，这玩意必须依赖一个叫做compile_commands.json的文件，里面记录了工程的目录结构，引用的库文件等，clangd依赖他来提供语言服务</p>
+<p>这玩意咋生成呢？如果你的项目用的是cmake，那一切都很美好，</p>
+<p><code>cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1</code></p>
+<p>用这句就行了</p>
+<p>然而很显然不管是keil还是cubeide用的都不是cmake（哭</p>
+<p>keil是自己的编译器和管理方式，cubeide用的是make和makefile</p>
+<p>那么这里有两个办法</p>
+<h2 id="如果你用的是keil"><a href="#如果你用的是keil" class="headerlink" title="如果你用的是keil"></a>如果你用的是keil</h2><p>装一坨叫做arm keil studio pack的玩意</p>
+<p>里面提供了一个插件可以直接导入keil的uvprojx文件，然后自动生成clangd所需的compile_commands.json文件</p>
+<p>其实因为keil设计的这套方案本来就是配合的clangd语言服务嘛，自然给你都解决好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172350650.png" alt="image-20250317235020611"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172355766.png" alt="image-20250317235556732"></p>
+<p>看起来一切都很美好，没毛病，除了这坨插件有点臃肿之外</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172358312.png" alt="image-20250317235820190"></p>
+<h2 id="但是如果你用的是CubeIDE…"><a href="#但是如果你用的是CubeIDE…" class="headerlink" title="但是如果你用的是CubeIDE…"></a>但是如果你用的是CubeIDE…</h2><p>首先，我们需要从makefile手动生成compile_commands.json</p>
+<p>搜到有一个工具，叫做bear，可以通过make来生成compile_commands.json</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180005004.png" alt="image-20250318000509964"></p>
+<p>但是很遗憾，这玩意只支持linux版本（</p>
+<p>本来打算放弃了，但是又发现这玩意有个windows的替代品（from clangd官网）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006545.png" alt="image-20250318000613523"></p>
+<p>那么我们安装这个玩意</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006519.png" alt="image-20250318000630479"></p>
+<p>在makefile的路径下面试一试</p>
+<p><code>python -m compiledb make all</code></p>
+<p>很遗憾呢，Windows下面没有make…CubeIDE自己的make和gcc啥的是封在他的安装路径里面的，外面也调用不到</p>
+<p>那么我们装一个make（此处过程省略，总之不管你用mingw还是Chocolatey还是啥…反正确保make命令是可用的就行了</p>
+<p>然后再试一下…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017040.png" alt="image-20250318001737010"></p>
+<p>似乎成功了是吧，然后也生成了对应的compile_commands.json文件</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017939.png" alt="image-20250318001758910"></p>
+<p>当然，我们可以把命令改成</p>
+<p><code>python -m compiledb -n make all</code></p>
+<p>不执行实际的make动作，只进行配置文件输出，防止影响工程实际代码（毕竟你的path里不一定有正确的gcc，鬼知道编译出什么玩意来）</p>
+<p>然后把compile_commands.json这玩意放到工程的根目录下面，用vsc打开…</p>
+<p>大功告成了…吗？</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180022868.png" alt="image-20250318002223851"></p>
+<p>事情往往没那么简单。。还是有报错。。</p>
+<p>只能继续搜索，问google，问大d老师</p>
+<p>看起来是因为cubeide的gcc使用了一个自定义的编译参数，clangd并不认识这玩意…</p>
+<p>解决方法嘛</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180024351.png" alt="image-20250318002439292"></p>
+<p>手动修改compile_commands.json文件，把”-fcyclomatic-complexity”,都替换成空行</p>
+<p>然后重新打开</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180027654.png" alt="image-20250318002716568"></p>
+<p>好吧…终于，你成功了=-=</p>
+<p>但是 我不知道 这一切值得吗…</p>
+<h2 id="结"><a href="#结" class="headerlink" title="结"></a>结</h2><p>最终，我删掉了clangd，删掉了上面的那一大坨东西，重新把配置改回了C/C++插件…</p>
+<p>可能唯一的意义就是，确实熟悉了一坨编译方法和Windows下配置环境的过程吧</p>
+<p>谁知道呢</p>
+<p>姑且放在这里吧，或者如果真的有人对这些闲的蛋疼的鼓捣有兴趣的话，可以来看看</p>
+<p>以及，发现了一个项目可以自动把cubeide转成clangd的支持</p>
+<p><a href="https://github.com/alex-schulster/stm_lsp_nvim">https://github.com/alex-schulster/stm_lsp_nvim</a></p>
+<p>很不错，满足了我的一切想象，但是…这玩意依然只支持linux（摔</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180030564.png" alt="image-20250318003024543"></p>
+]]></content>
+      <tags>
+        <tag>软件,嵌入式</tag>
       </tags>
   </entry>
 </search>

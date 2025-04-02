@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/popo2.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/popo2-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/popo2-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.superhostpopo.cn","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="所谓成长，大概也是跨越曾经无法挑战的困难吧… 所以在大学失败一次，毕业后失败一次，失败了n次之后，再一次尝试学习fpga来啦… 我得说真的是丢人到爆了（ 虽然很不想碰，但是还是避不开的玩意啊这东西 其实我一直还挺喜欢zynq这玩意的设计理念的，集成度高，性能强，还贼便宜（在国内环境下） 你妹小黄鱼的7010已经到了4块拆机带板的程度了…翻新好的也就七块 我买个G431还要10块呢（摔 所以重新来挑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZYNQ入门日记">
+<meta property="og:url" content="https://blog.superhostpopo.cn/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/index.html">
+<meta property="og:site_name" content="泡泡酱の秘密工作室">
+<meta property="og:description" content="所谓成长，大概也是跨越曾经无法挑战的困难吧… 所以在大学失败一次，毕业后失败一次，失败了n次之后，再一次尝试学习fpga来啦… 我得说真的是丢人到爆了（ 虽然很不想碰，但是还是避不开的玩意啊这东西 其实我一直还挺喜欢zynq这玩意的设计理念的，集成度高，性能强，还贼便宜（在国内环境下） 你妹小黄鱼的7010已经到了4块拆机带板的程度了…翻新好的也就七块 我买个G431还要10块呢（摔 所以重新来挑">
+<meta property="og:locale">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301934452.jpg">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301933249.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301938654.jpeg">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301944788.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302009142.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302011790.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302012888.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302014237.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302015557.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302021459.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302022426.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302111247.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010131899.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010143135.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011612161.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011653373.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011735759.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020059932.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020118337.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020119757.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022316294.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022327214.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329874.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329969.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030119659.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121488.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121773.png">
+<meta property="article:published_time" content="2025-03-30T11:24:11.000Z">
+<meta property="article:modified_time" content="2025-04-02T17:25:14.797Z">
+<meta property="article:author" content="最高主机泡泡">
+<meta property="article:tag" content="软件">
+<meta property="article:tag" content="嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301934452.jpg">
+
+
+<link rel="canonical" href="https://blog.superhostpopo.cn/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"https://blog.superhostpopo.cn/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/","path":"2025/03/30/ZYNQ入门日记/","title":"ZYNQ入门日记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ZYNQ入门日记 | 泡泡酱の秘密工作室</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">泡泡酱の秘密工作室</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">超绝可爱技术宅泡泡酱desu⭐</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day1-%E6%89%BE%E7%A1%AC%E4%BB%B6%EF%BC%8C%E7%9F%BF%E6%9D%BF%E6%94%B9%E9%80%A0%EF%BC%8C%E8%A3%85%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">day1 找硬件，矿板改造，装开发环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E6%9D%BF%E5%AD%90"><span class="nav-number">1.1.</span> <span class="nav-text">改板子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">装软件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day2-hello-world-and-%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">day2 hello world and ？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LED%E9%97%AA%E7%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">LED闪灯</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day3-PS%E7%AB%AF-AXI-GPIO%E9%97%AA%E7%81%AF"><span class="nav-number">3.</span> <span class="nav-text">day3 PS端 AXI GPIO闪灯</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day4-PS-GPIO%E6%96%B9%E6%B3%952%EF%BC%88EMIO%EF%BC%89-%E7%A8%8B%E5%BA%8F%E5%9B%BA%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">day4 PS GPIO方法2（EMIO） 程序固化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%9B%BA%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">程序固化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#day5-sd%E5%8D%A1%E5%90%AF%E5%8A%A8-uart-%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84%E5%92%8C%E6%B7%BB%E5%8A%A0verilog%E6%96%87%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">day5 sd卡启动 uart 工程结构和添加verilog文件</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="最高主机泡泡"
+      src="/images/popo.png">
+  <p class="site-author-name" itemprop="name">最高主机泡泡</p>
+  <div class="site-description" itemprop="description">一只菜鸡技术宅...修行中</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SuperHostPopo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SuperHostPopo" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/4023159" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;4023159" rel="noopener me" target="_blank"><i class="fab fa-youtube fa-fw"></i>bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi" title="交流QQ群853376692 → https:&#x2F;&#x2F;qm.qq.com&#x2F;cgi-bin&#x2F;qm&#x2F;qr?k&#x3D;5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&amp;jump_from&#x3D;webapi" rel="noopener me" target="_blank"><i class="fab fa-qq fa-fw"></i>交流QQ群853376692</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.emoe.xyz/" title="https:&#x2F;&#x2F;www.emoe.xyz&#x2F;" rel="noopener" target="_blank">e萌工作室</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://blog.superhostpopo.cn/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/popo.png">
+      <meta itemprop="name" content="最高主机泡泡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泡泡酱の秘密工作室">
+      <meta itemprop="description" content="一只菜鸡技术宅...修行中">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ZYNQ入门日记 | 泡泡酱の秘密工作室">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZYNQ入门日记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-30 19:24:11" itemprop="dateCreated datePublished" datetime="2025-03-30T19:24:11+08:00">2025-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-03 01:25:14" itemprop="dateModified" datetime="2025-04-03T01:25:14+08:00">2025-04-03</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.1k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>所谓成长，大概也是跨越曾经无法挑战的困难吧…</p>
+<p>所以在大学失败一次，毕业后失败一次，失败了n次之后，再一次尝试学习fpga来啦…</p>
+<p>我得说真的是丢人到爆了（</p>
+<p>虽然很不想碰，但是还是避不开的玩意啊这东西</p>
+<p>其实我一直还挺喜欢zynq这玩意的设计理念的，集成度高，性能强，还贼便宜（在国内环境下）</p>
+<p>你妹小黄鱼的7010已经到了4块拆机带板的程度了…翻新好的也就七块</p>
+<p>我买个G431还要10块呢（摔</p>
+<p>所以重新来挑战一下吧…</p>
+<p>屎山无边，回头是岸，努力攀登吧</p>
+<blockquote>
+<p>参考：</p>
+<ul>
+<li>教程系列<a target="_blank" rel="noopener" href="http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/">http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/</a></li>
+<li>正点原子领航者zynq教程文档</li>
+<li>其他网络资料、群友们和deepseek的帮助</li>
+</ul>
+<p>感谢相关教程</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="day1-找硬件，矿板改造，装开发环境"><a href="#day1-找硬件，矿板改造，装开发环境" class="headerlink" title="day1 找硬件，矿板改造，装开发环境"></a>day1 找硬件，矿板改造，装开发环境</h1><h2 id="改板子"><a href="#改板子" class="headerlink" title="改板子"></a>改板子</h2><p>首先我们需要一个开发板对吧<img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301934452.jpg" alt="ebaz4205"></p>
+<p>在之前某次尝试的时候凑热闹买了个咸鱼爆火的矿板，就这玩意（那时候zynq还没降价到现在这样，四五十的7010核心板已经很便宜的夸张了），一直没怎么玩，先拿来入门下吧</p>
+<p>没去用正经的开发板也是想更多的体验下对硬件的探索，熟悉这玩意的外围电路，毕竟是想要拿来做系统的软硬件都得学习吧</p>
+<p>另外就是群友的大作jlc开源核心板，非常的强大。这东西应该也已经很火了吧</p>
+<p>已经在准备啦，感谢立创的免费打板，正在采购备料中…打算等熟悉一点之后拿来替换这个矿板</p>
+<p>这里是链接：<a target="_blank" rel="noopener" href="https://oshwhub.com/z_star/zynq7020-core-board-and-various-rf-modules">https://oshwhub.com/z_star/zynq7020-core-board-and-various-rf-modules</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301933249.png" alt="img"></p>
+<p>关于矿板，在网上找到了很不错的资源汇总教程，我也姑且先按照这个来探索一下</p>
+<p><a target="_blank" rel="noopener" href="http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/">http://www.hellofpga.com/index.php/2023/02/17/ebaz4205_source/</a></p>
+<p>先是过一遍电路图，pcb，熟悉下布局（这玩意竟然是protel的…用ad可以导入就是）</p>
+<p>参考文章做一下改造：引出电源接口，焊jtag排针，串口排针，sd卡槽，pl端晶振</p>
+<p><a target="_blank" rel="noopener" href="http://www.hellofpga.com/index.php/2024/02/01/ebaz4205_re/">http://www.hellofpga.com/index.php/2024/02/01/ebaz4205_re/</a></p>
+<p>改完长这样，调试器是某宝买的烂大街兼容品（拆开看下里面没有意外是一颗ft232，标准方案，做这么大实在是属于撑的…）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301938654.jpeg" alt="img"></p>
+<h2 id="装软件"><a href="#装软件" class="headerlink" title="装软件"></a>装软件</h2><p>IDE的话在群友的建议下装了vivido 2018.3，比较经典的版本，bug少，轻便，占空间小（新版vivado一下就一两百G尼玛…比小而美还吓人）</p>
+<p>网上教程一堆，不多说</p>
+<p>然后推荐一下偶然发现的vscode插件，Digital IDE。感觉功能挺丰富的，用vsc编辑代码感觉就现代多了（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503301944788.png" alt="image-20250330194432704"></p>
+<p>还能提供原语补全啊语法检查之类一坨东西，对vivado支持也不错</p>
+<p>这里是官网，推荐一下：<a target="_blank" rel="noopener" href="https://nc-ai.cn/">https://nc-ai.cn/</a></p>
+<p>以及感谢群友的blog文章和提供的帮助</p>
+<p><a target="_blank" rel="noopener" href="https://badboy2002.xyz/2025/03/06/note/fpga-kai-fa-gong-ju-lian/">https://badboy2002.xyz/2025/03/06/note/fpga-kai-fa-gong-ju-lian/</a></p>
+<h1 id="day2-hello-world-and-？"><a href="#day2-hello-world-and-？" class="headerlink" title="day2 hello world and ？"></a>day2 hello world and ？</h1><h2 id="LED闪灯"><a href="#LED闪灯" class="headerlink" title="LED闪灯"></a>LED闪灯</h2><p>这里主要是熟悉下新建工程，怎么用vivado</p>
+<p>这IDE其实还挺像人的…就选芯片型号然后加.v文件就行了</p>
+<p>代码没啥可说的，就计数器</p>
+<p>这里的综合和实现（是叫这个吗？）有啥区别，没搞懂</p>
+<p>只知道必须先综合然后跑实现</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302009142.png" alt="image-20250330200905124"></p>
+<p>让我们问下大d老师</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302011790.png" alt="image-20250330201135769"></p>
+<p>综合完了就能看原理图了</p>
+<p>闪个灯这么一坨东西？</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302012888.png" alt="image-20250330201221831"></p>
+<p>然后做管脚约束，原理图里有两个LED，接一个（W13）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302014237.png" alt="image-20250330201446217"></p>
+<p>时钟输入接晶振（N18）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302015557.png" alt="image-20250330201503537"></p>
+<p>因为所有的IO都是3.3V供电，所以这里都选LVCMOS33。改一下约束然后点保存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302021459.png" alt="image-20250330202155395"></p>
+<p>其实约束文件长这样，也可以手写（大概</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302022426.png" alt="image-20250330202237404"></p>
+<p>理论上还应该有时序约束。但是这个工程太简单先懒得管了</p>
+<p>然后再综合，实现，生成bit流（好慢。。这么点工程这么慢。。）</p>
+<p>自动连接然后右键program device</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503302111247.png" alt="image-20250330211142199"></p>
+<p>这里遇到了问题，给我报错Launch Error: Unable to launch local hw_server executable.</p>
+<p>本来以为是下载器固件或者驱动有问题，折腾了半天</p>
+<p>最后其实是win的防火墙把vivado的调试器服务拦了，重启电脑然后重新开vivado,允许访问网络就ok了</p>
+<p>ok，闪灯了</p>
+<p>就这样</p>
+<p>看起来只用fpga其实也不用配arm那边的东西就是（但是这样没法固化引导，掉电就没了，据我所知如果要引导还算必须依赖ps那边的）</p>
+<p>总之算是熟悉了一遍工作流吧。软件界面，创建工程，写代码，约束引脚，综合，下载。</p>
+<p>先这样。</p>
+<p>todo：</p>
+<p>仿真，在线调试，固化程序。</p>
+<p>ps：发现矿板上的美光内存可以用官网的这个工具从丝印查到型号</p>
+<p><a target="_blank" rel="noopener" href="https://www.micron.com/sales-support/design-tools/fbga-parts-decoder">https://www.micron.com/sales-support/design-tools/fbga-parts-decoder</a></p>
+<p>我这个D9PTK似乎是MT41K128M16JT-125这玩意 也就是256M的16bit DDR3内存</p>
+<h1 id="day3-PS端-AXI-GPIO闪灯"><a href="#day3-PS端-AXI-GPIO闪灯" class="headerlink" title="day3 PS端 AXI GPIO闪灯"></a>day3 PS端 AXI GPIO闪灯</h1><p>然后熟悉下ps是吧</p>
+<p>其实正常来说是应该用mio的控制吧。。这教程咋上来就用axi总线的gpio ip核了</p>
+<p>算了试试也行</p>
+<p><a target="_blank" rel="noopener" href="http://www.hellofpga.com/index.php/2021/08/02/zynq_ps_to_pl_led_test/">http://www.hellofpga.com/index.php/2021/08/02/zynq_ps_to_pl_led_test/</a></p>
+<p>复杂一点 照着做也就好了</p>
+<p>也算是熟悉一下开发流程</p>
+<p>有几个点吧…</p>
+<p>这个vivado sdk（ps的开发工具，应该是个eclipse）里面按Ctrl+s保存代码会自动重新编译（</p>
+<p>然后就是这个例程</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010131899.png" alt="image-20250401013120870"></p>
+<p>他这个write函数是 直接写入IO的状态寄存器，也就是你写对应位是0就是输出低，对应位是1是输出高。</p>
+<p>并不是按照mask给对应位置高，0的位不操作…</p>
+<p>他这个例程也是有点误导性，下面是个clear，我还以为一个是置位一个是复位</p>
+<p>实际上clear确实是对mask标志的位进行复位（写0）</p>
+<p>但是write不是只对mask对应位写1啊….他会把其他位也写进去啊…</p>
+<p>结果发现另一个led也被操作了</p>
+<p>折腾半天没明白为啥会这样（我的bit0和bit1分别是一个led）</p>
+<p>所以你要想只操作bit0，就要手动把bit1的状态也写上保证不会被误操作（因为我led是低点亮。。。）</p>
+<p>好吧怪我没读api手册照着例程断章取义咯（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504010143135.png" alt="image-20250401014352108"></p>
+<p>好吧大d老师nb。。。竟然有专用的函数（</p>
+<p>ps：关于address editior怎么开</p>
+<p>在block design里找window菜单里面有</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011612161.png" alt="image-20250401161225085"></p>
+<h1 id="day4-PS-GPIO方法2（EMIO）-程序固化"><a href="#day4-PS-GPIO方法2（EMIO）-程序固化" class="headerlink" title="day4 PS GPIO方法2（EMIO） 程序固化"></a>day4 PS GPIO方法2（EMIO） 程序固化</h1><p>MIO或者EMIO其实是比较正常的GPIO用法吧…</p>
+<p>MIO是固定的PS IO</p>
+<p>EMIO就是用PL做IO的mux，随便定义IO接在哪个pin</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011653373.png" alt="image-20250401165313332"></p>
+<p>所以MIO的IO号是0~53，EMIO的号是54~117</p>
+<p>这里是AXI的GPIO和EMIO的区别</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504011735759.png" alt="image-20250401173513731"></p>
+<p>这篇文章不错：<a target="_blank" rel="noopener" href="https://adaptivesupport.amd.com/s/article/1012484?language=zh_CN">https://adaptivesupport.amd.com/s/article/1012484?language=zh_CN</a></p>
+<h2 id="程序固化"><a href="#程序固化" class="headerlink" title="程序固化"></a>程序固化</h2><p>zynq的程序固化必须依赖ps（从ps的fsbl也就是主boot loader引导再加载bit文件）</p>
+<p>所以必须建一个fsbl工程</p>
+<p>然后就是实测必须改nand的时序参数（可能是矿板这块8位nand的特殊吧）不然能烧录但是没法引导起来</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020059932.png" alt="img"></p>
+<p>ps：改完vivado的配置之后，需要重新综合，实现，生成bit流，导出硬件描述文件，开sdk，重新编译。。</p>
+<p>第一次开sdk好像还可能挂，还得重开一遍</p>
+<p>总之是相当的麻烦</p>
+<p>难道ps和pl联调时候pl改一点都得这么鼓捣一遍吗（干</p>
+<p>还有就是下载的话必须先跳线到jtag模式，烧录，然后再关机，跳线到nand模式，再开机…不进jtag模式还没法烧录。难绷。。。</p>
+<p>pss：小寄巧</p>
+<p>这个向导好像也可以用来创建管脚约束（另一个方法是综合完开sch然后点那些io，在下面的边栏选按结构显示，然后一个个改）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020118337.png" alt="image-20250402011845280"></p>
+<p><strong>这个办法可以更快自动生成boot（不用手动去加三个文件）</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504020119757.png" alt="image-20250402011951733"></p>
+<p>todo：</p>
+<p>sd卡启动，网卡</p>
+<h1 id="day5-sd卡启动-uart-工程结构和添加verilog文件"><a href="#day5-sd卡启动-uart-工程结构和添加verilog文件" class="headerlink" title="day5 sd卡启动 uart 工程结构和添加verilog文件"></a>day5 sd卡启动 uart 工程结构和添加verilog文件</h1><p>先说下sd卡启动</p>
+<p>其实没啥可说的</p>
+<p>我折腾了一晚上纯粹是因为sd卡不兼容 两个看着一样的卡，就是有一个不能用…</p>
+<p>鼓捣了半天boot模式，外设配置啥的</p>
+<p>另外必须用MIO40~45这一组SD接口去启动，格式化成fat32</p>
+<p>串口，也没啥可说的，默认的波特率是115200。默认用哪个串口print可以在这里直接改（如果你有两个串口）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022316294.png" alt="image-20250402231629262"></p>
+<p>他几个print xil_print和printf，标准的printf是支持的功能最全的。</p>
+<p>如果你用printf，其实可以不用写初始化函数啥的，自动都给你做好了</p>
+<p>但是如果你要调用他的底层函数，配中断啥的，那还得初始化一遍就是了。</p>
+<p>然后我就突然想看下这vivado生成出来的是个什么东西</p>
+<p>深坑似海啊…</p>
+<p>首先他自动生成的顶层模块，这里面的暴露的接口就是在约束文件里写的接口</p>
+<p>连接到下一层（也就是block design那一层）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022327214.png" alt="image-20250402232725169"></p>
+<p>然后这个design1就是block design生成的verilog文件</p>
+<p>里面把上一层的模块连接到ps核里</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329874.png" alt="image-20250402232918830"></p>
+<p>这个就是ps核的例化</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504022329969.png" alt="image-20250402232947937"></p>
+<p>再下层，里面都是ps核里的axi什么乱七八糟的描述，看不懂，不看了</p>
+<p>总之大概是这么个层次吧。</p>
+<p>那么我们知道，zynq是没法单独启动pl（fpga部分）的，必须用ps引导pl</p>
+<p>所以我直接开个.v文件，写点自己的逻辑，然后综合进去，像day2那样，是可以跑，但是没法固化，只能用编译器下载到内存里（只能调试用）</p>
+<p>如果想要启动，就必须加一个ps核，然后用ps的启动镜像（包含fsbl）来引导加载pl的bitstream文件</p>
+<p>于是我就想，如果我ps不做事，只用来引导pl，我的pl怎么做呢？</p>
+<p>首先必须用block design建立一个ps核，然后配好ddr和nand（或者sd卡），这还是跑不掉，不然fsbl引导不了，下面的都走不下去。</p>
+<p>然后直接把.v添加到工程里，再给拖进block design里…然后手动给这个模块的输入输出端口右键make external创建连接，然后综合，添加约束…这样竟然是ok的（（（（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030119659.png" alt="image-20250403011950624"></p>
+<p>于是他就变成了这样，ps和pl没什么关系，但是是可以这么跑的…</p>
+<p>原来zynq是这种奇妙的结构吗…真是绝了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121488.png" alt="image-20250403012112469"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504030121773.png" alt="image-20250403012122749"></p>
+<p>然后我们发现vivado自动生成了一大堆东西，把这个加进去的模块给放在了整个顶层设计里，并且引出端口…</p>
+<p>真奇妙啊，zynq</p>
+<p>todo：</p>
+<ul>
+<li>串口中断接收</li>
+<li>网口测试</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>最高主机泡泡
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.superhostpopo.cn/2025/03/30/ZYNQ%E5%85%A5%E9%97%A8%E6%97%A5%E8%AE%B0/" title="ZYNQ入门日记">https://blog.superhostpopo.cn/2025/03/30/ZYNQ入门日记/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/SuperHostPopo">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://space.bilibili.com/4023159">
+            <span class="icon">
+              <i class="fab fa-youtube"></i>
+            </span>
+
+            <span class="label">bilibili</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi">
+            <span class="icon">
+              <i class="fab fa-qq"></i>
+            </span>
+
+            <span class="label">交流QQ群853376692</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"># 软件</a>
+              <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag"># 嵌入式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/21/%E6%A1%8C%E9%9D%A2%E8%B4%B4%E7%89%87%E6%9C%BA%E8%B0%83%E6%9C%BA%E6%97%A5%E5%BF%97/" rel="prev" title="桌面贴片机调机日志">
+                  <i class="fa fa-chevron-left"></i> 桌面贴片机调机日志
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-terminal"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">最高主机泡泡</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">51k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
