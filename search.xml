@@ -1,6 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Lora训练学习笔记</title>
+    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
+<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
+<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
+<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+<span id="more"></span>
+<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
+<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
+<p>建个文件夹脚本git下来不多说</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
+<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
+<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
+<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
+<p>最后显示install compete就装完了。不得不说真大啊</p>
+<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
+<p>我真傻</p>
+<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
+<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
+<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
+<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
+<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
+<p>然后开webui，先切图。设好输入输出目录</p>
+<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
+<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
+<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
+<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
+<p>又要下一堆模型emmm 然后反推倒是很快</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
+<p>把反推完的tag扔到训练图的文件夹里去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
+<p>到这里训练集就处理完了。待用。</p>
+<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
+<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
+<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
+<p>然后改train.ps1训练脚本</p>
+<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
+<p>底模一般都推荐用full 7.2G原始大模型</p>
+<p>分辨率改一下</p>
+<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
+<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
+<p>dim就不改了 学习率这种进阶的东西也不改了</p>
+<p>优化器用了lion据说效果好一点</p>
+<p>locon没学明白，先不开</p>
+<p>好了保存然后开始训练</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
+<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
+<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
+<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
+<p>而且其实也不需要训练40轮这么多 </p>
+<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
+<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
+<p>我跑了40轮只是测试一下看看这样</p>
+<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
+<p>总之目前还没跑完，先试试10轮的，很满意！</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
+<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
+<p>等我再研究研究明白再来说</p>
+<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
+<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
+<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
+<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>2025最新STM32G4DFU升级实现与各种坑</title>
     <url>/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/</url>
     <content><![CDATA[<p>因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。</p>
@@ -155,171 +242,127 @@
       </tags>
   </entry>
   <entry>
-    <title>Lora训练学习笔记</title>
-    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
-<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
-<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
-<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+    <title>VtuberStudio配置选择和模型调参</title>
+    <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
+    <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
+<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
 <span id="more"></span>
-<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
-<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
-<p>建个文件夹脚本git下来不多说</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
-<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
-<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
-<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
-<p>最后显示install compete就装完了。不得不说真大啊</p>
-<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
-<p>我真傻</p>
-<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
-<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
-<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
-<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
-<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
-<p>然后开webui，先切图。设好输入输出目录</p>
-<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
-<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
-<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
-<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
-<p>又要下一堆模型emmm 然后反推倒是很快</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
-<p>把反推完的tag扔到训练图的文件夹里去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
-<p>到这里训练集就处理完了。待用。</p>
-<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
-<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
-<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
-<p>然后改train.ps1训练脚本</p>
-<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
-<p>底模一般都推荐用full 7.2G原始大模型</p>
-<p>分辨率改一下</p>
-<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
-<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
-<p>dim就不改了 学习率这种进阶的东西也不改了</p>
-<p>优化器用了lion据说效果好一点</p>
-<p>locon没学明白，先不开</p>
-<p>好了保存然后开始训练</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
-<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
-<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
-<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
-<p>而且其实也不需要训练40轮这么多 </p>
-<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
-<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
-<p>我跑了40轮只是测试一下看看这样</p>
-<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
-<p>总之目前还没跑完，先试试10轮的，很满意！</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
-<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
-<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
-<p>等我再研究研究明白再来说</p>
-<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
-<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
-<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
-<p>5.正则化 没看明白 待我以后再研究研究</p>
-<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
-<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
-<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
-<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
-<p>3.手动改标…真的好麻烦</p>
-<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
-<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
-<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
-<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
-    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
-<p>想着行动力行动力但是下班之后就好想睡觉</p>
-<p>彻底变成了社畜的模样</p>
-<p>但是哪怕迷茫也要前进呀</p>
-<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
-<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
-<p>权当是复健咯</p>
-<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
-<span id="more"></span>
-<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
-<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
-<p>也确实是太久没玩什么新东西了</p>
-<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
-<p><del>乐鑫的产品线真够乱的（摔</del></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
-<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
-<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
-<p>原理图也很简单</p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
-<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
-<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
-<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
-<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
-<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
-<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
-<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
-<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
-<p>装完之后随便选一个esp32s3的板子</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
-<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
-<p>于是随便撸了一个hello world试一下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>插上usb，可以自动识别com号，编译，下载</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
-<p>闪灯ok，串口输出ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
-<p>第一步算是跑起来了</p>
-<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
-<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
-<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
-<p>没想着能成功的</p>
-<p>结果一遍就刷进去了 草</p>
-<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
-<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
-<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
-<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
-<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
-<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
-<p>没啥可说的 很简单的玩意</p>
-<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
-<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
-<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
-<p>嗯…这就为后面埋下了大坑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
-<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
-<p>还没有点亮呢 至少先驱动起来看看</p>
-<p>于是找个普通的st7789驱动库吧</p>
-<p>屏幕卖家自然是带了一些例程代码的</p>
-<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
-<p>都用arduino了，图的不就是不用自己写库么</p>
-<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
-<p>去arduino上搜一搜好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
-<p>果然出来了一大堆</p>
-<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
-<p>第一个看着就ok，装来试一下吧</p>
-<hr>
-<p>未完待续…</p>
+<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
+<p><a href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
+<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
+<ul>
+<li>obs游戏采集vts进程</li>
+<li>obs采集vts虚拟摄像头</li>
+<li>spout2插件输出</li>
+<li>NDI网络接口推流（没用过）</li>
+</ul>
+<p>前面俩比较常用，都是老方法了</p>
+<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
+<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
+<p>用法参考wiki，b站也介绍很多</p>
+<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
+<p>看起来很棒</p>
+<p>不过需要手动给obs装一个插件</p>
+<p>官方的安装指南：<a href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
+<ol>
+<li><p>关掉obs</p>
+</li>
+<li><p>下载最新版本：<a href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
+</li>
+<li><p>一路next结束</p>
+</li>
+<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
+</li>
+<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
+</li>
+</ol>
+<h1 id="2-小技巧"><a href="#2-小技巧" class="headerlink" title="2. 小技巧"></a>2. 小技巧</h1><p>给vts设置为管理员启动（对steam打开也生效）</p>
+<p>wiki说可以增加进程优先级，降低延迟和卡顿（谁知道呢）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502150012000.png" alt="image-20250215001240940"></p>
+<h1 id="3-追踪方式"><a href="#3-追踪方式" class="headerlink" title="3.追踪方式"></a>3.追踪方式</h1><p>常用的面捕方法有这么几种</p>
+<ul>
+<li>VTS内置追踪直接调用电脑usb摄像头（最简单，效果差）</li>
+<li>电脑usb摄像头输入，VTS调用NVDIA面捕或者Google的面捕（比上面好，但是依然受摄像头限制）</li>
+<li>VTS ios端调用苹果iPhone面捕api，局域网推流面捕数据给电脑本地VTS调用（精度高，效果好）</li>
+<li>VTS ios端面捕，推流给电脑上的VBridger，VB推流给电脑端VTS调用（使用复杂，效果最好，可以实现额外的动作效果）</li>
+</ul>
+<p>其实还有几种其他的搭配，比如电脑摄像头配VB，感觉意义不大就不多提</p>
+<p>这里苹果的面捕api比起电脑摄像头有绝对的优势，这个是硬件差距，包括苹果的面捕摄像头硬件和ios的api生态。实测来看，不管是vts的面捕还是n卡面捕啥的，在我这种双屏常转头+摄像头比较远+摄像头在底侧向上拍的情况下，都无法避免丢追。但是ios的面捕工作稳定。</p>
+<p><strong>所以一般来说都会建议有条件的情况下使用苹果面捕</strong>（我这里是淘汰下来的老iPhone13正好再利用了，用了个手机支架横着放在电脑屏幕下面）</p>
+<p>然后是vb，vb是一个面捕软件，通过接收苹果api的面捕数据，二次计算得到更复杂精细的面部建模和追踪，用来驱动vts。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280030435.png" alt="image-20250328003021305"></p>
+<p>关于用不用vb，当然vb可以实现很多高级的复杂表情识别，但是这个是依赖你的模型建模的，如果你的模型没有做这些高级的输入绑定，那其实vb也无法帮你实现更高级的效果（我的模型就是普通的）</p>
+<p>如果你的模型是适配vb的，那当然肯定要用vb</p>
+<p>但是即使模型是普通的，也还是可以用的，vb是支持兼容普通模型的模式的，只不过就实现不了高级的表情，还占用电脑资源，增加复杂度</p>
+<p>然而我试过之后还是用了手机vts+VB+电脑vts的方案，原因是是啥呢</p>
+<p>首先吧</p>
+<p><strong>你用vb是可以不用买手机版vts的，手机vts要150，vb只要30多</strong></p>
+<p>众所周知如果你直接用手机vts推流电脑vts，如果不买手机端vts，5分钟就会自动断连</p>
+<p>但是如果你用vb，vb是使用第三方客户端连接接口，不通过推流接口，所以并不会受这个影响，是可以正常使用的，也就是其实只用买个vb就好了（这里不涉及破解啥的，完全是正常的功能使用）</p>
+<p>但是其实这是小事，vb还有个好用的地方…他可以调输出曲线！</p>
+<p>这个等会说</p>
+<p>先说下配置</p>
+<h2 id="工作流配置"><a href="#工作流配置" class="headerlink" title="工作流配置"></a>工作流配置</h2><p>首先保证iPhone和电脑在一个路由器局域网下面</p>
+<p>然后装ios的vts，不用装模型，直接开设置，拉到最下面第三方客户端，打开它（不用开pc推流）</p>
+<p>再点下显示ip，记下iPhone的局域网ip备用</p>
+<p>然后打开vb，载入</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037599.png" alt="image-20250328003704492"></p>
+<p>如果你是vb模型可以用前面那些高级的，我是普通模型就用了最后那个兼容配置</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037391.png" alt="image-20250328003752365"></p>
+<p>把刚才的ip写在这里，连接上iPhone</p>
+<p>这时候vb里的模型应该已经可以动了</p>
+<p>然后打开电脑版vts</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040029.png" alt="image-20250328004016998"></p>
+<p>在设置里给这个打开</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040969.png" alt="image-20250328004059943"></p>
+<p>去vb下面选vts，点右边的连接</p>
+<p>然后去vts里点同意</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280041156.png" alt="image-20250328004152122"></p>
+<p>这里插件应该连上了，你的模型也会动了</p>
+<p>搞定~</p>
+<p>剩下的就和正常的vts配置一样了，b站教程很多</p>
+<p>注意这么做的情况下，电脑端vts的所有面捕参数都不生效，比如灵敏度啥的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043442.png" alt="image-20250328004307411"></p>
+<p>这些都不生效，由手机端控制</p>
+<p>同样的，手机端所有模型配置都不生效</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043406.png" alt="image-20250328004341367"></p>
+<p>包括这些模型参数，表情啥的</p>
+<p>可以理解为现在被拆成了两部分，手机只负责面捕，电脑只负责渲染模型</p>
+<h2 id="关于vb和曲线"><a href="#关于vb和曲线" class="headerlink" title="关于vb和曲线"></a>关于vb和曲线</h2><p>这里就说到为什么要用vb了</p>
+<p>众所周知vts的参数输入映射是一个一次函数</p>
+<p>也就是[x,y]到[i,j]的一个线性映射（前面是你的面捕参数，后面是给模型的驱动参数）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280110598.png" alt="image-20250328011019567"></p>
+<p>这里怎么调都是线性的，在大部分情况下，通过调这四个值的范围来控制表情的动作幅度，常态表情是什么都是可以实现的</p>
+<p>但是有些时候就会有问题</p>
+<p>比如我这里的睁眼参数</p>
+<p>在我对着主屏幕看的时候，这个参数大概是0.7左右，正常来说我要把这个常态调整到输出给模型的1.0（也就是正常睁眼）</p>
+<p>大概是上面这个映射值</p>
+<p>但是当我稍微转头，看左边的屏幕，就出问题了</p>
+<p>这时候面捕识别到的睁眼参数会下降到0.4~0.5左右，实际上我还是睁眼，但是就会变成这样</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280112523.png" alt="image-20250328011230412"></p>
+<p>输出只有0.7了，变成了半闭眼，就很诡异</p>
+<p>只有我的输入参数到了0.2，0.3，也就是接近闭眼或者眨眼的情况，我才希望模型闭眼，不然就维持在睁眼的状态（比如转头看侧屏的时候应该是睁眼）</p>
+<p>通过这个简单的输入映射，就没法解决这个问题</p>
+<p>一个办法是改模型的控制参数里的变形器绑定，相当于直接修改模型动作，但是很明显模型不好改，一般来说都不会有源文件</p>
+<p><strong>那么用vb的曲线就可以解决这个问题</strong></p>
+<p>首先我们常态的输入是0.7，这时候眼睛的驱动参数是1左右，是正常的</p>
+<p>然后我转头，最差的情况输入下降到了0.4</p>
+<p>我希望在0.4~0.7的输入情况下模型的眼睛都不会明显闭眼，也就是把0.4~0.7的输入都映射到0.7左右的输出</p>
+<p>那么我们改曲线</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280117092.png" alt="image-20250328011709060"></p>
+<p>手动加两个控制点</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280127754.png" alt="image-20250328012742732"></p>
+<p>总之修成大概0.4到0.7的区间输出都是0.65左右就好了</p>
+<p>这样也不影响前后段的眼睛动作（比如闭眼，眨眼和睁大眼）</p>
+<p>ok~</p>
+<p>这玩意用法应该还有挺多的，就看怎么开发了</p>
+<p>结</p>
 ]]></content>
       <tags>
-        <tag>嵌入式</tag>
+        <tag>软件</tag>
       </tags>
   </entry>
   <entry>
@@ -568,7 +611,7 @@
 <p>因为偷懒 状态机写的不对，多个块里给next state赋值，没有给状态转移专门用组合逻辑实现，所以炸了</p>
 <p>fpga真神奇啊…verilog真难啊（哭</p>
 <p>明天再改 待续</p>
-<h1 id="day10"><a href="#day10" class="headerlink" title="day10"></a>day10</h1><p>学习了正确的状态机写法，重构中…</p>
+<h1 id="day10-重构"><a href="#day10-重构" class="headerlink" title="day10 重构"></a>day10 重构</h1><p>学习了正确的状态机写法，重构中…</p>
 <p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504071720946.png" alt="image-20250407172000923"></p>
 <p>因为if没有写else又炸了好几次，谷歌查报错才明白…</p>
 <p>组合逻辑不写else就会在生成bitstream阶段报LUT cells form a combinatorial loop. 然后炸掉</p>
@@ -579,9 +622,134 @@
 <p>开心</p>
 <p>歇 感谢群友们在线支持 感谢相关资料参考</p>
 <p>verilog博大精深，任重道远啊。</p>
+<h1 id="day-？11？-一波三折的核心板-ddr测试-qspi启动"><a href="#day-？11？-一波三折的核心板-ddr测试-qspi启动" class="headerlink" title="day ？11？ 一波三折的核心板 ddr测试 qspi启动"></a>day ？11？ 一波三折的核心板 ddr测试 qspi启动</h1><p>这几天没怎么搞zynq 去调别的东西了</p>
+<p>那么还记得最开始提的那个核心板吗…料也差不多了，焊一下</p>
+<p>立创eda自带的ibom功能倒是也不错</p>
+<p>为了防止电源焊错boom 于是先焊了外围元件没焊zynq本体（但是其实可以通过不焊穿心电容来隔离电源…我没仔细看电路图） 这也导致后面焊zynq的时候底面有元件，用加热台很难正确的给板子预热</p>
+<p>不过确实第一次焊电源出了点问题，fb电阻焊错导致有一路输出不正确。。倒是也不算多虑吧</p>
+<p>然后就干bga，焊zynq和ddr，ddr是立创买的全新，7010来自淘宝7.5的拆机翻新植球</p>
+<p>因为预热不充分，焊的有点折磨，然后接上电。。果不其然就下载不进去</p>
+<p>用万用表戳了下jtag接口的二极管值，发现tck是开路</p>
+<p>得了，焊接有问题</p>
+<p>重新加热吹一下没改善，无奈只能拆了，清理焊盘，换了另一片芯片上去</p>
+<p>尝试改进一下焊接手法，提高了温度，多加助焊剂，这次jtag二极管值正常了，也能连接识别了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121638760.png" alt="img"></p>
+<p>尝试烧个led进去测试下，发现这个核心板pl时钟接错了 接到了差分时钟n上（=-= 正常约束引脚走不过去实现，不过通过强制覆盖规则的方法倒是也能通过就是了（或者还是用ps提供时钟吧也行。。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121638713.png" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121638927.png" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121637835.jpeg" alt="img"></p>
+<p>嗯，总之pl ok了（<strong>那根绿线，这个板子jtag没引出vref，下载器不接vref会下载失败</strong>）</p>
+<p>然后ps 也是emio 点灯</p>
+<p>烧进去没反应，尝试调试，发现一直卡住（进错误处理了？</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121640835.png" alt="img"></p>
+<p>怀疑ddr有问题，那就<strong>跑下ddr测试吧</strong></p>
+<p>很简单，开ddr和串口，然后在sdk里创建一个dram test的模板工程就行了</p>
+<p>直接编译下载</p>
+<p>用的ddr是256M 16bit也就是512M的，选511M的测试，也就是输入5然后跑一下</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121641994.png" alt="img"></p>
+<p>日 全是误码，果然炸了</p>
+<p>问了下群友基本上来说肯定是ddr焊接有问题了</p>
+<p>把ddr拆了（这玩意自带高温锡，本身就贼难焊…）</p>
+<p>完蛋，这锡珠很明显是连锡短路了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121642260.jpeg" alt="img"></p>
+<p>然后这ddr就折磨了我两三个小时，来回来去的拆和装，新芯片用完了只能重新植球，板子上开关和led都吹变色了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121643004.jpeg" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121643210.jpeg" alt="img"></p>
+<p>植球中…</p>
+<p>最后放一个焊好的吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121643675.png" alt="img"></p>
+<p>然后用r和i指令可以测试读写眼图</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121643569.png" alt="img"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202504121643611.png" alt="img"></p>
+<p>这个眼宽还ok吧</p>
+<p>重新烧录用户程序，可以正常跑起来了…真是一波三折啊</p>
+<p>实际上来说，这玩意难度基本就在焊接bga上了，这种大的bga多层板还是需要良好的预热，加大量助焊剂，充分吹透，然后不要去下压芯片，会连锡…</p>
+<p>然后洗洗板子，试一下qspi flash启动</p>
+<p>没啥难度，就烧录flash然后切对启动模式就ok了 很简单，顺利</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
+    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
+<span id="more"></span>
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
+]]></content>
+      <tags>
         <tag>嵌入式</tag>
       </tags>
   </entry>
@@ -930,130 +1098,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>VtuberStudio配置选择和模型调参</title>
-    <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
-    <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
-<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
-<span id="more"></span>
-<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
-<p><a href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
-<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
-<ul>
-<li>obs游戏采集vts进程</li>
-<li>obs采集vts虚拟摄像头</li>
-<li>spout2插件输出</li>
-<li>NDI网络接口推流（没用过）</li>
-</ul>
-<p>前面俩比较常用，都是老方法了</p>
-<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
-<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
-<p>用法参考wiki，b站也介绍很多</p>
-<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
-<p>看起来很棒</p>
-<p>不过需要手动给obs装一个插件</p>
-<p>官方的安装指南：<a href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
-<ol>
-<li><p>关掉obs</p>
-</li>
-<li><p>下载最新版本：<a href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
-</li>
-<li><p>一路next结束</p>
-</li>
-<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
-</li>
-<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
-</li>
-</ol>
-<h1 id="2-小技巧"><a href="#2-小技巧" class="headerlink" title="2. 小技巧"></a>2. 小技巧</h1><p>给vts设置为管理员启动（对steam打开也生效）</p>
-<p>wiki说可以增加进程优先级，降低延迟和卡顿（谁知道呢）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502150012000.png" alt="image-20250215001240940"></p>
-<h1 id="3-追踪方式"><a href="#3-追踪方式" class="headerlink" title="3.追踪方式"></a>3.追踪方式</h1><p>常用的面捕方法有这么几种</p>
-<ul>
-<li>VTS内置追踪直接调用电脑usb摄像头（最简单，效果差）</li>
-<li>电脑usb摄像头输入，VTS调用NVDIA面捕或者Google的面捕（比上面好，但是依然受摄像头限制）</li>
-<li>VTS ios端调用苹果iPhone面捕api，局域网推流面捕数据给电脑本地VTS调用（精度高，效果好）</li>
-<li>VTS ios端面捕，推流给电脑上的VBridger，VB推流给电脑端VTS调用（使用复杂，效果最好，可以实现额外的动作效果）</li>
-</ul>
-<p>其实还有几种其他的搭配，比如电脑摄像头配VB，感觉意义不大就不多提</p>
-<p>这里苹果的面捕api比起电脑摄像头有绝对的优势，这个是硬件差距，包括苹果的面捕摄像头硬件和ios的api生态。实测来看，不管是vts的面捕还是n卡面捕啥的，在我这种双屏常转头+摄像头比较远+摄像头在底侧向上拍的情况下，都无法避免丢追。但是ios的面捕工作稳定。</p>
-<p><strong>所以一般来说都会建议有条件的情况下使用苹果面捕</strong>（我这里是淘汰下来的老iPhone13正好再利用了，用了个手机支架横着放在电脑屏幕下面）</p>
-<p>然后是vb，vb是一个面捕软件，通过接收苹果api的面捕数据，二次计算得到更复杂精细的面部建模和追踪，用来驱动vts。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280030435.png" alt="image-20250328003021305"></p>
-<p>关于用不用vb，当然vb可以实现很多高级的复杂表情识别，但是这个是依赖你的模型建模的，如果你的模型没有做这些高级的输入绑定，那其实vb也无法帮你实现更高级的效果（我的模型就是普通的）</p>
-<p>如果你的模型是适配vb的，那当然肯定要用vb</p>
-<p>但是即使模型是普通的，也还是可以用的，vb是支持兼容普通模型的模式的，只不过就实现不了高级的表情，还占用电脑资源，增加复杂度</p>
-<p>然而我试过之后还是用了手机vts+VB+电脑vts的方案，原因是是啥呢</p>
-<p>首先吧</p>
-<p><strong>你用vb是可以不用买手机版vts的，手机vts要150，vb只要30多</strong></p>
-<p>众所周知如果你直接用手机vts推流电脑vts，如果不买手机端vts，5分钟就会自动断连</p>
-<p>但是如果你用vb，vb是使用第三方客户端连接接口，不通过推流接口，所以并不会受这个影响，是可以正常使用的，也就是其实只用买个vb就好了（这里不涉及破解啥的，完全是正常的功能使用）</p>
-<p>但是其实这是小事，vb还有个好用的地方…他可以调输出曲线！</p>
-<p>这个等会说</p>
-<p>先说下配置</p>
-<h2 id="工作流配置"><a href="#工作流配置" class="headerlink" title="工作流配置"></a>工作流配置</h2><p>首先保证iPhone和电脑在一个路由器局域网下面</p>
-<p>然后装ios的vts，不用装模型，直接开设置，拉到最下面第三方客户端，打开它（不用开pc推流）</p>
-<p>再点下显示ip，记下iPhone的局域网ip备用</p>
-<p>然后打开vb，载入</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037599.png" alt="image-20250328003704492"></p>
-<p>如果你是vb模型可以用前面那些高级的，我是普通模型就用了最后那个兼容配置</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037391.png" alt="image-20250328003752365"></p>
-<p>把刚才的ip写在这里，连接上iPhone</p>
-<p>这时候vb里的模型应该已经可以动了</p>
-<p>然后打开电脑版vts</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040029.png" alt="image-20250328004016998"></p>
-<p>在设置里给这个打开</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040969.png" alt="image-20250328004059943"></p>
-<p>去vb下面选vts，点右边的连接</p>
-<p>然后去vts里点同意</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280041156.png" alt="image-20250328004152122"></p>
-<p>这里插件应该连上了，你的模型也会动了</p>
-<p>搞定~</p>
-<p>剩下的就和正常的vts配置一样了，b站教程很多</p>
-<p>注意这么做的情况下，电脑端vts的所有面捕参数都不生效，比如灵敏度啥的</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043442.png" alt="image-20250328004307411"></p>
-<p>这些都不生效，由手机端控制</p>
-<p>同样的，手机端所有模型配置都不生效</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043406.png" alt="image-20250328004341367"></p>
-<p>包括这些模型参数，表情啥的</p>
-<p>可以理解为现在被拆成了两部分，手机只负责面捕，电脑只负责渲染模型</p>
-<h2 id="关于vb和曲线"><a href="#关于vb和曲线" class="headerlink" title="关于vb和曲线"></a>关于vb和曲线</h2><p>这里就说到为什么要用vb了</p>
-<p>众所周知vts的参数输入映射是一个一次函数</p>
-<p>也就是[x,y]到[i,j]的一个线性映射（前面是你的面捕参数，后面是给模型的驱动参数）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280110598.png" alt="image-20250328011019567"></p>
-<p>这里怎么调都是线性的，在大部分情况下，通过调这四个值的范围来控制表情的动作幅度，常态表情是什么都是可以实现的</p>
-<p>但是有些时候就会有问题</p>
-<p>比如我这里的睁眼参数</p>
-<p>在我对着主屏幕看的时候，这个参数大概是0.7左右，正常来说我要把这个常态调整到输出给模型的1.0（也就是正常睁眼）</p>
-<p>大概是上面这个映射值</p>
-<p>但是当我稍微转头，看左边的屏幕，就出问题了</p>
-<p>这时候面捕识别到的睁眼参数会下降到0.4~0.5左右，实际上我还是睁眼，但是就会变成这样</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280112523.png" alt="image-20250328011230412"></p>
-<p>输出只有0.7了，变成了半闭眼，就很诡异</p>
-<p>只有我的输入参数到了0.2，0.3，也就是接近闭眼或者眨眼的情况，我才希望模型闭眼，不然就维持在睁眼的状态（比如转头看侧屏的时候应该是睁眼）</p>
-<p>通过这个简单的输入映射，就没法解决这个问题</p>
-<p>一个办法是改模型的控制参数里的变形器绑定，相当于直接修改模型动作，但是很明显模型不好改，一般来说都不会有源文件</p>
-<p><strong>那么用vb的曲线就可以解决这个问题</strong></p>
-<p>首先我们常态的输入是0.7，这时候眼睛的驱动参数是1左右，是正常的</p>
-<p>然后我转头，最差的情况输入下降到了0.4</p>
-<p>我希望在0.4~0.7的输入情况下模型的眼睛都不会明显闭眼，也就是把0.4~0.7的输入都映射到0.7左右的输出</p>
-<p>那么我们改曲线</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280117092.png" alt="image-20250328011709060"></p>
-<p>手动加两个控制点</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280127754.png" alt="image-20250328012742732"></p>
-<p>总之修成大概0.4到0.7的区间输出都是0.65左右就好了</p>
-<p>这样也不影响前后段的眼睛动作（比如闭眼，眨眼和睁大眼）</p>
-<p>ok~</p>
-<p>这玩意用法应该还有挺多的，就看怎么开发了</p>
-<p>结</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
     <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
@@ -1147,18 +1191,6 @@
       </tags>
   </entry>
   <entry>
-    <title>我回来啦</title>
-    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
-    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
-<p>更新下已经落后了一年版本的hexo吧…</p>
-<p>就是这样~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
-]]></content>
-      <tags>
-        <tag>杂项</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>开启vsc自带的同步功能</title>
     <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
     <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
@@ -1177,265 +1209,6 @@
       <tags>
         <tag>软件</tag>
         <tag>技巧</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>配置VSCode的Clangd语言服务支持STM32开发</title>
-    <url>/2025/03/17/%E9%85%8D%E7%BD%AEVSCode%E7%9A%84Clangd%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%94%AF%E6%8C%81STM32%E5%BC%80%E5%8F%91/</url>
-    <content><![CDATA[<p>众所周知STM32开发一般使用Keil或者CubeIDE来管理工程和编译，但是这俩玩意的编辑器都不太现代化，用起来不太爽，所以也有很多人用VSCode来编写代码，只使用IDE来进行编译和调试（当然也有使用VSCode+全套开源工具链打包进行编写+编译+调试的，但是在win下实现起来尤为的不方便以前尝试过这里先按下不表）</p>
-<p>然而vsc虽然很好用，但是他默认的C/C++插件功能就很难说是强大了，自动补全和语法检查经常傻傻的。一直也就这么凑合着用下来，今天一不小心给vsc的补全又玩炸了，调配置的时候突然想起这事，于是去搜了一下，说vsc其实是可以支持强大的clangd语言服务的…</p>
-<p>谁想到这就是坠入大坑的开始…</p>
-<span id="more"></span>
-<p>懒得多介绍了，网上一堆，简单说clangd应该是通用的最强大的C/C++语言服务（有没有之一？）</p>
-<p>性能和特性都比vsc默认的微软工具强很多</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172321392.png" alt="image-20250317232135358"></p>
-<p>安装clangd其实很简单，在拓展商店里直接装就行了，他还会提醒你本地没有语言服务，选择自动安装就可以给你配好了，没啥难度</p>
-<p>然后按照网上的教程配置clangd的特性</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172328540.png" alt="image-20250317232844513"></p>
-<p>打开vsc的配置json</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;C_Cpp.errorSquiggles&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngineFallback&quot;: &quot;Disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngine&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.autocomplete&quot;: &quot;disabled&quot;, // So you don&#x27;t get autocomplete from both extensions.</span><br></pre></td></tr></table></figure>
-<p>这些代码用来禁用原来的拓展的语言服务，防止冲突。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172330675.png" alt="image-20250317233034654"></p>
-<p>clangd路径已经被自动配置好了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;clangd.arguments&quot;: [</span><br><span class="line">// 让 Clangd 生成更详细的日志</span><br><span class="line">&quot;--log=verbose&quot;,</span><br><span class="line">// 输出的 JSON 文件更美观</span><br><span class="line">&quot;--pretty&quot;,</span><br><span class="line">// 全局补全(输入时弹出的建议将会提供 CMakeLists.txt 里配置的所有文件中可能的符号，会自动补充头文件)</span><br><span class="line">&quot;--all-scopes-completion&quot;,</span><br><span class="line">// 建议风格：打包(重载函数只会给出一个建议）</span><br><span class="line">// 相反可以设置为detailed</span><br><span class="line">&quot;--completion-style=bundled&quot;,</span><br><span class="line">// 跨文件重命名变量</span><br><span class="line">&quot;--cross-file-rename&quot;,</span><br><span class="line">// 允许补充头文件</span><br><span class="line">&quot;--header-insertion=iwyu&quot;,</span><br><span class="line">// 输入建议中，已包含头文件的项与还未包含头文件的项会以圆点加以区分</span><br><span class="line">&quot;--header-insertion-decorators&quot;,</span><br><span class="line">// 在后台自动分析文件(基于 complie_commands，我们用CMake生成)</span><br><span class="line">&quot;--background-index&quot;,</span><br><span class="line">// 启用 Clang-Tidy 以提供「静态检查」</span><br><span class="line">&quot;--clang-tidy&quot;,</span><br><span class="line">// Clang-Tidy 静态检查的参数，指出按照哪些规则进行静态检查，详情见「与按照官方文档配置好的 VSCode 相比拥有的优势」</span><br><span class="line">// 参数后部分的*表示通配符</span><br><span class="line">// 在参数前加入-，如-modernize-use-trailing-return-type，将会禁用某一规则</span><br><span class="line">&quot;--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*&quot;,</span><br><span class="line">// 默认格式化风格: 谷歌开源项目代码指南</span><br><span class="line">// &quot;--fallback-style=file&quot;,</span><br><span class="line">// 同时开启的任务数量</span><br><span class="line">&quot;-j=2&quot;,</span><br><span class="line">// pch优化的位置(memory 或 disk，选择memory会增加内存开销，但会提升性能) 推荐在板子上使用disk</span><br><span class="line">&quot;--pch-storage=memory&quot;,</span><br><span class="line">// 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末</span><br><span class="line">// 我选择禁用</span><br><span class="line">&quot;--function-arg-placeholders=false&quot;,</span><br><span class="line">// compelie_commands.json 文件的目录位置(相对于工作区，由于 CMake 生成的该文件默认在 build 文件夹中，故设置为 build)</span><br><span class="line">&quot;--compile-commands-dir=build&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>加入这一坨clangd的特性配置</p>
-<p>好了，搞定，看起来不难是吧…</p>
-<p>但是你用这个配置打开一个工程目录…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172344994.png" alt="image-20250317234441904"></p>
-<p>满眼一片红啊，啥都认不出来</p>
-<p>原因也很简单，就是clangd没法正确检索工程的库文件。</p>
-<p>vsc默认的C插件也有这个问题，所以一般会让你改成tag praser，然后就好了（</p>
-<p>但是在clangd这里，坑就深了…</p>
-<p>真正的折磨才刚刚开始</p>
-<p>查阅资料发现，这玩意必须依赖一个叫做compile_commands.json的文件，里面记录了工程的目录结构，引用的库文件等，clangd依赖他来提供语言服务</p>
-<p>这玩意咋生成呢？如果你的项目用的是cmake，那一切都很美好，</p>
-<p><code>cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1</code></p>
-<p>用这句就行了</p>
-<p>然而很显然不管是keil还是cubeide用的都不是cmake（哭</p>
-<p>keil是自己的编译器和管理方式，cubeide用的是make和makefile</p>
-<p>那么这里有两个办法</p>
-<h2 id="如果你用的是keil"><a href="#如果你用的是keil" class="headerlink" title="如果你用的是keil"></a>如果你用的是keil</h2><p>装一坨叫做arm keil studio pack的玩意</p>
-<p>里面提供了一个插件可以直接导入keil的uvprojx文件，然后自动生成clangd所需的compile_commands.json文件</p>
-<p>其实因为keil设计的这套方案本来就是配合的clangd语言服务嘛，自然给你都解决好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172350650.png" alt="image-20250317235020611"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172355766.png" alt="image-20250317235556732"></p>
-<p>看起来一切都很美好，没毛病，除了这坨插件有点臃肿之外</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172358312.png" alt="image-20250317235820190"></p>
-<h2 id="但是如果你用的是CubeIDE…"><a href="#但是如果你用的是CubeIDE…" class="headerlink" title="但是如果你用的是CubeIDE…"></a>但是如果你用的是CubeIDE…</h2><p>首先，我们需要从makefile手动生成compile_commands.json</p>
-<p>搜到有一个工具，叫做bear，可以通过make来生成compile_commands.json</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180005004.png" alt="image-20250318000509964"></p>
-<p>但是很遗憾，这玩意只支持linux版本（</p>
-<p>本来打算放弃了，但是又发现这玩意有个windows的替代品（from clangd官网）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006545.png" alt="image-20250318000613523"></p>
-<p>那么我们安装这个玩意</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006519.png" alt="image-20250318000630479"></p>
-<p>在makefile的路径下面试一试</p>
-<p><code>python -m compiledb make all</code></p>
-<p>很遗憾呢，Windows下面没有make…CubeIDE自己的make和gcc啥的是封在他的安装路径里面的，外面也调用不到</p>
-<p>那么我们装一个make（此处过程省略，总之不管你用mingw还是Chocolatey还是啥…反正确保make命令是可用的就行了</p>
-<p>然后再试一下…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017040.png" alt="image-20250318001737010"></p>
-<p>似乎成功了是吧，然后也生成了对应的compile_commands.json文件</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017939.png" alt="image-20250318001758910"></p>
-<p>当然，我们可以把命令改成</p>
-<p><code>python -m compiledb -n make all</code></p>
-<p>不执行实际的make动作，只进行配置文件输出，防止影响工程实际代码（毕竟你的path里不一定有正确的gcc，鬼知道编译出什么玩意来）</p>
-<p>然后把compile_commands.json这玩意放到工程的根目录下面，用vsc打开…</p>
-<p>大功告成了…吗？</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180022868.png" alt="image-20250318002223851"></p>
-<p>事情往往没那么简单。。还是有报错。。</p>
-<p>只能继续搜索，问google，问大d老师</p>
-<p>看起来是因为cubeide的gcc使用了一个自定义的编译参数，clangd并不认识这玩意…</p>
-<p>解决方法嘛</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180024351.png" alt="image-20250318002439292"></p>
-<p>手动修改compile_commands.json文件，把”-fcyclomatic-complexity”,都替换成空行</p>
-<p>然后重新打开</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180027654.png" alt="image-20250318002716568"></p>
-<p>好吧…终于，你成功了=-=</p>
-<p>但是 我不知道 这一切值得吗…</p>
-<h2 id="结"><a href="#结" class="headerlink" title="结"></a>结</h2><p>最终，我删掉了clangd，删掉了上面的那一大坨东西，重新把配置改回了C/C++插件…</p>
-<p>可能唯一的意义就是，确实熟悉了一坨编译方法和Windows下配置环境的过程吧</p>
-<p>谁知道呢</p>
-<p>姑且放在这里吧，或者如果真的有人对这些闲的蛋疼的鼓捣有兴趣的话，可以来看看</p>
-<p>以及，发现了一个项目可以自动把cubeide转成clangd的支持</p>
-<p><a href="https://github.com/alex-schulster/stm_lsp_nvim">https://github.com/alex-schulster/stm_lsp_nvim</a></p>
-<p>很不错，满足了我的一切想象，但是…这玩意依然只支持linux（摔</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180030564.png" alt="image-20250318003024543"></p>
-]]></content>
-      <tags>
-        <tag>软件,嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>不当爱抖露了！星野爱的重启人生</title>
-    <url>/2023/06/28/%E5%AE%89%E7%A7%91/</url>
-    <content><![CDATA[<blockquote>
-<p>同步更新：</p>
-<p>nga：<a href="https://bbs.nga.cn/read.php?tid=36780513">https://bbs.nga.cn/read.php?tid=36780513</a></p>
-<p>泥潭吞楼太厉害，搞个备份</p>
-</blockquote>
-<p><strong>想要与你相见，此愿我已寄托于星。</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280035446.png" alt="00023-397873791"></p>
-<span id="more"></span>
-<p>大家好~这里是个萌新，纯种的。创作经验莫得，文笔渣，中二病，逻辑乱，ooc，情商低，社畜苦，更新咕…<br>大纲无，存稿无，nga现骰现编中…打下这些字的时候正文真的一点都还没有写…<br>提前说声抱歉对不住读者老爷们的期待如果有读者的话，轻喷啦<br>如果还愿意看下去的话(真的有吗？)</p>
-<p>大概是纯自嗨吧，看了推子第一集之后就一直意难平，如果有另一条世界线该多好，如果那个世界可以再温柔一点该多好。在看了最新话的兄妹相认大药之后冲动再也抑制不住了——</p>
-<p><strong>我要给星野爱完整的一生！</strong></p>
-<p>于是基本就是这样，想要写一个另一条路线的星野爱充满未知的新生活，大体上应该是一个轻松快乐的故事吧 严谨的故事lz这种萌新也写不来啊，没那个能力知道嘛 ，来到各种各样的地方，结识形形色色的人，参与各种各样新奇有趣的冒险什么的~</p>
-<p>也会选择一个温柔的世界观，并且加足够强力的保底机制防止爱小姐的这次人生也变得惨兮兮的 lz向来是过保护的he大团圆爱好者啦</p>
-<p>预计会很混沌，太严肃的内容无，可能会有漫无边际的乱入和梗选项什么的，希望能足够有趣和快乐就好了呢。<br>也欢迎各种各样乱七八糟的安价啦如果真的有人安价的话</p>
-<p>因为是纯纯的萌新搞不明白怎么设计战斗系统也绝对写不好战斗，太难了啦！所以大概不会做战斗系统吧…目前吧？看我学习的成果啦，没准啥时候就觉得自己突然行了什么的</p>
-<p>再一次，愿爱小姐能拥有闪耀而快乐的人生！那么开始投下。</p>
-<p>如果看不到下面就是lz被抓去上班了/神鹤吞了/憋不出来卡文了 大变申</p>
-<p>骰娘啊骰娘 会有观众老爷赏脸嘛？</p>
-<p><strong>ROLL : 1d100</strong>=d100(93)=<strong>93</strong></p>
-<blockquote>
-<p>碎碎念 …</p>
-<p>果然都会有的吧，那种突然涌起的想要写点什么东西的冲动，越想越兴奋越想越兴奋，看的多了创作欲就会不受控的冒出来…然后真的想做的时候发现 寄了 我怎么这么菜写不出来啊卡壳啊这写的都是些啥啊 </p>
-<p>但是为什么还要作死呢。说到底还是冲动吧，想要做什么的冲动是挡不住的，明知道自己不行，明知道会失败，也想要马上去做的悸动吧。不停的踌躇害怕但是最后，还是输给了自己的欲望，不去做的话，热情冷下来的时候，就会后悔，又错过了尝试一件事的勇气，那时候没有尝试的话，以后可能就永远也不会去做了吧。</p>
-<p>了解安科的时间也不长，入坑作和很多人一样都是敬爱的王子海皇，虽然是看了王子新作小说后回去补的烈幻入真的是纯纯萌新中的萌新了。<br>第一次看就被这种 不可预测的命运的舞台 深深的吸引了<br>感觉会很快乐的样子呢！那就尝试一下吧！不试试去做会后悔的吧！失败了也没什么大不了的嘛！ 嗯 反正失败的尝试已经够多啦</p>
-</blockquote>
-<p>在下午上班之前，先按照惯例车个卡吧 虽然好像没多大用的样子，就当是第一次的仪式感吧</p>
-<p><strong>星野爱</strong><br>力量：</p>
-<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
-<p>擅长唱跳，身体能力不错的样子<br>体质：</p>
-<p><strong>ROLL : 1d100</strong>=d100(8)=<strong>8</strong></p>
-<p>差点大失败…体力不差，但是体质低，是有什么罕见的疾病吗？燃烧生命在当偶像吗喂<br>智力：</p>
-<p><strong>ROLL : 1d70</strong>=d70(15)=<strong>15</strong></p>
-<p>(没上过学 -30)<br>爱…我的丈育…有一种纯真的美 不是 符合原作的知识水平!<br>魅力：</p>
-<p><strong>ROLL : 1d100+50</strong>=d100(58)+50=<strong>108</strong></p>
-<p>(天才般的爱抖露sama +50，可突破上限)<br>总算有个不拉的了<strong>这不是全靠加值么</strong><br>意志：</p>
-<p><strong>ROLL : 1d100</strong>=d100(43)=<strong>43</strong></p>
-<p>普普通通平凡人的感觉<br>幸运：</p>
-<p><strong>ROLL : 1d100</strong>=d100(69)=<strong>69</strong></p>
-<p>普通的好运，大概能捡到零钱或者靠直觉避开雨天的程度吧，但是敌不过命运的恶意<br>魔力：0[未解锁]<br>这个世界，有魔法吗？</p>
-<p>lz要去上班了，下班后再见 上班摸鱼构思ing</p>
-<p>晚饭小更一下…没有大失败真好啊，真好啊，好啊，啊 但是这出目<br>怎么感觉会命途多舛啊</p>
-<p>下班啦 继续</p>
-<p>先来骰一下为啥这么惨体质只有8<br>是身体疾病吗</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>(是/否)</p>
-<p>燃烧生命歌唱的病弱少女，我哭死<br>那么是什么病呢</p>
-<p><strong>ROLL : 1d10</strong>=d10(5)=<strong>5</strong></p>
-<p>1-2 和莎莉奈同样的病症<br>3-4 营养不良(什么屑孤儿院)<br>5-6 严重贫血<br>7-8 遗传性心脏病(咚 咚 咚)<br>9 其实是装病(怎么都是屑啊)<br>10 大成功/大失败(<strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>)</p>
-<p>骰娘好温柔 选中了平和的选项<br>区区贫血而已，就用天才偶像大人高达43的意志力克服过去口牙<br>贫血的严重程度(越大越严重 0:多 吃 红 枣 100:临 界 血 限)</p>
-<p><strong>ROLL : 1d100</strong>=d100(99)=<strong>99</strong></p>
-<p>草草草<br>人生第一个大成功为什么会出现在这种地方啊<br>现在就是很后悔 非常后悔</p>
-<p><strong>“不要手贱去丢感觉没什么所谓的骰子”</strong>——必可活用于下一次</p>
-<p>让我冷静下想想该怎么圆…</p>
-<p>明明只是想找下手感象征性的车下卡满足下中二的仪式感啊喂，为什么会变成这样呢…说好的重生呢</p>
-<p>病情 大 成 功<br><strong>危</strong><br>也就是星野爱大失败<br>已经不是一般的贫血了，稍微运动过量可能就会缺氧倒地了吧。</p>
-<p>带着如此的身体，却还在偶像的舞台上闪闪发光，已经是毫无疑问的在燃烧生命了吧。<br>忘我的燃烧，一瞬的闪耀，双瞳中的光芒，如夜空中的长庚星一样点亮了无数人的梦想<br>”一等星寄于你身”，名副其实的，天才般的偶像大人<br>也难怪露比和阿库亚会无可救药的被吸引吧</p>
-<p>大失败是什么：</p>
-<p><strong>ROLL : 1d10</strong>=d10(1)=<strong>1</strong></p>
-<p>1-2 某次live过度劳累重病后被神木光趁虚而入(接 回 原 作)<br>3-4 粉丝线下开门杀时由于惊吓贫血发作而亡(世界线的收束)<br>5-6 其实神木光是活在现代的吸血鬼？<br>7-8 星野爱超人的魅力是血继限界，但代价是贫血<br>9 其实星野爱是超级混血种，血统浓度太高不稳定，表现为贫血(为啥啊)<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>PS：因为主题是重生，所以星野爱的死是已经发生了的事件。但是具体的情况可能会和原作有些微妙的不同？ 本来不想不同的但是骰娘果然是自由的啊…</p>
-<p>感谢版主 总算放出来了<br>人类的本质就是手贱<br>lz为什么又要手贱去改主楼然后被神鹤关了小黑屋</p>
-<p>后一半的梗选项没中，所以还是稳健的原作展开，唐突的大失败只是给小爱惨兮兮的一生又增加了一个注解…大概</p>
-<p>让我们回到主线吧</p>
-<p>小爱打了那个改变命运的电话吗</p>
-<p><strong>ROLL : 1d10</strong>=d10(9)=<strong>9</strong></p>
-<p>1-9 打了(原作展开)<br>10 没打(微妙的剧情变化)</p>
-<p>来个骰娘小爱。愿小爱的新人生也能拥有骰娘的祝福<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057284.jpeg" alt="img"></p>
-<p>一念之差，终归，还是没有逃得开命运<br>在按下通话键之前，在想些什么呢？或许是直觉，或许是超出常人的幸运，或许是不甘于既定的结局，犹豫着，手指微微颤抖。<br>最终，还是按下了恶魔的门铃。<br>给孩子们一个惊喜吧？带着点恶作剧的想着，离开了一人间的电话亭。</p>
-<p>于是那盛大的绽放和渺小的心愿都轰然崩塌。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057095.jpeg" alt="img"><br>“我爱你们。”<br>“这句话…绝对，不是谎言。”</p>
-<p>说出来了啊。太好了。然后…<br>孩子撕心裂肺的哭喊声似乎逐渐模糊了。视野越来越暗。<br>天黑了吗<br>好多星星。大城市里，也能看到星空吗？<br>好亮，最亮的那一颗，是叫什么…<br>可以许愿吗？<br>好想要，“爱”啊。</p>
-<p>意识，中断了。</p>
-<p>“爱！” “爱！” “爱！！！”<br>……“都是，我的错”</p>
-<p>爱的苏醒(75以上醒来)</p>
-<p><strong>ROLL : 1d100</strong>=d100(2)=<strong>2</strong></p>
-<p>唐 突 大 失 败<br>但是死都死了…放过孩子吧，已经够惨的了，只是想多睡一会有什么错 bushi</p>
-<p>？？？的闹别扭(别扭：小爱你倒是争点气啊&lt;——&gt;温柔：已经很累了，多休息下吧)</p>
-<p><strong>ROLL : d100</strong>=d100(52)=<strong>52</strong></p>
-<p>星野爱的苏醒(75以上醒来，？？？的祝福+25)</p>
-<p><strong>ROLL : d100</strong>=d100(48)=<strong>48</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057885.jpeg" alt="img"></p>
-<p>上一楼忘了写加值了<br>1d100(48)+25=73<br>怎么又在关键时刻差一点拉跨啊</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057168.jpeg" alt="img"><br>？？？(随机立绘)：辛苦啦，真是个粪游戏呀，人生的一周目。受苦了呢，小爱，但是，要全成就通关的吧，二周目？加油！</p>
-<p>星野爱的苏醒(75以上醒来，？？？的祝福+50)</p>
-<p><strong>ROLL : d100+50</strong>=d100(93)+50=<strong>143</strong></p>
-<p>看来鼓励很有效嘛。星野爱，堂堂复活！</p>
-<p>先骰一下状态。<br>二周目小爱醒来时多大了：</p>
-<p><strong>ROLL : 1d6+10</strong>=d6(5)+10=<strong>15</strong></p>
-<p>(？？？：跳关是二周目的一环！孤儿院太受苦了别再折磨孩子了)</p>
-<p>现在的剧情时间点是：(越小越接近被小爱被刺杀时，越大越接近推子原作进度的时间)</p>
-<p><strong>ROLL : 1d100</strong>=d100(3)=<strong>3</strong></p>
-<p>小爱的记忆：(0：我是谁，我在哪？ 100：仿佛从前世的梦中醒来)<br><strong>？？？的祝福：那些痛苦，已经过去了(遗忘痛苦的回忆，不会踏上一周目路线)</strong></p>
-<p><strong>ROLL : 1d100</strong>=d100(95)=<strong>95</strong></p>
-<p>PS：想了想，还是让不要让过去的回忆啊复仇啊神木光什么的再掺和进来了，大赤老师都写不明白我瞎整干啥啊，说好的要给小爱一个开心快乐的故事啊。</p>
-<p>大失败接大成功，骰娘，令人敬畏<br>剧情时间是被刺前后，也就是小爱20岁，阿夸露比才4岁，有点遗憾可能没法很快让原作主角组们出场了。或许mem还有机会？<br>记忆大成功，基本啥都记得，就当是之前的技能点都完美继承了吧。</p>
-<p>好像听到了呼唤。<br>“加油！”<br>该醒了。<br>亮光，刺眼的朝阳，睁开双眼。<br>做了个好长的梦啊…为了成为有名的偶像，努力地练习，一步步地积累人气，那一天，马上就要到了。明天，就要登上东京巨蛋演出了…好幸福…然后…<br>然后怎么了？记忆…想不起来<br>不对！<br>这不是梦！<br>我是…星野爱。<br>我应该，<strong>已经死了啊</strong></p>
-<p>小爱的惊讶：</p>
-<p><strong>ROLL : 1d100</strong>=d100(21)=<strong>21</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058633.jpeg" alt="img"></p>
-<p>lz看了新一话内心过于激动 已经不知道怎么描述了<br>我发现nga的分隔线在手机端好像不太能显示。还是手动吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058042.jpeg" alt="img"><br>诶，难道是传说中的重生剧情？果然我是女主角嘛！</p>
-<p>稍加思考，小爱就充满自信地接受了这个事实<br>至于是怎么死掉的？完全没印象，就当作是live路上救助小女孩然后堂堂泥头车转生吧！做了好事啊，这么想的话，不是大赚特赚了吗？反正女主角是不会死的啦！</p>
-<p>既然是赚来的人生，这次就自由自在一点吧<br>也不用再做偶像了吧。最高峰，差一步就可以登上了。虽然很可惜，但是”谎言“已经表演的够多了。这一次，还是试一下”真实“的自己吧</p>
-<p>小爱还想继续做偶像吗：(做够了，想尝试下新人生-50，也就是目前不会做啦)</p>
-<p><strong>ROLL : 1d50</strong>=d50(17)=<strong>17</strong></p>
-<p>说起来现在是什么情况，既然没有当偶像的话，还在孤儿院吗？(1-9 还在 10 不太一样的情况)</p>
-<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
-<p>如果在的话，和孤儿院关系好吗？</p>
-<p><strong>ROLL : 1d100</strong>=d100(87)=<strong>87</strong></p>
-<p>生活条件怎么样</p>
-<p><strong>ROLL : 1d100</strong>=d100(4)=<strong>4</strong></p>
-<p>这大失败率是不是不正常啊喂<br>还好因为是重生来的所以只是背景板设定，小爱不用再受苦了(跳关万岁！但是按这个设定的话上辈子过的是有多倒霉啊…)</p>
-<p>从小生活的孤儿院，虽然条件不太好，但是孤儿院老奶奶却对孩子们都很用心照顾。对小爱来说，这里是比那个在两世记忆中都没有留下几个片段的”家庭“要温暖的多的地方了。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058010.jpeg" alt="img"><br>”总比挨那个不知道现在出没出狱的老妈揍强多了嘛！”<br>小爱总是一边笑一边这么说。<br>虽说孤儿院的生活还算温馨，但是物质条件上…<br>大失败：</p>
-<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
-<p>1-3 穷困潦倒，乡下孤儿院资助企业倒闭，已经快要维持不下去了<br>4-6 家徒四壁，夏天漏雨冬天挨冻<br>7-9 吃不饱饭，年长的姐姐都会把饭菜让给长身体的小爱一些<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>吞楼好严重 可能还是得找个备份更新的地方了…让我找找<br>————————————<br>倒闭边缘的孤儿院，很王道系的开局</p>
-<p>真怀念啊，这个地方。躺在熟悉的床上，小爱感受到了久违的温暖和放松<br>上一次，也是为了赚钱，才一个人跑到大城市，走上了偶像之路</p>
-<p>“那就再来一次吧，加油！我可是王道系女主角，换一个路线一定也可以的！”<br>拍了拍自己的脸颊，小爱站起身，走出了“存档点”</p>
-<p>要去哪里呢：(1 先在乡下转转 2 出发，去大城市！)</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>顺便一提，重生清除病弱debuff，现在的小爱，感觉自己无敌青春健康，状态好极了<br>重骰下体质，保底60(健康青春少女)</p>
-<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
-<p>智力因为还是并没有上学所以很遗憾…(教育程度低是萌点！)</p>
-<p>曾经无比憧憬的大城市，也早已失去了光鲜亮丽的滤镜。曾经的超人气偶像，这一世也还只是一个普普通通初中年级的少女而已。</p>
-<p>“真的没人认得自己了啊…不过这地方本来也没人认得什么偶像吧？”<br>走在清晨的小路上，下意识地做出了招牌的微笑，随即，又恍然一愣<br>“不用伪装自己，不用营业的笑容，这样的感觉，也不坏嘛”<br>小爱自嘲地想着<br>“毕竟，我已经不是偶像了嘛”</p>
-<p>“总之，女主角就先来拯救这个家吧！”<br>说是这么说…该做点啥呢？</p>
-<p>小爱的决心：(像家一样的存在+30)</p>
-<p><strong>ROLL : 1d70+30</strong>=d70(32)+30=<strong>62</strong></p>
-<p>小爱思路的正经程度：(越大越正经，越小越脱线)</p>
-<p><strong>ROLL : 1d100</strong>=d100(26)=<strong>26</strong></p>
-<p>————————————<br>新手村任务：第一桶金！为了拯救即将废部的…</p>
-<p>还指望她能想出啥靠谱的主意  只能说符合原作了<br>————————————<br>小爱的主意是：</p>
-<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
-<p>1-2 One piece！去孤儿院附近的山里寻宝！<br>3-4 去钓鱼吧，能不能钓上来宝藏？<br>5-6 研究转运仪式(福生玄黄…)<br>7-8 向路边的猫许愿(只是普通的猫吧！)<br>9 这里可以放个安价吗？尝试一下，中了的话没人就重新骰qwq<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(2)=<strong>2</strong></p>
-<p>ps：发现好像不放图就不那么容易被吞的样子…呜呜呜我的立绘我的小表情 再想想有没有其他办法吧</p>
-<p>“赚钱的话，怎么样比较快呢？没准再睡一觉醒来就成了巨~富有的远亲的继承人，也不是没有可能吧？”<br>小爱一边漫无目的地在街上瞎转，一边胡思乱想着。<br>“诶，这长得奇形怪状的猫哪来的？”<br>是一开始就在吗？一只黑猫呆呆地趴在路边。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280134263.jpeg" alt="img"><br>“这种展开，是魔法少女吗？！“<br>思路总是如此跳跃的，小爱不知怎么想起了闲暇时在小书店偷偷翻看过的魔法少女漫画。<br>”是吧是吧绝对是吧！总之先许愿再说！“<br>可能黑猫也被吓住了吧，竟然没有跑开，怔怔的看着小爱跑过来，蹲下，闪着星光的紫瞳和一对黑瞳大眼瞪小眼<br>”我想要花不完的钱！呃…也别太显眼了。孤儿院也修成豪华别墅！啊还有…”</p>
-<p>发生了什么：</p>
-<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
-<p>1-5 喵？喵？喵？(你在说什么我听不懂因为我只是只普通猫咪)<br>6-9 吓跑了(不给我吃的还冲我吼 喵！)<br>10 真不是平常猫？</p>
-<p>加班（哭） 只能稍微更一点了</p>
-<p><strong>话还没说完，黑猫就一溜烟跑不见了<br>虽然很遗憾，猫只是普通的猫而已。<br>不甘心的小爱朝着消失的方向一顿狂奔，理所当然地一无所获。</strong></p>
-<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/2cfe6338-1d38-48f1-9e64-f0026e0c5535.png" alt="00142-77213927.png" style="zoom:25%;" /></p>
-<p><strong>“什么嘛，果然漫画里都是骗人的”</strong><br>小爱的失望：</p>
-<p><strong>ROLL : 1d100</strong>=d100(14)=<strong>14</strong></p>
-<p><strong>这不是一点也不失望么！你还有点常识啊
-</strong></p>
-<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/1ed14888-c5b3-46e0-902a-f1deb52b4caf.png" alt="00140-1819914487.png" style="zoom:25%;" /></p>
-<p><strong>”事情总不会有这么容易啦…再想想办法吧“<br>一边努力把自己的思维切回正轨，小爱忽然发现</strong></p>
-<p><strong>ROLL : 1d10</strong>=d10(4)=<strong>4</strong></p>
-<p>1-3 跑太远没看路，迷路啦<br>4-6 闯入了电视剧的外景拍摄现场<br>7-9 某个著名偶像团体在开live(为什么会在这种乡下啊喂！)<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-]]></content>
-      <tags>
-        <tag>其他</tag>
       </tags>
   </entry>
   <entry>
@@ -1621,6 +1394,277 @@
 ]]></content>
       <tags>
         <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>不当爱抖露了！星野爱的重启人生</title>
+    <url>/2023/06/28/%E5%AE%89%E7%A7%91/</url>
+    <content><![CDATA[<blockquote>
+<p>同步更新：</p>
+<p>nga：<a href="https://bbs.nga.cn/read.php?tid=36780513">https://bbs.nga.cn/read.php?tid=36780513</a></p>
+<p>泥潭吞楼太厉害，搞个备份</p>
+</blockquote>
+<p><strong>想要与你相见，此愿我已寄托于星。</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280035446.png" alt="00023-397873791"></p>
+<span id="more"></span>
+<p>大家好~这里是个萌新，纯种的。创作经验莫得，文笔渣，中二病，逻辑乱，ooc，情商低，社畜苦，更新咕…<br>大纲无，存稿无，nga现骰现编中…打下这些字的时候正文真的一点都还没有写…<br>提前说声抱歉对不住读者老爷们的期待如果有读者的话，轻喷啦<br>如果还愿意看下去的话(真的有吗？)</p>
+<p>大概是纯自嗨吧，看了推子第一集之后就一直意难平，如果有另一条世界线该多好，如果那个世界可以再温柔一点该多好。在看了最新话的兄妹相认大药之后冲动再也抑制不住了——</p>
+<p><strong>我要给星野爱完整的一生！</strong></p>
+<p>于是基本就是这样，想要写一个另一条路线的星野爱充满未知的新生活，大体上应该是一个轻松快乐的故事吧 严谨的故事lz这种萌新也写不来啊，没那个能力知道嘛 ，来到各种各样的地方，结识形形色色的人，参与各种各样新奇有趣的冒险什么的~</p>
+<p>也会选择一个温柔的世界观，并且加足够强力的保底机制防止爱小姐的这次人生也变得惨兮兮的 lz向来是过保护的he大团圆爱好者啦</p>
+<p>预计会很混沌，太严肃的内容无，可能会有漫无边际的乱入和梗选项什么的，希望能足够有趣和快乐就好了呢。<br>也欢迎各种各样乱七八糟的安价啦如果真的有人安价的话</p>
+<p>因为是纯纯的萌新搞不明白怎么设计战斗系统也绝对写不好战斗，太难了啦！所以大概不会做战斗系统吧…目前吧？看我学习的成果啦，没准啥时候就觉得自己突然行了什么的</p>
+<p>再一次，愿爱小姐能拥有闪耀而快乐的人生！那么开始投下。</p>
+<p>如果看不到下面就是lz被抓去上班了/神鹤吞了/憋不出来卡文了 大变申</p>
+<p>骰娘啊骰娘 会有观众老爷赏脸嘛？</p>
+<p><strong>ROLL : 1d100</strong>=d100(93)=<strong>93</strong></p>
+<blockquote>
+<p>碎碎念 …</p>
+<p>果然都会有的吧，那种突然涌起的想要写点什么东西的冲动，越想越兴奋越想越兴奋，看的多了创作欲就会不受控的冒出来…然后真的想做的时候发现 寄了 我怎么这么菜写不出来啊卡壳啊这写的都是些啥啊 </p>
+<p>但是为什么还要作死呢。说到底还是冲动吧，想要做什么的冲动是挡不住的，明知道自己不行，明知道会失败，也想要马上去做的悸动吧。不停的踌躇害怕但是最后，还是输给了自己的欲望，不去做的话，热情冷下来的时候，就会后悔，又错过了尝试一件事的勇气，那时候没有尝试的话，以后可能就永远也不会去做了吧。</p>
+<p>了解安科的时间也不长，入坑作和很多人一样都是敬爱的王子海皇，虽然是看了王子新作小说后回去补的烈幻入真的是纯纯萌新中的萌新了。<br>第一次看就被这种 不可预测的命运的舞台 深深的吸引了<br>感觉会很快乐的样子呢！那就尝试一下吧！不试试去做会后悔的吧！失败了也没什么大不了的嘛！ 嗯 反正失败的尝试已经够多啦</p>
+</blockquote>
+<p>在下午上班之前，先按照惯例车个卡吧 虽然好像没多大用的样子，就当是第一次的仪式感吧</p>
+<p><strong>星野爱</strong><br>力量：</p>
+<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
+<p>擅长唱跳，身体能力不错的样子<br>体质：</p>
+<p><strong>ROLL : 1d100</strong>=d100(8)=<strong>8</strong></p>
+<p>差点大失败…体力不差，但是体质低，是有什么罕见的疾病吗？燃烧生命在当偶像吗喂<br>智力：</p>
+<p><strong>ROLL : 1d70</strong>=d70(15)=<strong>15</strong></p>
+<p>(没上过学 -30)<br>爱…我的丈育…有一种纯真的美 不是 符合原作的知识水平!<br>魅力：</p>
+<p><strong>ROLL : 1d100+50</strong>=d100(58)+50=<strong>108</strong></p>
+<p>(天才般的爱抖露sama +50，可突破上限)<br>总算有个不拉的了<strong>这不是全靠加值么</strong><br>意志：</p>
+<p><strong>ROLL : 1d100</strong>=d100(43)=<strong>43</strong></p>
+<p>普普通通平凡人的感觉<br>幸运：</p>
+<p><strong>ROLL : 1d100</strong>=d100(69)=<strong>69</strong></p>
+<p>普通的好运，大概能捡到零钱或者靠直觉避开雨天的程度吧，但是敌不过命运的恶意<br>魔力：0[未解锁]<br>这个世界，有魔法吗？</p>
+<p>lz要去上班了，下班后再见 上班摸鱼构思ing</p>
+<p>晚饭小更一下…没有大失败真好啊，真好啊，好啊，啊 但是这出目<br>怎么感觉会命途多舛啊</p>
+<p>下班啦 继续</p>
+<p>先来骰一下为啥这么惨体质只有8<br>是身体疾病吗</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>(是/否)</p>
+<p>燃烧生命歌唱的病弱少女，我哭死<br>那么是什么病呢</p>
+<p><strong>ROLL : 1d10</strong>=d10(5)=<strong>5</strong></p>
+<p>1-2 和莎莉奈同样的病症<br>3-4 营养不良(什么屑孤儿院)<br>5-6 严重贫血<br>7-8 遗传性心脏病(咚 咚 咚)<br>9 其实是装病(怎么都是屑啊)<br>10 大成功/大失败(<strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>)</p>
+<p>骰娘好温柔 选中了平和的选项<br>区区贫血而已，就用天才偶像大人高达43的意志力克服过去口牙<br>贫血的严重程度(越大越严重 0:多 吃 红 枣 100:临 界 血 限)</p>
+<p><strong>ROLL : 1d100</strong>=d100(99)=<strong>99</strong></p>
+<p>草草草<br>人生第一个大成功为什么会出现在这种地方啊<br>现在就是很后悔 非常后悔</p>
+<p><strong>“不要手贱去丢感觉没什么所谓的骰子”</strong>——必可活用于下一次</p>
+<p>让我冷静下想想该怎么圆…</p>
+<p>明明只是想找下手感象征性的车下卡满足下中二的仪式感啊喂，为什么会变成这样呢…说好的重生呢</p>
+<p>病情 大 成 功<br><strong>危</strong><br>也就是星野爱大失败<br>已经不是一般的贫血了，稍微运动过量可能就会缺氧倒地了吧。</p>
+<p>带着如此的身体，却还在偶像的舞台上闪闪发光，已经是毫无疑问的在燃烧生命了吧。<br>忘我的燃烧，一瞬的闪耀，双瞳中的光芒，如夜空中的长庚星一样点亮了无数人的梦想<br>”一等星寄于你身”，名副其实的，天才般的偶像大人<br>也难怪露比和阿库亚会无可救药的被吸引吧</p>
+<p>大失败是什么：</p>
+<p><strong>ROLL : 1d10</strong>=d10(1)=<strong>1</strong></p>
+<p>1-2 某次live过度劳累重病后被神木光趁虚而入(接 回 原 作)<br>3-4 粉丝线下开门杀时由于惊吓贫血发作而亡(世界线的收束)<br>5-6 其实神木光是活在现代的吸血鬼？<br>7-8 星野爱超人的魅力是血继限界，但代价是贫血<br>9 其实星野爱是超级混血种，血统浓度太高不稳定，表现为贫血(为啥啊)<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>PS：因为主题是重生，所以星野爱的死是已经发生了的事件。但是具体的情况可能会和原作有些微妙的不同？ 本来不想不同的但是骰娘果然是自由的啊…</p>
+<p>感谢版主 总算放出来了<br>人类的本质就是手贱<br>lz为什么又要手贱去改主楼然后被神鹤关了小黑屋</p>
+<p>后一半的梗选项没中，所以还是稳健的原作展开，唐突的大失败只是给小爱惨兮兮的一生又增加了一个注解…大概</p>
+<p>让我们回到主线吧</p>
+<p>小爱打了那个改变命运的电话吗</p>
+<p><strong>ROLL : 1d10</strong>=d10(9)=<strong>9</strong></p>
+<p>1-9 打了(原作展开)<br>10 没打(微妙的剧情变化)</p>
+<p>来个骰娘小爱。愿小爱的新人生也能拥有骰娘的祝福<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057284.jpeg" alt="img"></p>
+<p>一念之差，终归，还是没有逃得开命运<br>在按下通话键之前，在想些什么呢？或许是直觉，或许是超出常人的幸运，或许是不甘于既定的结局，犹豫着，手指微微颤抖。<br>最终，还是按下了恶魔的门铃。<br>给孩子们一个惊喜吧？带着点恶作剧的想着，离开了一人间的电话亭。</p>
+<p>于是那盛大的绽放和渺小的心愿都轰然崩塌。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057095.jpeg" alt="img"><br>“我爱你们。”<br>“这句话…绝对，不是谎言。”</p>
+<p>说出来了啊。太好了。然后…<br>孩子撕心裂肺的哭喊声似乎逐渐模糊了。视野越来越暗。<br>天黑了吗<br>好多星星。大城市里，也能看到星空吗？<br>好亮，最亮的那一颗，是叫什么…<br>可以许愿吗？<br>好想要，“爱”啊。</p>
+<p>意识，中断了。</p>
+<p>“爱！” “爱！” “爱！！！”<br>……“都是，我的错”</p>
+<p>爱的苏醒(75以上醒来)</p>
+<p><strong>ROLL : 1d100</strong>=d100(2)=<strong>2</strong></p>
+<p>唐 突 大 失 败<br>但是死都死了…放过孩子吧，已经够惨的了，只是想多睡一会有什么错 bushi</p>
+<p>？？？的闹别扭(别扭：小爱你倒是争点气啊&lt;——&gt;温柔：已经很累了，多休息下吧)</p>
+<p><strong>ROLL : d100</strong>=d100(52)=<strong>52</strong></p>
+<p>星野爱的苏醒(75以上醒来，？？？的祝福+25)</p>
+<p><strong>ROLL : d100</strong>=d100(48)=<strong>48</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057885.jpeg" alt="img"></p>
+<p>上一楼忘了写加值了<br>1d100(48)+25=73<br>怎么又在关键时刻差一点拉跨啊</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057168.jpeg" alt="img"><br>？？？(随机立绘)：辛苦啦，真是个粪游戏呀，人生的一周目。受苦了呢，小爱，但是，要全成就通关的吧，二周目？加油！</p>
+<p>星野爱的苏醒(75以上醒来，？？？的祝福+50)</p>
+<p><strong>ROLL : d100+50</strong>=d100(93)+50=<strong>143</strong></p>
+<p>看来鼓励很有效嘛。星野爱，堂堂复活！</p>
+<p>先骰一下状态。<br>二周目小爱醒来时多大了：</p>
+<p><strong>ROLL : 1d6+10</strong>=d6(5)+10=<strong>15</strong></p>
+<p>(？？？：跳关是二周目的一环！孤儿院太受苦了别再折磨孩子了)</p>
+<p>现在的剧情时间点是：(越小越接近被小爱被刺杀时，越大越接近推子原作进度的时间)</p>
+<p><strong>ROLL : 1d100</strong>=d100(3)=<strong>3</strong></p>
+<p>小爱的记忆：(0：我是谁，我在哪？ 100：仿佛从前世的梦中醒来)<br><strong>？？？的祝福：那些痛苦，已经过去了(遗忘痛苦的回忆，不会踏上一周目路线)</strong></p>
+<p><strong>ROLL : 1d100</strong>=d100(95)=<strong>95</strong></p>
+<p>PS：想了想，还是让不要让过去的回忆啊复仇啊神木光什么的再掺和进来了，大赤老师都写不明白我瞎整干啥啊，说好的要给小爱一个开心快乐的故事啊。</p>
+<p>大失败接大成功，骰娘，令人敬畏<br>剧情时间是被刺前后，也就是小爱20岁，阿夸露比才4岁，有点遗憾可能没法很快让原作主角组们出场了。或许mem还有机会？<br>记忆大成功，基本啥都记得，就当是之前的技能点都完美继承了吧。</p>
+<p>好像听到了呼唤。<br>“加油！”<br>该醒了。<br>亮光，刺眼的朝阳，睁开双眼。<br>做了个好长的梦啊…为了成为有名的偶像，努力地练习，一步步地积累人气，那一天，马上就要到了。明天，就要登上东京巨蛋演出了…好幸福…然后…<br>然后怎么了？记忆…想不起来<br>不对！<br>这不是梦！<br>我是…星野爱。<br>我应该，<strong>已经死了啊</strong></p>
+<p>小爱的惊讶：</p>
+<p><strong>ROLL : 1d100</strong>=d100(21)=<strong>21</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058633.jpeg" alt="img"></p>
+<p>lz看了新一话内心过于激动 已经不知道怎么描述了<br>我发现nga的分隔线在手机端好像不太能显示。还是手动吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058042.jpeg" alt="img"><br>诶，难道是传说中的重生剧情？果然我是女主角嘛！</p>
+<p>稍加思考，小爱就充满自信地接受了这个事实<br>至于是怎么死掉的？完全没印象，就当作是live路上救助小女孩然后堂堂泥头车转生吧！做了好事啊，这么想的话，不是大赚特赚了吗？反正女主角是不会死的啦！</p>
+<p>既然是赚来的人生，这次就自由自在一点吧<br>也不用再做偶像了吧。最高峰，差一步就可以登上了。虽然很可惜，但是”谎言“已经表演的够多了。这一次，还是试一下”真实“的自己吧</p>
+<p>小爱还想继续做偶像吗：(做够了，想尝试下新人生-50，也就是目前不会做啦)</p>
+<p><strong>ROLL : 1d50</strong>=d50(17)=<strong>17</strong></p>
+<p>说起来现在是什么情况，既然没有当偶像的话，还在孤儿院吗？(1-9 还在 10 不太一样的情况)</p>
+<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
+<p>如果在的话，和孤儿院关系好吗？</p>
+<p><strong>ROLL : 1d100</strong>=d100(87)=<strong>87</strong></p>
+<p>生活条件怎么样</p>
+<p><strong>ROLL : 1d100</strong>=d100(4)=<strong>4</strong></p>
+<p>这大失败率是不是不正常啊喂<br>还好因为是重生来的所以只是背景板设定，小爱不用再受苦了(跳关万岁！但是按这个设定的话上辈子过的是有多倒霉啊…)</p>
+<p>从小生活的孤儿院，虽然条件不太好，但是孤儿院老奶奶却对孩子们都很用心照顾。对小爱来说，这里是比那个在两世记忆中都没有留下几个片段的”家庭“要温暖的多的地方了。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058010.jpeg" alt="img"><br>”总比挨那个不知道现在出没出狱的老妈揍强多了嘛！”<br>小爱总是一边笑一边这么说。<br>虽说孤儿院的生活还算温馨，但是物质条件上…<br>大失败：</p>
+<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
+<p>1-3 穷困潦倒，乡下孤儿院资助企业倒闭，已经快要维持不下去了<br>4-6 家徒四壁，夏天漏雨冬天挨冻<br>7-9 吃不饱饭，年长的姐姐都会把饭菜让给长身体的小爱一些<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>吞楼好严重 可能还是得找个备份更新的地方了…让我找找<br>————————————<br>倒闭边缘的孤儿院，很王道系的开局</p>
+<p>真怀念啊，这个地方。躺在熟悉的床上，小爱感受到了久违的温暖和放松<br>上一次，也是为了赚钱，才一个人跑到大城市，走上了偶像之路</p>
+<p>“那就再来一次吧，加油！我可是王道系女主角，换一个路线一定也可以的！”<br>拍了拍自己的脸颊，小爱站起身，走出了“存档点”</p>
+<p>要去哪里呢：(1 先在乡下转转 2 出发，去大城市！)</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>顺便一提，重生清除病弱debuff，现在的小爱，感觉自己无敌青春健康，状态好极了<br>重骰下体质，保底60(健康青春少女)</p>
+<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
+<p>智力因为还是并没有上学所以很遗憾…(教育程度低是萌点！)</p>
+<p>曾经无比憧憬的大城市，也早已失去了光鲜亮丽的滤镜。曾经的超人气偶像，这一世也还只是一个普普通通初中年级的少女而已。</p>
+<p>“真的没人认得自己了啊…不过这地方本来也没人认得什么偶像吧？”<br>走在清晨的小路上，下意识地做出了招牌的微笑，随即，又恍然一愣<br>“不用伪装自己，不用营业的笑容，这样的感觉，也不坏嘛”<br>小爱自嘲地想着<br>“毕竟，我已经不是偶像了嘛”</p>
+<p>“总之，女主角就先来拯救这个家吧！”<br>说是这么说…该做点啥呢？</p>
+<p>小爱的决心：(像家一样的存在+30)</p>
+<p><strong>ROLL : 1d70+30</strong>=d70(32)+30=<strong>62</strong></p>
+<p>小爱思路的正经程度：(越大越正经，越小越脱线)</p>
+<p><strong>ROLL : 1d100</strong>=d100(26)=<strong>26</strong></p>
+<p>————————————<br>新手村任务：第一桶金！为了拯救即将废部的…</p>
+<p>还指望她能想出啥靠谱的主意  只能说符合原作了<br>————————————<br>小爱的主意是：</p>
+<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
+<p>1-2 One piece！去孤儿院附近的山里寻宝！<br>3-4 去钓鱼吧，能不能钓上来宝藏？<br>5-6 研究转运仪式(福生玄黄…)<br>7-8 向路边的猫许愿(只是普通的猫吧！)<br>9 这里可以放个安价吗？尝试一下，中了的话没人就重新骰qwq<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(2)=<strong>2</strong></p>
+<p>ps：发现好像不放图就不那么容易被吞的样子…呜呜呜我的立绘我的小表情 再想想有没有其他办法吧</p>
+<p>“赚钱的话，怎么样比较快呢？没准再睡一觉醒来就成了巨~富有的远亲的继承人，也不是没有可能吧？”<br>小爱一边漫无目的地在街上瞎转，一边胡思乱想着。<br>“诶，这长得奇形怪状的猫哪来的？”<br>是一开始就在吗？一只黑猫呆呆地趴在路边。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280134263.jpeg" alt="img"><br>“这种展开，是魔法少女吗？！“<br>思路总是如此跳跃的，小爱不知怎么想起了闲暇时在小书店偷偷翻看过的魔法少女漫画。<br>”是吧是吧绝对是吧！总之先许愿再说！“<br>可能黑猫也被吓住了吧，竟然没有跑开，怔怔的看着小爱跑过来，蹲下，闪着星光的紫瞳和一对黑瞳大眼瞪小眼<br>”我想要花不完的钱！呃…也别太显眼了。孤儿院也修成豪华别墅！啊还有…”</p>
+<p>发生了什么：</p>
+<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
+<p>1-5 喵？喵？喵？(你在说什么我听不懂因为我只是只普通猫咪)<br>6-9 吓跑了(不给我吃的还冲我吼 喵！)<br>10 真不是平常猫？</p>
+<p>加班（哭） 只能稍微更一点了</p>
+<p><strong>话还没说完，黑猫就一溜烟跑不见了<br>虽然很遗憾，猫只是普通的猫而已。<br>不甘心的小爱朝着消失的方向一顿狂奔，理所当然地一无所获。</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/2cfe6338-1d38-48f1-9e64-f0026e0c5535.png" alt="00142-77213927.png" style="zoom:25%;" /></p>
+<p><strong>“什么嘛，果然漫画里都是骗人的”</strong><br>小爱的失望：</p>
+<p><strong>ROLL : 1d100</strong>=d100(14)=<strong>14</strong></p>
+<p><strong>这不是一点也不失望么！你还有点常识啊
+</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/1ed14888-c5b3-46e0-902a-f1deb52b4caf.png" alt="00140-1819914487.png" style="zoom:25%;" /></p>
+<p><strong>”事情总不会有这么容易啦…再想想办法吧“<br>一边努力把自己的思维切回正轨，小爱忽然发现</strong></p>
+<p><strong>ROLL : 1d10</strong>=d10(4)=<strong>4</strong></p>
+<p>1-3 跑太远没看路，迷路啦<br>4-6 闯入了电视剧的外景拍摄现场<br>7-9 某个著名偶像团体在开live(为什么会在这种乡下啊喂！)<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+]]></content>
+      <tags>
+        <tag>其他</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>配置VSCode的Clangd语言服务支持STM32开发</title>
+    <url>/2025/03/17/%E9%85%8D%E7%BD%AEVSCode%E7%9A%84Clangd%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%94%AF%E6%8C%81STM32%E5%BC%80%E5%8F%91/</url>
+    <content><![CDATA[<p>众所周知STM32开发一般使用Keil或者CubeIDE来管理工程和编译，但是这俩玩意的编辑器都不太现代化，用起来不太爽，所以也有很多人用VSCode来编写代码，只使用IDE来进行编译和调试（当然也有使用VSCode+全套开源工具链打包进行编写+编译+调试的，但是在win下实现起来尤为的不方便以前尝试过这里先按下不表）</p>
+<p>然而vsc虽然很好用，但是他默认的C/C++插件功能就很难说是强大了，自动补全和语法检查经常傻傻的。一直也就这么凑合着用下来，今天一不小心给vsc的补全又玩炸了，调配置的时候突然想起这事，于是去搜了一下，说vsc其实是可以支持强大的clangd语言服务的…</p>
+<p>谁想到这就是坠入大坑的开始…</p>
+<span id="more"></span>
+<p>懒得多介绍了，网上一堆，简单说clangd应该是通用的最强大的C/C++语言服务（有没有之一？）</p>
+<p>性能和特性都比vsc默认的微软工具强很多</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172321392.png" alt="image-20250317232135358"></p>
+<p>安装clangd其实很简单，在拓展商店里直接装就行了，他还会提醒你本地没有语言服务，选择自动安装就可以给你配好了，没啥难度</p>
+<p>然后按照网上的教程配置clangd的特性</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172328540.png" alt="image-20250317232844513"></p>
+<p>打开vsc的配置json</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;C_Cpp.errorSquiggles&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngineFallback&quot;: &quot;Disabled&quot;,</span><br><span class="line">&quot;C_Cpp.intelliSenseEngine&quot;: &quot;disabled&quot;,</span><br><span class="line">&quot;C_Cpp.autocomplete&quot;: &quot;disabled&quot;, // So you don&#x27;t get autocomplete from both extensions.</span><br></pre></td></tr></table></figure>
+<p>这些代码用来禁用原来的拓展的语言服务，防止冲突。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172330675.png" alt="image-20250317233034654"></p>
+<p>clangd路径已经被自动配置好了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&quot;clangd.arguments&quot;: [</span><br><span class="line">// 让 Clangd 生成更详细的日志</span><br><span class="line">&quot;--log=verbose&quot;,</span><br><span class="line">// 输出的 JSON 文件更美观</span><br><span class="line">&quot;--pretty&quot;,</span><br><span class="line">// 全局补全(输入时弹出的建议将会提供 CMakeLists.txt 里配置的所有文件中可能的符号，会自动补充头文件)</span><br><span class="line">&quot;--all-scopes-completion&quot;,</span><br><span class="line">// 建议风格：打包(重载函数只会给出一个建议）</span><br><span class="line">// 相反可以设置为detailed</span><br><span class="line">&quot;--completion-style=bundled&quot;,</span><br><span class="line">// 跨文件重命名变量</span><br><span class="line">&quot;--cross-file-rename&quot;,</span><br><span class="line">// 允许补充头文件</span><br><span class="line">&quot;--header-insertion=iwyu&quot;,</span><br><span class="line">// 输入建议中，已包含头文件的项与还未包含头文件的项会以圆点加以区分</span><br><span class="line">&quot;--header-insertion-decorators&quot;,</span><br><span class="line">// 在后台自动分析文件(基于 complie_commands，我们用CMake生成)</span><br><span class="line">&quot;--background-index&quot;,</span><br><span class="line">// 启用 Clang-Tidy 以提供「静态检查」</span><br><span class="line">&quot;--clang-tidy&quot;,</span><br><span class="line">// Clang-Tidy 静态检查的参数，指出按照哪些规则进行静态检查，详情见「与按照官方文档配置好的 VSCode 相比拥有的优势」</span><br><span class="line">// 参数后部分的*表示通配符</span><br><span class="line">// 在参数前加入-，如-modernize-use-trailing-return-type，将会禁用某一规则</span><br><span class="line">&quot;--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*&quot;,</span><br><span class="line">// 默认格式化风格: 谷歌开源项目代码指南</span><br><span class="line">// &quot;--fallback-style=file&quot;,</span><br><span class="line">// 同时开启的任务数量</span><br><span class="line">&quot;-j=2&quot;,</span><br><span class="line">// pch优化的位置(memory 或 disk，选择memory会增加内存开销，但会提升性能) 推荐在板子上使用disk</span><br><span class="line">&quot;--pch-storage=memory&quot;,</span><br><span class="line">// 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末</span><br><span class="line">// 我选择禁用</span><br><span class="line">&quot;--function-arg-placeholders=false&quot;,</span><br><span class="line">// compelie_commands.json 文件的目录位置(相对于工作区，由于 CMake 生成的该文件默认在 build 文件夹中，故设置为 build)</span><br><span class="line">&quot;--compile-commands-dir=build&quot;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>加入这一坨clangd的特性配置</p>
+<p>好了，搞定，看起来不难是吧…</p>
+<p>但是你用这个配置打开一个工程目录…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172344994.png" alt="image-20250317234441904"></p>
+<p>满眼一片红啊，啥都认不出来</p>
+<p>原因也很简单，就是clangd没法正确检索工程的库文件。</p>
+<p>vsc默认的C插件也有这个问题，所以一般会让你改成tag praser，然后就好了（</p>
+<p>但是在clangd这里，坑就深了…</p>
+<p>真正的折磨才刚刚开始</p>
+<p>查阅资料发现，这玩意必须依赖一个叫做compile_commands.json的文件，里面记录了工程的目录结构，引用的库文件等，clangd依赖他来提供语言服务</p>
+<p>这玩意咋生成呢？如果你的项目用的是cmake，那一切都很美好，</p>
+<p><code>cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1</code></p>
+<p>用这句就行了</p>
+<p>然而很显然不管是keil还是cubeide用的都不是cmake（哭</p>
+<p>keil是自己的编译器和管理方式，cubeide用的是make和makefile</p>
+<p>那么这里有两个办法</p>
+<h2 id="如果你用的是keil"><a href="#如果你用的是keil" class="headerlink" title="如果你用的是keil"></a>如果你用的是keil</h2><p>装一坨叫做arm keil studio pack的玩意</p>
+<p>里面提供了一个插件可以直接导入keil的uvprojx文件，然后自动生成clangd所需的compile_commands.json文件</p>
+<p>其实因为keil设计的这套方案本来就是配合的clangd语言服务嘛，自然给你都解决好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172350650.png" alt="image-20250317235020611"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172355766.png" alt="image-20250317235556732"></p>
+<p>看起来一切都很美好，没毛病，除了这坨插件有点臃肿之外</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503172358312.png" alt="image-20250317235820190"></p>
+<h2 id="但是如果你用的是CubeIDE…"><a href="#但是如果你用的是CubeIDE…" class="headerlink" title="但是如果你用的是CubeIDE…"></a>但是如果你用的是CubeIDE…</h2><p>首先，我们需要从makefile手动生成compile_commands.json</p>
+<p>搜到有一个工具，叫做bear，可以通过make来生成compile_commands.json</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180005004.png" alt="image-20250318000509964"></p>
+<p>但是很遗憾，这玩意只支持linux版本（</p>
+<p>本来打算放弃了，但是又发现这玩意有个windows的替代品（from clangd官网）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006545.png" alt="image-20250318000613523"></p>
+<p>那么我们安装这个玩意</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180006519.png" alt="image-20250318000630479"></p>
+<p>在makefile的路径下面试一试</p>
+<p><code>python -m compiledb make all</code></p>
+<p>很遗憾呢，Windows下面没有make…CubeIDE自己的make和gcc啥的是封在他的安装路径里面的，外面也调用不到</p>
+<p>那么我们装一个make（此处过程省略，总之不管你用mingw还是Chocolatey还是啥…反正确保make命令是可用的就行了</p>
+<p>然后再试一下…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017040.png" alt="image-20250318001737010"></p>
+<p>似乎成功了是吧，然后也生成了对应的compile_commands.json文件</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180017939.png" alt="image-20250318001758910"></p>
+<p>当然，我们可以把命令改成</p>
+<p><code>python -m compiledb -n make all</code></p>
+<p>不执行实际的make动作，只进行配置文件输出，防止影响工程实际代码（毕竟你的path里不一定有正确的gcc，鬼知道编译出什么玩意来）</p>
+<p>然后把compile_commands.json这玩意放到工程的根目录下面，用vsc打开…</p>
+<p>大功告成了…吗？</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180022868.png" alt="image-20250318002223851"></p>
+<p>事情往往没那么简单。。还是有报错。。</p>
+<p>只能继续搜索，问google，问大d老师</p>
+<p>看起来是因为cubeide的gcc使用了一个自定义的编译参数，clangd并不认识这玩意…</p>
+<p>解决方法嘛</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180024351.png" alt="image-20250318002439292"></p>
+<p>手动修改compile_commands.json文件，把”-fcyclomatic-complexity”,都替换成空行</p>
+<p>然后重新打开</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180027654.png" alt="image-20250318002716568"></p>
+<p>好吧…终于，你成功了=-=</p>
+<p>但是 我不知道 这一切值得吗…</p>
+<h2 id="结"><a href="#结" class="headerlink" title="结"></a>结</h2><p>最终，我删掉了clangd，删掉了上面的那一大坨东西，重新把配置改回了C/C++插件…</p>
+<p>可能唯一的意义就是，确实熟悉了一坨编译方法和Windows下配置环境的过程吧</p>
+<p>谁知道呢</p>
+<p>姑且放在这里吧，或者如果真的有人对这些闲的蛋疼的鼓捣有兴趣的话，可以来看看</p>
+<p>以及，发现了一个项目可以自动把cubeide转成clangd的支持</p>
+<p><a href="https://github.com/alex-schulster/stm_lsp_nvim">https://github.com/alex-schulster/stm_lsp_nvim</a></p>
+<p>很不错，满足了我的一切想象，但是…这玩意依然只支持linux（摔</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503180030564.png" alt="image-20250318003024543"></p>
+]]></content>
+      <tags>
+        <tag>软件,嵌入式</tag>
       </tags>
   </entry>
 </search>
