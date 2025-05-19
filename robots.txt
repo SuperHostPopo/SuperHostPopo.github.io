@@ -13,5 +13,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: https://blog.superhostpopo.cn/sitemap.xml
-Sitemap: https://blog.superhostpopo.cn/baidusitemap.xml
+Sitemap: https://www.superhostpopo.cn/sitemap.xml
+Sitemap: https://www.superhostpopo.cn/baidusitemap.xml

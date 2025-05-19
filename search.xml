@@ -1,164 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>AT32开发踩坑记录</title>
-    <url>/2025/05/06/AT32%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>众所周知的原因，最近芯片有点涨价（st你又不是美国公司你涨啥 摔）</p>
-<p>让我们强烈谴责js趁乱投机倒把的行为</p>
-<p>于是就顺手尝试一下国产mcu咯 </p>
-<p>at32这玩意，小产品上用的挺多，看了下主流型号价格不贵内存flash给的挺舍得的，外设也不错</p>
-<p>于是搞了个核心板来品一下他的库到底有多少屎…</p>
-<span id="more"></span>
-<p>芯片的型号是AT32F403ACGT7</p>
-<p>这玩意好像就几块钱，M4内核，240M主频，1024K flash 200多k ram，挺厉害</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060313322.png" alt="image-20250506031323264"></p>
-<h2 id="工作流"><a href="#工作流" class="headerlink" title="工作流"></a>工作流</h2><p>大致看了下，这玩意sdk支持Keil，IAR还有他们自己做的AT32 IDE（应该是类似Cube IDE的Eclipse魔改类似物）</p>
-<p>从简单的角度就直接用keil了</p>
-<p>看下官方提供的资源<a href="https://www.arterytek.com/cn/product/AT32F403A.jsp#Resource">https://www.arterytek.com/cn/product/AT32F403A.jsp#Resource</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060317722.png" alt="image-20250506031757670"></p>
-<p>当然先下载个固件库，看看里面有啥例程，然后下载下keil5的支持包，安装一下</p>
-<p>jlink识别包我这里没用到先不装</p>
-<p>他竟然也有个类似于cube mx的图形化配置器，不错哦</p>
-<p>直接找个例程看看</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060324084.png" alt="image-20250506032411062"></p>
-<p>工程都是现成的，很好</p>
-<p>用keil打开尝试了一下，ok可以编译没问题，算是成功一半了（</p>
-<p>在官网的技术支持里有很多ap note可以看，比如入门指南：</p>
-<p><a href="https://www.arterytek.com/download/APNOTE/AN0023_AT32F403A_407_Get_started_guide_V2.0.5_ZH.pdf">https://www.arterytek.com/download/APNOTE/AN0023_AT32F403A_407_Get_started_guide_V2.0.5_ZH.pdf</a></p>
-<p>算是写的挺详细的了</p>
-<p>其实似乎也没啥需要多说的</p>
-<p>后面的使用基本上都是用他的配置器直接生成的工程，用起来和cube差不多吧，虽然简陋一点，姑且功能是ok的，所以这些例程基本上是参考代码作用了，也不需要手动按照这些例程去配置工程和系统初始化啥的，算是方便很多</p>
-<p>基本上就和用Cube一样配好外设，时钟树，生成工程，写用户代码编译下载就行。</p>
-<p>得说开发起来有配置器哪怕再简陋也方便太多了啊（主要是不用配该死的keil工程和include了。。。）</p>
-<h2 id="关于调试器"><a href="#关于调试器" class="headerlink" title="关于调试器"></a>关于调试器</h2><p>官方说是需要用他们的at link（其实看起来就是个改了个名字的dap link，在keil设置里就选dap link就可以了）</p>
-<p>我这里实际试了下，用dap-link v2和stlink v2（淘宝最便宜的十块钱调试器）都是可以在keil正常识别和下载的，keil的调试也可以用</p>
-<p>至于官方的下载工具，我没有去尝试，有兴趣的可以试一下</p>
-<h2 id="关于库"><a href="#关于库" class="headerlink" title="关于库"></a>关于库</h2><p>官方例程里有些调用就挺抽象的。。比如io的例程里</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060330321.png" alt="image-20250506033055298"></p>
-<p>不是，我说咱们IO操作库呢？就这么用寄存器怼啊？</p>
-<p>但是实际上…官方是提供了库函数的</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060333927.png" alt="image-20250506033324889"></p>
-<p>固件库的文档里也有写明白</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060334415.png" alt="image-20250506033440390"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060334504.png" alt="image-20250506033431468"></p>
-<p>所以…what can i say呢？</p>
-<h2 id="关于串口printf"><a href="#关于串口printf" class="headerlink" title="关于串口printf"></a>关于串口printf</h2><p>官方的ap note里有个串口printf的移植文档</p>
-<p>但是！<strong>不要看那个</strong></p>
-<p>用不了，那文档2021年的，一直没更新，里面写的方法根本没法用（</p>
-<p>what can i say</p>
-<p>最后去例程里抄了一个，能用了</p>
-<p>手动在main的user code里加下面这段就行</p>
-<p>建议开micro lib（虽然他说可以不用开…但是实际上我试了下不开也不会省空间的…）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* support printf function, usemicrolib is unnecessary */</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (__ARMCC_VERSION &gt; 6000000)</span></span><br><span class="line">  __asm (<span class="string">&quot;.global __use_no_semihosting\n\t&quot;</span>);</span><br><span class="line">  <span class="type">void</span> _sys_exit(<span class="type">int</span> x)</span><br><span class="line">  &#123;</span><br><span class="line">    x = x;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* __use_no_semihosting was requested, but _ttywrch was */</span></span><br><span class="line">  <span class="type">void</span> _ttywrch(<span class="type">int</span> ch)</span><br><span class="line">  &#123;</span><br><span class="line">    ch = ch;</span><br><span class="line">  &#125;</span><br><span class="line">  FILE __stdout;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">ifdef</span> __CC_ARM</span></span><br><span class="line">  <span class="meta">#<span class="keyword">pragma</span> import(__use_no_semihosting)</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">FILE</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="type">int</span> handle;</span><br><span class="line">  &#125;;</span><br><span class="line">  FILE __stdout;</span><br><span class="line">  <span class="type">void</span> _sys_exit(<span class="type">int</span> x)</span><br><span class="line">  &#123;</span><br><span class="line">    x = x;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* __use_no_semihosting was requested, but _ttywrch was */</span></span><br><span class="line">  <span class="type">void</span> _ttywrch(<span class="type">int</span> ch)</span><br><span class="line">  &#123;</span><br><span class="line">    ch = ch;</span><br><span class="line">  &#125;</span><br><span class="line"> <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined (__GNUC__) &amp;&amp; !defined (__clang__)</span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> PUTCHAR_PROTOTYPE int __io_putchar(int ch)</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @brief  retargets the c library printf function to the usart.</span></span><br><span class="line"><span class="comment">  * @param  none</span></span><br><span class="line"><span class="comment">  * @retval none</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">PUTCHAR_PROTOTYPE</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDBE_FLAG) == RESET);</span><br><span class="line">  usart_data_transmit(USART1, (<span class="type">uint16_t</span>)ch);</span><br><span class="line">  <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDC_FLAG) == RESET);</span><br><span class="line">  <span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (defined (__GNUC__) &amp;&amp; !defined (__clang__)) || (defined (__ICCARM__))</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined (__GNUC__) &amp;&amp; !defined (__clang__)</span></span><br><span class="line"><span class="type">int</span> _write(<span class="type">int</span> fd, <span class="type">char</span> *pbuffer, <span class="type">int</span> size)</span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined ( __ICCARM__ )</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> module_name = <span class="string">&quot;?__write&quot;</span></span></span><br><span class="line"><span class="type">int</span> __write(<span class="type">int</span> fd, <span class="type">char</span> *pbuffer, <span class="type">int</span> size)</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; i ++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDBE_FLAG) == RESET);</span><br><span class="line">    usart_data_transmit(USART1, (<span class="type">uint16_t</span>)(*pbuffer++));</span><br><span class="line">    <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDC_FLAG) == RESET);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<h2 id="st7789驱动，spi和dma"><a href="#st7789驱动，spi和dma" class="headerlink" title="st7789驱动，spi和dma"></a>st7789驱动，spi和dma</h2><p>必不可少的当然是点屏</p>
-<p>我这里用一个烂大街的320*240 7789测试</p>
-<p>7789库很多，我这里用的朋友移植的版本：<a href="https://github.com/Floyd-Fish/ST7789-STM32">https://github.com/Floyd-Fish/ST7789-STM32</a></p>
-<p>首先说下这个spi</p>
-<p>这玩意…官方例程里的写法是有问题的</p>
-<p>他在每次spi发送之前判断txbuffer是否为空，如果为空就发送</p>
-<p>如果单纯是发spi，这么写没问题</p>
-<p>但是问题在于，tx buffer空 <strong>不代表spi传输完成</strong> 这时候可以写下一个buffer，但是实际上时序上，总线上数据还没有被发出（硬件phy有延时）</p>
-<p>所以你写完spi之后拉cs pin是会直接挂死…（总线还没传输完就拉掉cs自然会挂掉…）</p>
-<p>就这么个问题查了我一天，给我搞麻了，示波器波形看着都挺好的（毕竟没有仔细对比时序），最后还是靠逻辑分析仪出马才解决的</p>
-<p>经过反复尝试后确定可以正确运行的方法是判断</p>
-<p><code>while(spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG) == SET);</code></p>
-<p>也就是spi总线非忙的时候才可以进行下一步操作，这样可以保证spi传输完成，总线已经被释放</p>
-<p>解决这个当然就已经可以点亮了，但是这样写spi很慢，还是得做dma</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG) == SET);<span class="comment">//判忙</span></span><br><span class="line"></span><br><span class="line">wk_dma_channel_config(DMA1_CHANNEL1, </span><br><span class="line">	(<span class="type">uint32_t</span>)&amp;SPI1-&gt;dt, </span><br><span class="line">	buff, </span><br><span class="line">	chunk_size);</span><br><span class="line">dma_channel_enable(DMA1_CHANNEL1, TRUE);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(dma_flag_get(DMA1_FDT1_FLAG) == RESET);</span><br><span class="line">dma_flag_clear(DMA1_FDT1_FLAG);</span><br><span class="line"></span><br><span class="line">dma_channel_enable(DMA1_CHANNEL1, FALSE);</span><br></pre></td></tr></table></figure>
-<p>这里首先还是得判忙</p>
-<p>然后配置dma的源数据buffer和数据长度（dma初始化之前已经配置好了，直接用她的配置器生成）</p>
-<p>最后启用dma开始传输</p>
-<p>等待传输完成，<strong>记得这里要清掉完成flag </strong>这tm竟然不会读的时候自动清除，如果不清下一次传输就不会等待会直接跳过，然后给关掉，就炸了…我真是服了</p>
-<p>最后还得给dma关了（不然没法执行下一次重新配置传输buffer和开启传输）</p>
-<p>记得给main里自动生成的配置和启动代码给关了（不然就在初始化的时候直接给开启传输了。。。）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060353970.png" alt="image-20250506035306944"></p>
-<p>然后这一块玩意还不是用户代码，如果你在配置软件里改了重新生成，就会自动给覆盖回去又打开了…what can I say</p>
-<h2 id="lvgl移植"><a href="#lvgl移植" class="headerlink" title="lvgl移植"></a>lvgl移植</h2><p>这东西吧 其实没啥太多要说的</p>
-<p>不过在keil里移植的话，因为众所周知keil的工程文件管理特别逆天（不支持直接添加文件夹和子文件夹，库文件结构复杂的时候一个个加巨逆天），所以很折磨</p>
-<p>这里有个简单点的办法（at32的文档写的，还挺好用）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060358581.png" alt="image-20250506035845557"></p>
-<p>去下载好的lvgl里面找到这个pack，安装到keil里</p>
-<p>然后工程里找这个</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060359944.png" alt="image-20250506035919924"></p>
-<p>勾上必要的组件（这里开了跑分和demo，如果只是使用只开essential就好了）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060359261.png" alt="image-20250506035957244"></p>
-<p>直接ok就行了，会自动把lvgl必要的玩意都给你加到工程里</p>
-<p>方便很多</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060400863.png" alt="image-20250506040031851"></p>
-<p>当然有个坏处就这些小钥匙都是只读的，实际上是直接引用的库路径，没法修改（但是实际上也不会没事去改这些源代码，只要改port代码就行了，所以不影响）</p>
-<p>实际需要用到修改的就这五个文件（lv_conf_cmsis实际上就是lv_conf.h，内容是一样的）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060401583.png" alt="image-20250506040150561"></p>
-<p>这里移植过程不多说了，所有的lvgl都是一样的，照着做就行了，没啥特别的</p>
-<p>就是配置分辨率，配置buffer方式（单片机用模式1，开个10行buffer就行了），写flush刷屏函数，配触摸或者按键，systick里加服务函数这些东西 基本上是大同小异的</p>
-<p>几个需要注意的点：</p>
-<p>keil编译器要开c99</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060405187.png" alt="image-20250506040506168"></p>
-<p>用spi接口的情况要开字节序翻转，不然颜色会炸</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060405163.png" alt="image-20250506040540140"></p>
-<p>如果跑demo最少需要48k分配空间，跑自己的小ui可以开小</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060406999.png" alt="image-20250506040609981"></p>
-<p>systick的中断里面加上时基handler，这里要注意at32的配置器里systick那里要选中断模式，不然不会开systick中断，这里进不去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060407224.png" alt="image-20250506040738203"></p>
-<p>刷新函数，很简单，供参考（write data里面是上文里的dma传输代码）</p>
-<p>size *2是因为他传进来的像素区域是rgb565也就是int16的，按字节传输是两倍大小</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060408431.png" alt="image-20250506040855407"></p>
-<p>最后一点，如果你下载之后发现直接进hard fault挂死，那是因为爆栈了…</p>
-<p>去配置器里给堆栈空间改大然后再跑就好了</p>
-<p>跑个分（很简单，include benchmark的.h然后在初始化之后调用benchmark函数就行了）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060411329.jpeg" alt="img"></p>
-<p>关于gui制作，用按键做输入的移植，推荐下文章，写的很好（移植也可以参考他的系列，虽然是esp32的但是基本上一样）</p>
-<p><a href="https://blog.csdn.net/m0_55986987/article/details/133032918">https://blog.csdn.net/m0_55986987/article/details/133032918</a></p>
-<p><a href="https://blog.csdn.net/m0_55986987/article/details/133171860">https://blog.csdn.net/m0_55986987/article/details/133171860</a></p>
-<h2 id="移植FreeRTOS"><a href="#移植FreeRTOS" class="headerlink" title="移植FreeRTOS"></a>移植FreeRTOS</h2><p>其实我之前没用过rtos…</p>
-<p>但是还是得学的吧</p>
-<p>实际上移植意外的简单就是了，挺小的，比起lvgl那一大坨简单多了（</p>
-<p>at32有这个文档，可以参考，里面还有rtos教程（乐</p>
-<p><a href="https://www.arterytek.com/download/APNOTE/AN0025_FreeRTOS_on_AT32_MCU_ZH_V2.0.0.pdf">https://www.arterytek.com/download/APNOTE/AN0025_FreeRTOS_on_AT32_MCU_ZH_V2.0.0.pdf</a></p>
-<p>虽然at32的官方固件库里提供了一个freertos版本，不过看了下那个玩意内核版本是10.4.3，我去官网下了个最新的内核版本是11.1.0，所以还是用自己下的吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061611557.png" alt="image-20250506161131522"></p>
-<p>我直接找了个gpio测试的工程去移植</p>
-<p>理论上应该修改延时时钟源为除了systick的其他定时器，因为rtos会占用systick，不过我这里实测你不在配置器里开systick延时的中断模式的话，也能直接移植就是了，rtos能正常工作</p>
-<p>但是大概是freertos的时钟源配置会覆盖原始的配置还是啥原因，启动了rtos调度器之后在里面用单片机库函数自带的delay是会直接飞掉（根本不延时，跑的飞快）</p>
-<p>所以实际上<strong>如果需要用原来库函数的延时，就还是换个定时器吧</strong>。当然因为可以用vtaskdelay所以可能直接关了就好？</p>
-<p>freertos官网下载最新版解压之后把这坨文件扔到工程目录里建个文件夹放进去就行</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061618701.png" alt="image-20250506161819672"></p>
-<p>在keil里加一下，文件不多不费劲</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061619139.png" alt="image-20250506161918119"></p>
-<p>其实就7个根目录下面的.c，还有protable下面的memmang里的heap_4，还有protable下面的rvds下面CM4F（我们单片机是CM4内核）里面port.c</p>
-<p>就这9个文件</p>
-<p>然后加include不提（include文件夹，cm4f文件夹，memmang里面没.h不用加）</p>
-<p><strong>重要！！</strong></p>
-<p>这里注意，<strong>如果你是keil5，AC6编译器，不能选RVDS目录下面的，要用GCC目录下面的CM4F文件夹里的文件</strong></p>
-<p>不然编译会报一万个错误…查了下说是ac5和ac6的兼容问题，ac6只支持gcc格式的一些语法，所以会报错</p>
-<p>用gcc版本的文件是正常的</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061623681.png" alt="image-20250506162326654"></p>
-<p>记得选C99，freertos要求c99版本</p>
-<p>最后加config.h，我直接从上面那个at32文档配套的例程里扣了一个，直接扔到工程的inc文件夹下面完事</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061625042.png" alt="image-20250506162521021"></p>
-<p>这里重要的主频和tick频率已经给配置好了（如果用的不一样，手动改一下）</p>
-<p>堆栈大小优先级数量啥的，可以自己配，我先不动了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061634822.png" alt="image-20250506163432792"></p>
-<p>编译一下，最后剩下的三个报错，就是中断handler重复定义，去工程生成的int.c里给报错的三个函数注释掉就行了（因为rtos会接管这些函数）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061626191.png" alt="image-20250506162636167"></p>
-<p>注释掉应该就可以正常编译了，尝试写个简单的测试程序</p>
-<p>需要包含一下rtos的库</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;FreeRTOS.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;task.h&quot;</span></span></span><br></pre></td></tr></table></figure>
-<p>创建线程</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">task1</span><span class="params">(<span class="type">void</span> * para)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(;;)</span><br><span class="line">	&#123;</span><br><span class="line">		gpio_bits_toggle(GPIOA, GPIO_PINS_2);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;running in task 1...\n&quot;</span>);</span><br><span class="line">		vTaskDelay(<span class="number">500</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">task2</span><span class="params">(<span class="type">void</span> * para)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(;;)</span><br><span class="line">	&#123;</span><br><span class="line">		gpio_bits_toggle(GPIOA, GPIO_PINS_1);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;running in task 2...\n&quot;</span>);</span><br><span class="line">		vTaskDelay(<span class="number">1000</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在外设初始化完成之后，启动线程和调度器</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">xTaskCreate(task1,<span class="string">&quot;LED1&quot;</span>,<span class="number">128</span>,<span class="literal">NULL</span>,<span class="number">1</span>,<span class="literal">NULL</span>);</span><br><span class="line">xTaskCreate(task2,<span class="string">&quot;LED2&quot;</span>,<span class="number">128</span>,<span class="literal">NULL</span>,<span class="number">1</span>,<span class="literal">NULL</span>);</span><br><span class="line">vTaskStartScheduler();</span><br></pre></td></tr></table></figure>
-<p>注意这里启动之后后面的while1就不会被执行到了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061628416.png" alt="image-20250506162829390"></p>
-<p>下面的部分永远也不会被执行了，程序被调度器接管了</p>
-<p>下载一下，两个灯都正常闪，移植ok</p>
-<p>关于rtos的更多用法，还在学习中…</p>
-<h2 id="待续…"><a href="#待续…" class="headerlink" title="待续…"></a>待续…</h2>]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2025最新STM32G4DFU升级实现与各种坑</title>
     <url>/2025/03/17/2025%E6%9C%80%E6%96%B0STM32G4DFU%E5%8D%87%E7%BA%A7%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%90%84%E7%A7%8D%E5%9D%91/</url>
     <content><![CDATA[<p>因为项目开发需要，鼓捣一下stm32的usb dfu固件升级，搜了下网上教程，很多讲的很详细也很好，但是都比较老了，用的F4一类的比较老的型号和库，ST的HAL库又没事就改实现和接口，于是照着做下来发现坑深似海，遇到了一堆问题。</p>
@@ -286,31 +128,91 @@
       </tags>
   </entry>
   <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+    <title>Lora训练学习笔记</title>
+    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
+<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
+<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
+<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
 <span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
+<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
+<p>建个文件夹脚本git下来不多说</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
+<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
+<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
+<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
+<p>最后显示install compete就装完了。不得不说真大啊</p>
+<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
+<p>我真傻</p>
+<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
+<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
+<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
+<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
+<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
+<p>然后开webui，先切图。设好输入输出目录</p>
+<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
+<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
+<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
+<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
+<p>又要下一堆模型emmm 然后反推倒是很快</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
+<p>把反推完的tag扔到训练图的文件夹里去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
+<p>到这里训练集就处理完了。待用。</p>
+<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
+<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
+<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
+<p>然后改train.ps1训练脚本</p>
+<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
+<p>底模一般都推荐用full 7.2G原始大模型</p>
+<p>分辨率改一下</p>
+<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
+<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
+<p>dim就不改了 学习率这种进阶的东西也不改了</p>
+<p>优化器用了lion据说效果好一点</p>
+<p>locon没学明白，先不开</p>
+<p>好了保存然后开始训练</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
+<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
+<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
+<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
+<p>而且其实也不需要训练40轮这么多 </p>
+<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
+<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
+<p>我跑了40轮只是测试一下看看这样</p>
+<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
+<p>总之目前还没跑完，先试试10轮的，很满意！</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
+<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
+<p>等我再研究研究明白再来说</p>
+<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
+<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
+<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
+<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
 ]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
   </entry>
   <entry>
     <title>VtuberStudio配置选择和模型调参</title>
@@ -431,6 +333,33 @@
 <p>ok~</p>
 <p>这玩意用法应该还有挺多的，就看怎么开发了</p>
 <p>结</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+<span id="more"></span>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
@@ -784,24 +713,177 @@
       </tags>
   </entry>
   <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
+    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
+<span id="more"></span>
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
+]]></content>
+      <tags>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
+    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
+<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
+<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
+<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
+<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
+<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
+<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
+<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
+<p>那么下面就是具体的配置过程啦~</p>
+<span id="more"></span>
+<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
+<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
+<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
+<blockquote>
+<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
+<ul>
+<li>支持拖拽图片上传</li>
+<li>支持快捷键上传剪贴板里第一张图片</li>
+<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
+<li>上传图片后自动复制链接到剪贴板</li>
+<li>支持自定义复制到剪贴板的链接格式</li>
+<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
+<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
+</ul>
+</blockquote>
+<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
+<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
+<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
+<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
+<ul>
+<li><p><code>七牛图床</code> v1.0</p>
+</li>
+<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
+</li>
+<li><p><code>又拍云</code> v1.2.0</p>
+</li>
+<li><p><code>GitHub</code> v1.5.0</p>
+</li>
+<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
+</li>
+<li><p><code>阿里云 OSS</code> v1.6.0</p>
+</li>
+<li><p><code>Imgur</code> v1.6.0</p>
+</li>
+</ul>
+<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
+<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
+<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
+<p>所以就产生了一些无法避免的槽点</p>
+<ul>
+<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
+<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
+</ul>
+<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
+<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
+<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
+<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
+<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
+<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
+<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
+<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
+<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
+<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
+<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
+<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
+<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
+<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
+<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
+<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
+<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
+<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
+<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
+<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
+<blockquote>
+<p>其实有个比较优雅的方案是这样</p>
+<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
+<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
+</blockquote>
+<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
+<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
+<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
+<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
 ]]></content>
       <tags>
         <tag>软件</tag>
-        <tag>技巧</tag>
       </tags>
   </entry>
   <entry>
@@ -1072,6 +1154,185 @@
       </tags>
   </entry>
   <entry>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AT32开发踩坑记录</title>
+    <url>/2025/05/06/AT32%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>众所周知的原因，最近芯片有点涨价（st你又不是美国公司你涨啥 摔）</p>
+<p>让我们强烈谴责js趁乱投机倒把的行为</p>
+<p>于是就顺手尝试一下国产mcu咯 </p>
+<p>at32这玩意，小产品上用的挺多，看了下主流型号价格不贵内存flash给的挺舍得的，外设也不错</p>
+<p>于是搞了个核心板来品一下他的库到底有多少屎…</p>
+<span id="more"></span>
+<p>芯片的型号是AT32F403ACGT7</p>
+<p>这玩意好像就几块钱，M4内核，240M主频，1024K flash 200多k ram，挺厉害</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060313322.png" alt="image-20250506031323264"></p>
+<h2 id="工作流"><a href="#工作流" class="headerlink" title="工作流"></a>工作流</h2><p>大致看了下，这玩意sdk支持Keil，IAR还有他们自己做的AT32 IDE（应该是类似Cube IDE的Eclipse魔改类似物）</p>
+<p>从简单的角度就直接用keil了</p>
+<p>看下官方提供的资源<a href="https://www.arterytek.com/cn/product/AT32F403A.jsp#Resource">https://www.arterytek.com/cn/product/AT32F403A.jsp#Resource</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060317722.png" alt="image-20250506031757670"></p>
+<p>当然先下载个固件库，看看里面有啥例程，然后下载下keil5的支持包，安装一下</p>
+<p>jlink识别包我这里没用到先不装</p>
+<p>他竟然也有个类似于cube mx的图形化配置器，不错哦</p>
+<p>直接找个例程看看</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060324084.png" alt="image-20250506032411062"></p>
+<p>工程都是现成的，很好</p>
+<p>用keil打开尝试了一下，ok可以编译没问题，算是成功一半了（</p>
+<p>在官网的技术支持里有很多ap note可以看，比如入门指南：</p>
+<p><a href="https://www.arterytek.com/download/APNOTE/AN0023_AT32F403A_407_Get_started_guide_V2.0.5_ZH.pdf">https://www.arterytek.com/download/APNOTE/AN0023_AT32F403A_407_Get_started_guide_V2.0.5_ZH.pdf</a></p>
+<p>算是写的挺详细的了</p>
+<p>其实似乎也没啥需要多说的</p>
+<p>后面的使用基本上都是用他的配置器直接生成的工程，用起来和cube差不多吧，虽然简陋一点，姑且功能是ok的，所以这些例程基本上是参考代码作用了，也不需要手动按照这些例程去配置工程和系统初始化啥的，算是方便很多</p>
+<p>基本上就和用Cube一样配好外设，时钟树，生成工程，写用户代码编译下载就行。</p>
+<p>得说开发起来有配置器哪怕再简陋也方便太多了啊（主要是不用配该死的keil工程和include了。。。）</p>
+<h2 id="关于调试器"><a href="#关于调试器" class="headerlink" title="关于调试器"></a>关于调试器</h2><p>官方说是需要用他们的at link（其实看起来就是个改了个名字的dap link，在keil设置里就选dap link就可以了）</p>
+<p>我这里实际试了下，用dap-link v2和stlink v2（淘宝最便宜的十块钱调试器）都是可以在keil正常识别和下载的，keil的调试也可以用</p>
+<p>至于官方的下载工具，我没有去尝试，有兴趣的可以试一下</p>
+<h2 id="关于库"><a href="#关于库" class="headerlink" title="关于库"></a>关于库</h2><p>官方例程里有些调用就挺抽象的。。比如io的例程里</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060330321.png" alt="image-20250506033055298"></p>
+<p>不是，我说咱们IO操作库呢？就这么用寄存器怼啊？</p>
+<p>但是实际上…官方是提供了库函数的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060333927.png" alt="image-20250506033324889"></p>
+<p>固件库的文档里也有写明白</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060334415.png" alt="image-20250506033440390"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060334504.png" alt="image-20250506033431468"></p>
+<p>所以…what can i say呢？</p>
+<h2 id="关于串口printf"><a href="#关于串口printf" class="headerlink" title="关于串口printf"></a>关于串口printf</h2><p>官方的ap note里有个串口printf的移植文档</p>
+<p>但是！<strong>不要看那个</strong></p>
+<p>用不了，那文档2021年的，一直没更新，里面写的方法根本没法用（</p>
+<p>what can i say</p>
+<p>最后去例程里抄了一个，能用了</p>
+<p>手动在main的user code里加下面这段就行</p>
+<p>建议开micro lib（虽然他说可以不用开…但是实际上我试了下不开也不会省空间的…）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* support printf function, usemicrolib is unnecessary */</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (__ARMCC_VERSION &gt; 6000000)</span></span><br><span class="line">  __asm (<span class="string">&quot;.global __use_no_semihosting\n\t&quot;</span>);</span><br><span class="line">  <span class="type">void</span> _sys_exit(<span class="type">int</span> x)</span><br><span class="line">  &#123;</span><br><span class="line">    x = x;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* __use_no_semihosting was requested, but _ttywrch was */</span></span><br><span class="line">  <span class="type">void</span> _ttywrch(<span class="type">int</span> ch)</span><br><span class="line">  &#123;</span><br><span class="line">    ch = ch;</span><br><span class="line">  &#125;</span><br><span class="line">  FILE __stdout;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">ifdef</span> __CC_ARM</span></span><br><span class="line">  <span class="meta">#<span class="keyword">pragma</span> import(__use_no_semihosting)</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> __<span class="title">FILE</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    <span class="type">int</span> handle;</span><br><span class="line">  &#125;;</span><br><span class="line">  FILE __stdout;</span><br><span class="line">  <span class="type">void</span> _sys_exit(<span class="type">int</span> x)</span><br><span class="line">  &#123;</span><br><span class="line">    x = x;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* __use_no_semihosting was requested, but _ttywrch was */</span></span><br><span class="line">  <span class="type">void</span> _ttywrch(<span class="type">int</span> ch)</span><br><span class="line">  &#123;</span><br><span class="line">    ch = ch;</span><br><span class="line">  &#125;</span><br><span class="line"> <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined (__GNUC__) &amp;&amp; !defined (__clang__)</span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> PUTCHAR_PROTOTYPE int __io_putchar(int ch)</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * @brief  retargets the c library printf function to the usart.</span></span><br><span class="line"><span class="comment">  * @param  none</span></span><br><span class="line"><span class="comment">  * @retval none</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">PUTCHAR_PROTOTYPE</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDBE_FLAG) == RESET);</span><br><span class="line">  usart_data_transmit(USART1, (<span class="type">uint16_t</span>)ch);</span><br><span class="line">  <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDC_FLAG) == RESET);</span><br><span class="line">  <span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> (defined (__GNUC__) &amp;&amp; !defined (__clang__)) || (defined (__ICCARM__))</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined (__GNUC__) &amp;&amp; !defined (__clang__)</span></span><br><span class="line"><span class="type">int</span> _write(<span class="type">int</span> fd, <span class="type">char</span> *pbuffer, <span class="type">int</span> size)</span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined ( __ICCARM__ )</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> module_name = <span class="string">&quot;?__write&quot;</span></span></span><br><span class="line"><span class="type">int</span> __write(<span class="type">int</span> fd, <span class="type">char</span> *pbuffer, <span class="type">int</span> size)</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; i ++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDBE_FLAG) == RESET);</span><br><span class="line">    usart_data_transmit(USART1, (<span class="type">uint16_t</span>)(*pbuffer++));</span><br><span class="line">    <span class="keyword">while</span>(usart_flag_get(USART1, USART_TDC_FLAG) == RESET);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="st7789驱动，spi和dma"><a href="#st7789驱动，spi和dma" class="headerlink" title="st7789驱动，spi和dma"></a>st7789驱动，spi和dma</h2><p>必不可少的当然是点屏</p>
+<p>我这里用一个烂大街的320*240 7789测试</p>
+<p>7789库很多，我这里用的朋友移植的版本：<a href="https://github.com/Floyd-Fish/ST7789-STM32">https://github.com/Floyd-Fish/ST7789-STM32</a></p>
+<p>首先说下这个spi</p>
+<p>这玩意…官方例程里的写法是有问题的</p>
+<p>他在每次spi发送之前判断txbuffer是否为空，如果为空就发送</p>
+<p>如果单纯是发spi，这么写没问题</p>
+<p>但是问题在于，tx buffer空 <strong>不代表spi传输完成</strong> 这时候可以写下一个buffer，但是实际上时序上，总线上数据还没有被发出（硬件phy有延时）</p>
+<p>所以你写完spi之后拉cs pin是会直接挂死…（总线还没传输完就拉掉cs自然会挂掉…）</p>
+<p>就这么个问题查了我一天，给我搞麻了，示波器波形看着都挺好的（毕竟没有仔细对比时序），最后还是靠逻辑分析仪出马才解决的</p>
+<p>经过反复尝试后确定可以正确运行的方法是判断</p>
+<p><code>while(spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG) == SET);</code></p>
+<p>也就是spi总线非忙的时候才可以进行下一步操作，这样可以保证spi传输完成，总线已经被释放</p>
+<p>解决这个当然就已经可以点亮了，但是这样写spi很慢，还是得做dma</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(spi_i2s_flag_get(SPI1, SPI_I2S_BF_FLAG) == SET);<span class="comment">//判忙</span></span><br><span class="line"></span><br><span class="line">wk_dma_channel_config(DMA1_CHANNEL1, </span><br><span class="line">	(<span class="type">uint32_t</span>)&amp;SPI1-&gt;dt, </span><br><span class="line">	buff, </span><br><span class="line">	chunk_size);</span><br><span class="line">dma_channel_enable(DMA1_CHANNEL1, TRUE);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(dma_flag_get(DMA1_FDT1_FLAG) == RESET);</span><br><span class="line">dma_flag_clear(DMA1_FDT1_FLAG);</span><br><span class="line"></span><br><span class="line">dma_channel_enable(DMA1_CHANNEL1, FALSE);</span><br></pre></td></tr></table></figure>
+<p>这里首先还是得判忙</p>
+<p>然后配置dma的源数据buffer和数据长度（dma初始化之前已经配置好了，直接用她的配置器生成）</p>
+<p>最后启用dma开始传输</p>
+<p>等待传输完成，<strong>记得这里要清掉完成flag </strong>这tm竟然不会读的时候自动清除，如果不清下一次传输就不会等待会直接跳过，然后给关掉，就炸了…我真是服了</p>
+<p>最后还得给dma关了（不然没法执行下一次重新配置传输buffer和开启传输）</p>
+<p>记得给main里自动生成的配置和启动代码给关了（不然就在初始化的时候直接给开启传输了。。。）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060353970.png" alt="image-20250506035306944"></p>
+<p>然后这一块玩意还不是用户代码，如果你在配置软件里改了重新生成，就会自动给覆盖回去又打开了…what can I say</p>
+<h2 id="lvgl移植"><a href="#lvgl移植" class="headerlink" title="lvgl移植"></a>lvgl移植</h2><p>这东西吧 其实没啥太多要说的</p>
+<p>不过在keil里移植的话，因为众所周知keil的工程文件管理特别逆天（不支持直接添加文件夹和子文件夹，库文件结构复杂的时候一个个加巨逆天），所以很折磨</p>
+<p>这里有个简单点的办法（at32的文档写的，还挺好用）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060358581.png" alt="image-20250506035845557"></p>
+<p>去下载好的lvgl里面找到这个pack，安装到keil里</p>
+<p>然后工程里找这个</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060359944.png" alt="image-20250506035919924"></p>
+<p>勾上必要的组件（这里开了跑分和demo，如果只是使用只开essential就好了）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060359261.png" alt="image-20250506035957244"></p>
+<p>直接ok就行了，会自动把lvgl必要的玩意都给你加到工程里</p>
+<p>方便很多</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060400863.png" alt="image-20250506040031851"></p>
+<p>当然有个坏处就这些小钥匙都是只读的，实际上是直接引用的库路径，没法修改（但是实际上也不会没事去改这些源代码，只要改port代码就行了，所以不影响）</p>
+<p>实际需要用到修改的就这五个文件（lv_conf_cmsis实际上就是lv_conf.h，内容是一样的）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060401583.png" alt="image-20250506040150561"></p>
+<p>这里移植过程不多说了，所有的lvgl都是一样的，照着做就行了，没啥特别的</p>
+<p>就是配置分辨率，配置buffer方式（单片机用模式1，开个10行buffer就行了），写flush刷屏函数，配触摸或者按键，systick里加服务函数这些东西 基本上是大同小异的</p>
+<p>几个需要注意的点：</p>
+<p>keil编译器要开c99</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060405187.png" alt="image-20250506040506168"></p>
+<p>用spi接口的情况要开字节序翻转，不然颜色会炸</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060405163.png" alt="image-20250506040540140"></p>
+<p>如果跑demo最少需要48k分配空间，跑自己的小ui可以开小</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060406999.png" alt="image-20250506040609981"></p>
+<p>systick的中断里面加上时基handler，这里要注意at32的配置器里systick那里要选中断模式，不然不会开systick中断，这里进不去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060407224.png" alt="image-20250506040738203"></p>
+<p>刷新函数，很简单，供参考（write data里面是上文里的dma传输代码）</p>
+<p>size *2是因为他传进来的像素区域是rgb565也就是int16的，按字节传输是两倍大小</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060408431.png" alt="image-20250506040855407"></p>
+<p>最后一点，如果你下载之后发现直接进hard fault挂死，那是因为爆栈了…</p>
+<p>去配置器里给堆栈空间改大然后再跑就好了</p>
+<p>跑个分（很简单，include benchmark的.h然后在初始化之后调用benchmark函数就行了）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505060411329.jpeg" alt="img"></p>
+<p>关于gui制作，用按键做输入的移植，推荐下文章，写的很好（移植也可以参考他的系列，虽然是esp32的但是基本上一样）</p>
+<p><a href="https://blog.csdn.net/m0_55986987/article/details/133032918">https://blog.csdn.net/m0_55986987/article/details/133032918</a></p>
+<p><a href="https://blog.csdn.net/m0_55986987/article/details/133171860">https://blog.csdn.net/m0_55986987/article/details/133171860</a></p>
+<h2 id="移植FreeRTOS"><a href="#移植FreeRTOS" class="headerlink" title="移植FreeRTOS"></a>移植FreeRTOS</h2><p>其实我之前没用过rtos…</p>
+<p>但是还是得学的吧</p>
+<p>实际上移植意外的简单就是了，挺小的，比起lvgl那一大坨简单多了（</p>
+<p>at32有这个文档，可以参考，里面还有rtos教程（乐</p>
+<p><a href="https://www.arterytek.com/download/APNOTE/AN0025_FreeRTOS_on_AT32_MCU_ZH_V2.0.0.pdf">https://www.arterytek.com/download/APNOTE/AN0025_FreeRTOS_on_AT32_MCU_ZH_V2.0.0.pdf</a></p>
+<p>虽然at32的官方固件库里提供了一个freertos版本，不过看了下那个玩意内核版本是10.4.3，我去官网下了个最新的内核版本是11.1.0，所以还是用自己下的吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061611557.png" alt="image-20250506161131522"></p>
+<p>我直接找了个gpio测试的工程去移植</p>
+<p>理论上应该修改延时时钟源为除了systick的其他定时器，因为rtos会占用systick，不过我这里实测你不在配置器里开systick延时的中断模式的话，也能直接移植就是了，rtos能正常工作</p>
+<p>但是大概是freertos的时钟源配置会覆盖原始的配置还是啥原因，启动了rtos调度器之后在里面用单片机库函数自带的delay是会直接飞掉（根本不延时，跑的飞快）</p>
+<p>所以实际上<strong>如果需要用原来库函数的延时，就还是换个定时器吧</strong>。当然因为可以用vtaskdelay所以可能直接关了就好？</p>
+<p>freertos官网下载最新版解压之后把这坨文件扔到工程目录里建个文件夹放进去就行</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061618701.png" alt="image-20250506161819672"></p>
+<p>在keil里加一下，文件不多不费劲</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061619139.png" alt="image-20250506161918119"></p>
+<p>其实就7个根目录下面的.c，还有protable下面的memmang里的heap_4，还有protable下面的rvds下面CM4F（我们单片机是CM4内核）里面port.c</p>
+<p>就这9个文件</p>
+<p>然后加include不提（include文件夹，cm4f文件夹，memmang里面没.h不用加）</p>
+<p><strong>重要！！</strong></p>
+<p>这里注意，<strong>如果你是keil5，AC6编译器，不能选RVDS目录下面的，要用GCC目录下面的CM4F文件夹里的文件</strong></p>
+<p>不然编译会报一万个错误…查了下说是ac5和ac6的兼容问题，ac6只支持gcc格式的一些语法，所以会报错</p>
+<p>用gcc版本的文件是正常的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061623681.png" alt="image-20250506162326654"></p>
+<p>记得选C99，freertos要求c99版本</p>
+<p>最后加config.h，我直接从上面那个at32文档配套的例程里扣了一个，直接扔到工程的inc文件夹下面完事</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061625042.png" alt="image-20250506162521021"></p>
+<p>这里重要的主频和tick频率已经给配置好了（如果用的不一样，手动改一下）</p>
+<p>堆栈大小优先级数量啥的，可以自己配，我先不动了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061634822.png" alt="image-20250506163432792"></p>
+<p>编译一下，最后剩下的三个报错，就是中断handler重复定义，去工程生成的int.c里给报错的三个函数注释掉就行了（因为rtos会接管这些函数）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061626191.png" alt="image-20250506162636167"></p>
+<p>注释掉应该就可以正常编译了，尝试写个简单的测试程序</p>
+<p>需要包含一下rtos的库</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;FreeRTOS.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;task.h&quot;</span></span></span><br></pre></td></tr></table></figure>
+<p>创建线程</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">task1</span><span class="params">(<span class="type">void</span> * para)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(;;)</span><br><span class="line">	&#123;</span><br><span class="line">		gpio_bits_toggle(GPIOA, GPIO_PINS_2);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;running in task 1...\n&quot;</span>);</span><br><span class="line">		vTaskDelay(<span class="number">500</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">task2</span><span class="params">(<span class="type">void</span> * para)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span>(;;)</span><br><span class="line">	&#123;</span><br><span class="line">		gpio_bits_toggle(GPIOA, GPIO_PINS_1);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;running in task 2...\n&quot;</span>);</span><br><span class="line">		vTaskDelay(<span class="number">1000</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在外设初始化完成之后，启动线程和调度器</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">xTaskCreate(task1,<span class="string">&quot;LED1&quot;</span>,<span class="number">128</span>,<span class="literal">NULL</span>,<span class="number">1</span>,<span class="literal">NULL</span>);</span><br><span class="line">xTaskCreate(task2,<span class="string">&quot;LED2&quot;</span>,<span class="number">128</span>,<span class="literal">NULL</span>,<span class="number">1</span>,<span class="literal">NULL</span>);</span><br><span class="line">vTaskStartScheduler();</span><br></pre></td></tr></table></figure>
+<p>注意这里启动之后后面的while1就不会被执行到了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505061628416.png" alt="image-20250506162829390"></p>
+<p>下面的部分永远也不会被执行了，程序被调度器接管了</p>
+<p>下载一下，两个灯都正常闪，移植ok</p>
+<p>关于rtos的更多用法，还在学习中…</p>
+<h2 id="待续…"><a href="#待续…" class="headerlink" title="待续…"></a>待续…</h2>]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>lora训练学习笔记续_2024</title>
     <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
     <content><![CDATA[<p>好久没摸了</p>
@@ -1310,186 +1571,6 @@
       </tags>
   </entry>
   <entry>
-    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
-    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
-<p>想着行动力行动力但是下班之后就好想睡觉</p>
-<p>彻底变成了社畜的模样</p>
-<p>但是哪怕迷茫也要前进呀</p>
-<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
-<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
-<p>权当是复健咯</p>
-<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
-<span id="more"></span>
-<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
-<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
-<p>也确实是太久没玩什么新东西了</p>
-<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
-<p><del>乐鑫的产品线真够乱的（摔</del></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
-<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
-<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
-<p>原理图也很简单</p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
-<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
-<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
-<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
-<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
-<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
-<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
-<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
-<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
-<p>装完之后随便选一个esp32s3的板子</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
-<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
-<p>于是随便撸了一个hello world试一下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>插上usb，可以自动识别com号，编译，下载</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
-<p>闪灯ok，串口输出ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
-<p>第一步算是跑起来了</p>
-<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
-<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
-<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
-<p>没想着能成功的</p>
-<p>结果一遍就刷进去了 草</p>
-<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
-<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
-<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
-<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
-<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
-<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
-<p>没啥可说的 很简单的玩意</p>
-<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
-<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
-<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
-<p>嗯…这就为后面埋下了大坑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
-<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
-<p>还没有点亮呢 至少先驱动起来看看</p>
-<p>于是找个普通的st7789驱动库吧</p>
-<p>屏幕卖家自然是带了一些例程代码的</p>
-<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
-<p>都用arduino了，图的不就是不用自己写库么</p>
-<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
-<p>去arduino上搜一搜好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
-<p>果然出来了一大堆</p>
-<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
-<p>第一个看着就ok，装来试一下吧</p>
-<hr>
-<p>未完待续…</p>
-]]></content>
-      <tags>
-        <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Lora训练学习笔记</title>
-    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
-<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
-<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
-<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
-<span id="more"></span>
-<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
-<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
-<p>建个文件夹脚本git下来不多说</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
-<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
-<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
-<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
-<p>最后显示install compete就装完了。不得不说真大啊</p>
-<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
-<p>我真傻</p>
-<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
-<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
-<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
-<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
-<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
-<p>然后开webui，先切图。设好输入输出目录</p>
-<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
-<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
-<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
-<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
-<p>又要下一堆模型emmm 然后反推倒是很快</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
-<p>把反推完的tag扔到训练图的文件夹里去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
-<p>到这里训练集就处理完了。待用。</p>
-<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
-<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
-<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
-<p>然后改train.ps1训练脚本</p>
-<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
-<p>底模一般都推荐用full 7.2G原始大模型</p>
-<p>分辨率改一下</p>
-<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
-<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
-<p>dim就不改了 学习率这种进阶的东西也不改了</p>
-<p>优化器用了lion据说效果好一点</p>
-<p>locon没学明白，先不开</p>
-<p>好了保存然后开始训练</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
-<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
-<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
-<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
-<p>而且其实也不需要训练40轮这么多 </p>
-<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
-<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
-<p>我跑了40轮只是测试一下看看这样</p>
-<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
-<p>总之目前还没跑完，先试试10轮的，很满意！</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
-<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
-<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
-<p>等我再研究研究明白再来说</p>
-<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
-<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
-<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
-<p>5.正则化 没看明白 待我以后再研究研究</p>
-<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
-<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
-<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
-<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
-<p>3.手动改标…真的好麻烦</p>
-<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
-<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
-<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
-<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>我回来啦</title>
-    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
-    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
-<p>更新下已经落后了一年版本的hexo吧…</p>
-<p>就是这样~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
-]]></content>
-      <tags>
-        <tag>杂项</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>桌面贴片机调机日志</title>
     <url>/2025/03/21/%E6%A1%8C%E9%9D%A2%E8%B4%B4%E7%89%87%E6%9C%BA%E8%B0%83%E6%9C%BA%E6%97%A5%E5%BF%97/</url>
     <content><![CDATA[<p>因为有些样板和小批量的需求，jlc的smt又很贵，寻思着搞个家里桌面级能放下的小贴片机</p>
@@ -1675,17 +1756,6 @@
       </tags>
   </entry>
   <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>配置VSCode的Clangd语言服务支持STM32开发</title>
     <url>/2025/03/17/%E9%85%8D%E7%BD%AEVSCode%E7%9A%84Clangd%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E6%94%AF%E6%8C%81STM32%E5%BC%80%E5%8F%91/</url>
     <content><![CDATA[<p>众所周知STM32开发一般使用Keil或者CubeIDE来管理工程和编译，但是这俩玩意的编辑器都不太现代化，用起来不太爽，所以也有很多人用VSCode来编写代码，只使用IDE来进行编译和调试（当然也有使用VSCode+全套开源工具链打包进行编写+编译+调试的，但是在win下实现起来尤为的不方便以前尝试过这里先按下不表）</p>
@@ -1773,96 +1843,26 @@
       </tags>
   </entry>
   <entry>
-    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
-    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
-<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
-<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
-<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
-<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
-<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
-<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
-<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
-<p>那么下面就是具体的配置过程啦~</p>
-<span id="more"></span>
-<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
-<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
-<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
-<blockquote>
-<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
-<ul>
-<li>支持拖拽图片上传</li>
-<li>支持快捷键上传剪贴板里第一张图片</li>
-<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
-<li>上传图片后自动复制链接到剪贴板</li>
-<li>支持自定义复制到剪贴板的链接格式</li>
-<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
-<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
-</ul>
-</blockquote>
-<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
-<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
-<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
-<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
-<ul>
-<li><p><code>七牛图床</code> v1.0</p>
-</li>
-<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
-</li>
-<li><p><code>又拍云</code> v1.2.0</p>
-</li>
-<li><p><code>GitHub</code> v1.5.0</p>
-</li>
-<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
-</li>
-<li><p><code>阿里云 OSS</code> v1.6.0</p>
-</li>
-<li><p><code>Imgur</code> v1.6.0</p>
-</li>
-</ul>
-<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
-<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
-<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
-<p>所以就产生了一些无法避免的槽点</p>
-<ul>
-<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
-<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
-</ul>
-<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
-<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
-<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
-<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
-<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
-<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
-<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
-<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
-<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
-<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
-<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
-<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
-<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
-<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
-<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
-<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
-<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
-<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
-<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
-<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
-<blockquote>
-<p>其实有个比较优雅的方案是这样</p>
-<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
-<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
-</blockquote>
-<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
-<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
-<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
-<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
+    <title>我回来啦</title>
+    <url>/2023/02/19/%E6%88%91%E5%9B%9E%E6%9D%A5%E5%95%A6/</url>
+    <content><![CDATA[<p>突然想起来还做过这么个玩意（pia…</p>
+<p>更新下已经落后了一年版本的hexo吧…</p>
+<p>就是这样~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/image-20230219153853928.png" alt="image-20230219153853928"></p>
 ]]></content>
       <tags>
-        <tag>软件</tag>
+        <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
       </tags>
   </entry>
 </search>
