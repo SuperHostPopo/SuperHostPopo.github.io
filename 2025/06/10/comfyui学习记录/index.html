@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/popo2.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/popo2-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/popo2-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.superhostpopo.cn","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.14.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="补课啊补课 也是难啃的玩意 慢慢玩玩看吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="comfyui学习记录">
+<meta property="og:url" content="https://www.superhostpopo.cn/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="泡泡酱の秘密工作室">
+<meta property="og:description" content="补课啊补课 也是难啃的玩意 慢慢玩玩看吧">
+<meta property="og:locale">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100221772.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222039.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222484.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100223268.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100232857.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100233797.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236431.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236942.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506102143801.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249408.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249750.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110250723.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100304538.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110031667.jpeg">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120515500.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120516091.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120517234.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120545409.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120546631.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547764.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547408.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120548180.png">
+<meta property="og:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120549541.png">
+<meta property="article:published_time" content="2025-06-09T18:02:58.000Z">
+<meta property="article:modified_time" content="2025-06-11T21:51:23.529Z">
+<meta property="article:author" content="最高主机泡泡">
+<meta property="article:tag" content="软件">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100221772.png">
+
+
+<link rel="canonical" href="https://www.superhostpopo.cn/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-Hans","comments":true,"permalink":"https://www.superhostpopo.cn/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/","path":"2025/06/10/comfyui学习记录/","title":"comfyui学习记录"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>comfyui学习记录 | 泡泡酱の秘密工作室</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">泡泡酱の秘密工作室</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">超绝可爱技术宅泡泡酱desu⭐</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B5%84%E6%96%99%E5%8C%BA"><span class="nav-number">1.</span> <span class="nav-text">资料区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">学习记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8Ftips"><span class="nav-number">2.1.</span> <span class="nav-text">小tips</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E9%AB%98%E6%B8%85%E4%BF%AE%E5%A4%8D"><span class="nav-number">2.2.</span> <span class="nav-text">关于高清修复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Econtrolnet%E5%92%8Cipadapter"><span class="nav-number">2.3.</span> <span class="nav-text">关于controlnet和ipadapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%89%B9%E5%A4%84%E7%90%86"><span class="nav-number">2.4.</span> <span class="nav-text">关于批处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%BB%84%E5%92%8C%E7%BB%84%E8%8A%82%E7%82%B9"><span class="nav-number">2.5.</span> <span class="nav-text">关于组和组节点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="最高主机泡泡"
+      src="/images/popo.png">
+  <p class="site-author-name" itemprop="name">最高主机泡泡</p>
+  <div class="site-description" itemprop="description">一只菜鸡技术宅...修行中</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SuperHostPopo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SuperHostPopo" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/4023159" title="bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;4023159" rel="noopener me" target="_blank"><i class="fab fa-youtube fa-fw"></i>bilibili</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi" title="交流QQ群853376692 → https:&#x2F;&#x2F;qm.qq.com&#x2F;cgi-bin&#x2F;qm&#x2F;qr?k&#x3D;5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&amp;jump_from&#x3D;webapi" rel="noopener me" target="_blank"><i class="fab fa-qq fa-fw"></i>交流QQ群853376692</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.emoe.xyz/" title="https:&#x2F;&#x2F;www.emoe.xyz&#x2F;" rel="noopener" target="_blank">e萌工作室</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://www.superhostpopo.cn/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/popo.png">
+      <meta itemprop="name" content="最高主机泡泡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="泡泡酱の秘密工作室">
+      <meta itemprop="description" content="一只菜鸡技术宅...修行中">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="comfyui学习记录 | 泡泡酱の秘密工作室">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          comfyui学习记录
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-06-10 02:02:58" itemprop="dateCreated datePublished" datetime="2025-06-10T02:02:58+08:00">2025-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-12 05:51:23" itemprop="dateModified" datetime="2025-06-12T05:51:23+08:00">2025-06-12</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>补课啊补课</p>
+<p>也是难啃的玩意</p>
+<p>慢慢玩玩看吧</p>
+<span id="more"></span>
+<h1 id="资料区"><a href="#资料区" class="headerlink" title="资料区"></a>资料区</h1><p>先记一下一些学习资料</p>
+<ul>
+<li>官方示例工作流<a target="_blank" rel="noopener" href="https://comfyanonymous.github.io/ComfyUI_examples/">https://comfyanonymous.github.io/ComfyUI_examples/</a></li>
+<li>上面那些工作流的github打包下载<a target="_blank" rel="noopener" href="https://github.com/comfyanonymous/ComfyUI_examples">https://github.com/comfyanonymous/ComfyUI_examples</a></li>
+<li>官方文档<a target="_blank" rel="noopener" href="https://docs.comfy.org/zh-CN">https://docs.comfy.org/zh-CN</a></li>
+<li>一些简单的节点功能介绍（只有自带节点）<a target="_blank" rel="noopener" href="https://blenderneko.github.io/ComfyUI-docs/">https://blenderneko.github.io/ComfyUI-docs/</a></li>
+<li>官方推荐的节点包等<a target="_blank" rel="noopener" href="https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html">https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html</a></li>
+<li>upscaler的合集资源<a target="_blank" rel="noopener" href="https://huggingface.co/wyrde/upscales">https://huggingface.co/wyrde/upscales</a></li>
+<li>alice的工作流（方便使用，很大）<a target="_blank" rel="noopener" href="https://github.com/2515448788/ShiQi_Workflow">https://github.com/2515448788/ShiQi_Workflow</a></li>
+<li>一个模型汇总<a target="_blank" rel="noopener" href="https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer">https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer</a></li>
+<li>for循环的使用<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1KXpheEE2F/?vd_source=8ebdffcec7e15fc87b9e66b3564f7b37">https://www.bilibili.com/video/BV1KXpheEE2F/?vd_source=8ebdffcec7e15fc87b9e66b3564f7b37</a></li>
+</ul>
+<p>一些workflow模板和下载网址</p>
+<ul>
+<li>学习用，有一些介绍readme <a target="_blank" rel="noopener" href="https://github.com/wyrde/wyrde-comfyui-workflows">https://github.com/wyrde/wyrde-comfyui-workflows</a></li>
+<li>一些简单的模板workflow <a target="_blank" rel="noopener" href="https://github.com/atlasunified/Templates-ComfyUI-">https://github.com/atlasunified/Templates-ComfyUI-</a></li>
+<li>使用easy use节点包的工作流模板<a target="_blank" rel="noopener" href="https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file">https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file</a></li>
+<li>was节点的模板<a target="_blank" rel="noopener" href="https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples">https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples</a></li>
+<li>openart 工作流分享 <a target="_blank" rel="noopener" href="https://openart.ai/workflows/home">https://openart.ai/workflows/home</a></li>
+<li>另一个工作流分享网站 <a target="_blank" rel="noopener" href="https://comfyworkflows.com/">https://comfyworkflows.com/</a></li>
+<li>c站也有一些</li>
+<li>在ui里直接文件 template可以看自带的模板包括第三方节点自带的也可以看</li>
+</ul>
+<h1 id="学习记录"><a href="#学习记录" class="headerlink" title="学习记录"></a>学习记录</h1><p><strong>使用秋叶的包 打了一堆外部节点（</strong></p>
+<h2 id="小tips"><a href="#小tips" class="headerlink" title="小tips"></a>小tips</h2><p>manager里可以下到常用模型，还可以打快照（节点包的状态啥的，防止装崩了可以恢复）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100221772.png" alt="image-20250610022152707"></p>
+<p>右键可以看节点导航和清理显存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222039.png" alt="image-20250610022221021"></p>
+<p>这里可以方便的开关节点，节点组，还可以导航节点，看节点的编号（解决报错信息有用）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222484.png" alt="image-20250610022255462"></p>
+<p>文件保存的通配符</p>
+<p>这里是节点名字.参数名字，节点名右键属性看，参数名把参数拉出来就能看到了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100223268.png" alt="image-20250610022315245"></p>
+<p>打开节点ID和来源的显示</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100232857.png" alt="image-20250610023208824"></p>
+<p>节点模式：设成never就相当于禁用了（不高亮）</p>
+<p>紫色的bypass（跳过）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100233797.png" alt="image-20250610023342746"></p>
+<p>连线样式，隐藏连线</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236431.png" alt="image-20250610023636396"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236942.png" alt="image-20250610023648909"></p>
+<p>load image节点可以直接粘贴图片进去，然后右键可以编辑遮罩（从mask输出，然后用带遮罩的vae编码器编码，进行inpaint）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506102143801.png" alt="image-20250610214339732"></p>
+<p>这个节点提供了所有提示词框的自动补全</p>
+<p>但是需要手动点一下load然后save才能起效</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249408.png" alt="image-20250611024914372"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249750.png" alt="image-20250611024940699"></p>
+<p>右键查看模型信息的功能，也是这个节点提供的（自动匹配c站信息）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110250723.png" alt="image-20250611025044697"></p>
+<p>各种字符串相关的功能：合并字符串，字符串追加、替换等，很多节点都有</p>
+<p>比如string function、show text、concat啥的</p>
+<p><strong>关于a1111和comfy提示词格式</strong></p>
+<p>实际上就是对提示词prompt的权重加权计算方式不同，也就是加括号：1.1这种写法产生的结果不一样，comfy的权重会更重一些，所以一些tag如果用的不好会炸掉</p>
+<p>可以靠切换到a1111提示词模式来避免</p>
+<h2 id="关于高清修复"><a href="#关于高清修复" class="headerlink" title="关于高清修复"></a>关于高清修复</h2><p>怎么在comfy里实现webui一样的高清修复一直没太明白</p>
+<p>研究了下应该是这样</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100304538.png" alt="image-20250610030451472"></p>
+<p>就基本上效果一样了</p>
+<p>实际上是先一次出图，然后用放大模型放大，再二次重采样（图生图）出来的</p>
+<p>所以不是标准的潜空间放大（我没理解错的话）</p>
+<p>但是我这里发现 他这个放大倍数好奇怪</p>
+<p>0.5实际上是放大两倍。。不理解为什么</p>
+<p><strong>后续：我理解了。。这个4x ultrasharp的模型相当于本身就把图像扩大4倍，所以后面要再缩放0.5相当于一共是扩大了2倍。原来如此。webui只是帮你自动处理了这个过程而已。。我完全理解了！</strong></p>
+<p>然后这里种子不一样。。得改下 理论上应该是要种子一致的</p>
+<p>comfy ui可以统计时间（这个是easy use节点的功能，统计节点时间），发现这个hiresfix比起webui的快好多为啥。。。</p>
+<h2 id="关于controlnet和ipadapter"><a href="#关于controlnet和ipadapter" class="headerlink" title="关于controlnet和ipadapter"></a>关于controlnet和ipadapter</h2><p>batch图像节点，可以把几个图合并，作为一个controlnet的参考</p>
+<p>wtg比较节点，可以输出diff图，仔细看两张图的区别</p>
+<p>controlnet的参考图预处理（prepare image）节点可以改变图像裁剪的焦点（ipadapter接收1：1比例的图，所以需要裁剪）</p>
+<p>几个预处理器的效果比较</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110031667.jpeg" alt="参考图"></p>
+<p>在comfyui里使用controlnet</p>
+<p>一般要分开选预处理器和controlnet两个节点</p>
+<p>相当于预处理器先把图像处理成上面的这种输出图的样子，然后塞给controlnet模型</p>
+<p>我们常用的那个union模型，也是搭配不同的预处理后的图片可以实现不同效果（当然也可以用独立controlnet模型，一个预处理器对应一种controlnet模型）</p>
+<p>这里也更好理解controlnet的机制一点</p>
+<p>说起来仔细看comfyui才发现，lora是控制的model和clip（两个都控制，可以分开设置强度），controlnet是控制的正负条件，而ipadapter是控制的model</p>
+<p>还是挺有意思的</p>
+<h2 id="关于批处理"><a href="#关于批处理" class="headerlink" title="关于批处理"></a>关于批处理</h2><p>有两个方法吧</p>
+<p>首先我们知道comfy是异步队列的</p>
+<p>比如你点两下右上角的启动，或者给批次设置成2然后点启动，结果都是一样</p>
+<p>他会根据你的数量加到左边的队列里，然后一个个顺序运行，队列后面的会pending</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120515500.png" alt="image-20250612051551472"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120516091.png" alt="image-20250612051601076"></p>
+<p>然后如果我们工作流里没有控制的东西，就点几下或者一个批次（batch）的启动，除了随机种子别的都不会变就跑几次</p>
+<p>想要实现批处理就要在流里面加上流程控制</p>
+<p>第一个方法就是用batch image节点，他会根据每个batch顺序从文件夹里拿图，在工作流里处理（当然你也可以设置成随机取）</p>
+<p>比如很简单我给controlnet的输入load image改成batch image</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120517234.png" alt="image-20250612051755212"></p>
+<p>然后右上角开一个batch的任务（看你想执行多少次）</p>
+<p>他就会每张图自动从文件夹里取底图给controlnet处理然后出图，这样可以很简单的实现一个批量垫图</p>
+<p>第二个方法是在工作流里用for循环节点，这个看b站讲解吧</p>
+<p>我也还没弄明白</p>
+<p>是比较灵活高级的方法</p>
+<h2 id="关于组和组节点"><a href="#关于组和组节点" class="headerlink" title="关于组和组节点"></a>关于组和组节点</h2><p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120545409.png" alt="image-20250612054503382"></p>
+<p>左上角标是这样的就是组节点</p>
+<p>实际上就是把几个节点复合到一起，然后把一些输入输出暴露出来，作为一个复用块，可以方便调用，在节点库里也能找到这样的节点（只有打开了对应工作流才能看到，不是作为自定义节点一直加载的）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120546631.png" alt="image-20250612054632608"></p>
+<p>右键选这个就能给拆开看到里面是什么结构</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547764.png" alt="image-20250612054714736"></p>
+<p>这种方块底色的是节点组</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547408.png" alt="image-20250612054757365"></p>
+<p>用来标识功能区域，方便管理和开关，然后也可以作为一个组一起拖动</p>
+<p>在组管理器里也能看到这样的层次结构，可以作为一个组一起启用和禁用</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120548180.png" alt="image-20250612054855153"></p>
+<p>右键添加组就可以创建一个</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120549541.png" alt="image-20250612054916520"></p>
+<p>然后把大小调整好，把节点拖进去就自动加入组里了</p>
+<p>也可以改标题和名字</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>最高主机泡泡
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.superhostpopo.cn/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="comfyui学习记录">https://www.superhostpopo.cn/2025/06/10/comfyui学习记录/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/SuperHostPopo">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://space.bilibili.com/4023159">
+            <span class="icon">
+              <i class="fab fa-youtube"></i>
+            </span>
+
+            <span class="label">bilibili</span>
+          </a>
+      </div>
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="https://qm.qq.com/cgi-bin/qm/qr?k=5CvcQibu7bdh8UCZSN-1TYfRKFkL1qAh&jump_from=webapi">
+            <span class="icon">
+              <i class="fab fa-qq"></i>
+            </span>
+
+            <span class="label">交流QQ群853376692</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"># 软件</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/20/%E5%86%8D%E6%88%98zynq%E6%97%A0ddr%E5%90%AF%E5%8A%A8/" rel="prev" title="再战zynq无ddr启动">
+                  <i class="fa fa-chevron-left"></i> 再战zynq无ddr启动
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-terminal"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">最高主机泡泡</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">69k</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
