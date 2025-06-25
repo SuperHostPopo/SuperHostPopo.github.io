@@ -128,6 +128,244 @@
       </tags>
   </entry>
   <entry>
+    <title>Lora训练学习笔记</title>
+    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
+<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
+<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
+<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+<span id="more"></span>
+<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
+<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
+<p>建个文件夹脚本git下来不多说</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
+<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
+<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
+<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
+<p>最后显示install compete就装完了。不得不说真大啊</p>
+<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
+<p>我真傻</p>
+<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
+<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
+<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
+<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
+<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
+<p>然后开webui，先切图。设好输入输出目录</p>
+<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
+<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
+<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
+<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
+<p>又要下一堆模型emmm 然后反推倒是很快</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
+<p>把反推完的tag扔到训练图的文件夹里去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
+<p>到这里训练集就处理完了。待用。</p>
+<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
+<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
+<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
+<p>然后改train.ps1训练脚本</p>
+<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
+<p>底模一般都推荐用full 7.2G原始大模型</p>
+<p>分辨率改一下</p>
+<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
+<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
+<p>dim就不改了 学习率这种进阶的东西也不改了</p>
+<p>优化器用了lion据说效果好一点</p>
+<p>locon没学明白，先不开</p>
+<p>好了保存然后开始训练</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
+<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
+<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
+<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
+<p>而且其实也不需要训练40轮这么多 </p>
+<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
+<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
+<p>我跑了40轮只是测试一下看看这样</p>
+<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
+<p>总之目前还没跑完，先试试10轮的，很满意！</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
+<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
+<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
+<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
+<p>等我再研究研究明白再来说</p>
+<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
+<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
+<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
+<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
+<p>5.正则化 没看明白 待我以后再研究研究</p>
+<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
+<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
+<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
+<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
+<p>3.手动改标…真的好麻烦</p>
+<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
+<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
+<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
+<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>PyQt入门笔记</title>
+    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>我不当鸽子啦！</p>
+<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
+<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
+<p>得有一年没怎么敲过代码了吧</p>
+<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
+<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
+<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+<span id="more"></span>
+<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
+<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
+<p>ok 这个警告和path有关，看起来可以先不管</p>
+<p>简单跑个hello world</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p>槽 这hello world 也够复杂…看着任重道远啊</p>
+<p>管他，先Ctrl+F5</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
+<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VtuberStudio配置选择和模型调参</title>
+    <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
+    <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
+<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
+<span id="more"></span>
+<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
+<p><a href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
+<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
+<ul>
+<li>obs游戏采集vts进程</li>
+<li>obs采集vts虚拟摄像头</li>
+<li>spout2插件输出</li>
+<li>NDI网络接口推流（没用过）</li>
+</ul>
+<p>前面俩比较常用，都是老方法了</p>
+<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
+<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
+<p>用法参考wiki，b站也介绍很多</p>
+<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
+<p>看起来很棒</p>
+<p>不过需要手动给obs装一个插件</p>
+<p>官方的安装指南：<a href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
+<ol>
+<li><p>关掉obs</p>
+</li>
+<li><p>下载最新版本：<a href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
+</li>
+<li><p>一路next结束</p>
+</li>
+<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
+</li>
+<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
+</li>
+</ol>
+<h1 id="2-小技巧"><a href="#2-小技巧" class="headerlink" title="2. 小技巧"></a>2. 小技巧</h1><p>给vts设置为管理员启动（对steam打开也生效）</p>
+<p>wiki说可以增加进程优先级，降低延迟和卡顿（谁知道呢）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502150012000.png" alt="image-20250215001240940"></p>
+<h1 id="3-追踪方式"><a href="#3-追踪方式" class="headerlink" title="3.追踪方式"></a>3.追踪方式</h1><p>常用的面捕方法有这么几种</p>
+<ul>
+<li>VTS内置追踪直接调用电脑usb摄像头（最简单，效果差）</li>
+<li>电脑usb摄像头输入，VTS调用NVDIA面捕或者Google的面捕（比上面好，但是依然受摄像头限制）</li>
+<li>VTS ios端调用苹果iPhone面捕api，局域网推流面捕数据给电脑本地VTS调用（精度高，效果好）</li>
+<li>VTS ios端面捕，推流给电脑上的VBridger，VB推流给电脑端VTS调用（使用复杂，效果最好，可以实现额外的动作效果）</li>
+</ul>
+<p>其实还有几种其他的搭配，比如电脑摄像头配VB，感觉意义不大就不多提</p>
+<p>这里苹果的面捕api比起电脑摄像头有绝对的优势，这个是硬件差距，包括苹果的面捕摄像头硬件和ios的api生态。实测来看，不管是vts的面捕还是n卡面捕啥的，在我这种双屏常转头+摄像头比较远+摄像头在底侧向上拍的情况下，都无法避免丢追。但是ios的面捕工作稳定。</p>
+<p><strong>所以一般来说都会建议有条件的情况下使用苹果面捕</strong>（我这里是淘汰下来的老iPhone13正好再利用了，用了个手机支架横着放在电脑屏幕下面）</p>
+<p>然后是vb，vb是一个面捕软件，通过接收苹果api的面捕数据，二次计算得到更复杂精细的面部建模和追踪，用来驱动vts。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280030435.png" alt="image-20250328003021305"></p>
+<p>关于用不用vb，当然vb可以实现很多高级的复杂表情识别，但是这个是依赖你的模型建模的，如果你的模型没有做这些高级的输入绑定，那其实vb也无法帮你实现更高级的效果（我的模型就是普通的）</p>
+<p>如果你的模型是适配vb的，那当然肯定要用vb</p>
+<p>但是即使模型是普通的，也还是可以用的，vb是支持兼容普通模型的模式的，只不过就实现不了高级的表情，还占用电脑资源，增加复杂度</p>
+<p>然而我试过之后还是用了手机vts+VB+电脑vts的方案，原因是是啥呢</p>
+<p>首先吧</p>
+<p><strong>你用vb是可以不用买手机版vts的，手机vts要150，vb只要30多</strong></p>
+<p>众所周知如果你直接用手机vts推流电脑vts，如果不买手机端vts，5分钟就会自动断连</p>
+<p>但是如果你用vb，vb是使用第三方客户端连接接口，不通过推流接口，所以并不会受这个影响，是可以正常使用的，也就是其实只用买个vb就好了（这里不涉及破解啥的，完全是正常的功能使用）</p>
+<p>但是其实这是小事，vb还有个好用的地方…他可以调输出曲线！</p>
+<p>这个等会说</p>
+<p>先说下配置</p>
+<h2 id="工作流配置"><a href="#工作流配置" class="headerlink" title="工作流配置"></a>工作流配置</h2><p>首先保证iPhone和电脑在一个路由器局域网下面</p>
+<p>然后装ios的vts，不用装模型，直接开设置，拉到最下面第三方客户端，打开它（不用开pc推流）</p>
+<p>再点下显示ip，记下iPhone的局域网ip备用</p>
+<p>然后打开vb，载入</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037599.png" alt="image-20250328003704492"></p>
+<p>如果你是vb模型可以用前面那些高级的，我是普通模型就用了最后那个兼容配置</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037391.png" alt="image-20250328003752365"></p>
+<p>把刚才的ip写在这里，连接上iPhone</p>
+<p>这时候vb里的模型应该已经可以动了</p>
+<p>然后打开电脑版vts</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040029.png" alt="image-20250328004016998"></p>
+<p>在设置里给这个打开</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040969.png" alt="image-20250328004059943"></p>
+<p>去vb下面选vts，点右边的连接</p>
+<p>然后去vts里点同意</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280041156.png" alt="image-20250328004152122"></p>
+<p>这里插件应该连上了，你的模型也会动了</p>
+<p>搞定~</p>
+<p>剩下的就和正常的vts配置一样了，b站教程很多</p>
+<p>注意这么做的情况下，电脑端vts的所有面捕参数都不生效，比如灵敏度啥的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043442.png" alt="image-20250328004307411"></p>
+<p>这些都不生效，由手机端控制</p>
+<p>同样的，手机端所有模型配置都不生效</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043406.png" alt="image-20250328004341367"></p>
+<p>包括这些模型参数，表情啥的</p>
+<p>可以理解为现在被拆成了两部分，手机只负责面捕，电脑只负责渲染模型</p>
+<h2 id="关于vb和曲线"><a href="#关于vb和曲线" class="headerlink" title="关于vb和曲线"></a>关于vb和曲线</h2><p>这里就说到为什么要用vb了</p>
+<p>众所周知vts的参数输入映射是一个一次函数</p>
+<p>也就是[x,y]到[i,j]的一个线性映射（前面是你的面捕参数，后面是给模型的驱动参数）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280110598.png" alt="image-20250328011019567"></p>
+<p>这里怎么调都是线性的，在大部分情况下，通过调这四个值的范围来控制表情的动作幅度，常态表情是什么都是可以实现的</p>
+<p>但是有些时候就会有问题</p>
+<p>比如我这里的睁眼参数</p>
+<p>在我对着主屏幕看的时候，这个参数大概是0.7左右，正常来说我要把这个常态调整到输出给模型的1.0（也就是正常睁眼）</p>
+<p>大概是上面这个映射值</p>
+<p>但是当我稍微转头，看左边的屏幕，就出问题了</p>
+<p>这时候面捕识别到的睁眼参数会下降到0.4~0.5左右，实际上我还是睁眼，但是就会变成这样</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280112523.png" alt="image-20250328011230412"></p>
+<p>输出只有0.7了，变成了半闭眼，就很诡异</p>
+<p>只有我的输入参数到了0.2，0.3，也就是接近闭眼或者眨眼的情况，我才希望模型闭眼，不然就维持在睁眼的状态（比如转头看侧屏的时候应该是睁眼）</p>
+<p>通过这个简单的输入映射，就没法解决这个问题</p>
+<p>一个办法是改模型的控制参数里的变形器绑定，相当于直接修改模型动作，但是很明显模型不好改，一般来说都不会有源文件</p>
+<p><strong>那么用vb的曲线就可以解决这个问题</strong></p>
+<p>首先我们常态的输入是0.7，这时候眼睛的驱动参数是1左右，是正常的</p>
+<p>然后我转头，最差的情况输入下降到了0.4</p>
+<p>我希望在0.4~0.7的输入情况下模型的眼睛都不会明显闭眼，也就是把0.4~0.7的输入都映射到0.7左右的输出</p>
+<p>那么我们改曲线</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280117092.png" alt="image-20250328011709060"></p>
+<p>手动加两个控制点</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280127754.png" alt="image-20250328012742732"></p>
+<p>总之修成大概0.4到0.7的区间输出都是0.65左右就好了</p>
+<p>这样也不影响前后段的眼睛动作（比如闭眼，眨眼和睁大眼）</p>
+<p>ok~</p>
+<p>这玩意用法应该还有挺多的，就看怎么开发了</p>
+<p>结</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>AT32开发踩坑记录</title>
     <url>/2025/05/06/AT32%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</url>
     <content><![CDATA[<p>众所周知的原因，最近芯片有点涨价（st你又不是美国公司你涨啥 摔）</p>
@@ -286,118 +524,919 @@
       </tags>
   </entry>
   <entry>
-    <title>PyQt入门笔记</title>
-    <url>/2023/05/05/PyQt%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>我不当鸽子啦！</p>
-<p>久违的和工作室的小伙伴们一起做项目。不能再鸽啦</p>
-<p>给我分了个写上位机GUI的活…我这哪里像是很会软件的样子啊摔</p>
-<p>得有一年没怎么敲过代码了吧</p>
-<p>要说GUI，当年也学过点半吊子electron，但是这里还是用py更方便点吧。反正都是从头学差不多嘛</p>
-<p>看了下PY下靠谱的GUI库，还是用经典的qt吧</p>
-<p>这里姑且记一下学习记录吧。反正个人博客不就是拿来随缘记录的么</p>
+    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
+    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
+<p>想着行动力行动力但是下班之后就好想睡觉</p>
+<p>彻底变成了社畜的模样</p>
+<p>但是哪怕迷茫也要前进呀</p>
+<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
+<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
+<p>权当是复健咯</p>
+<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
 <span id="more"></span>
-<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><p>先来个hello world</p>
-<p>在vsc终端下面装一下库本体 py环境用的系统上装的3.10.7</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"># 安装PyQt5</span><br><span class="line">pip install -i https://pypi.tuna.tsinghua.edu.cn/simple PyQt5</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050053351.png" alt="image-20230505005312326"></p>
-<p>ok 这个警告和path有关，看起来可以先不管</p>
-<p>简单跑个hello world</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">import sys</span><br><span class="line">from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout</span><br><span class="line"></span><br><span class="line"># 建立application对象</span><br><span class="line">app = QApplication(sys.argv)</span><br><span class="line"># 建立窗体对象</span><br><span class="line">w = QWidget()</span><br><span class="line"># 设置窗体大小</span><br><span class="line">w.resize(500, 500)</span><br><span class="line"></span><br><span class="line"># 设置样式</span><br><span class="line">w.layout = QVBoxLayout()</span><br><span class="line">w.label = QLabel(&quot;Hello World!&quot;)</span><br><span class="line">w.label.setStyleSheet(&quot;font-size:25px;margin-left:155px;&quot;)</span><br><span class="line">w.setWindowTitle(&quot;PyQt5 窗口&quot;)</span><br><span class="line">w.layout.addWidget(w.label)</span><br><span class="line">w.setLayout(w.layout)</span><br><span class="line"></span><br><span class="line"># 显示窗体</span><br><span class="line">w.show()</span><br><span class="line"># 运行程序</span><br><span class="line">sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
-<p>槽 这hello world 也够复杂…看着任重道远啊</p>
-<p>管他，先Ctrl+F5</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202305050058457.png" alt="image-20230505005811438"></p>
-<p>ok，今天的学习就先到这里啦！欲知后事如何…反正之后再说~</p>
+<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
+<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
+<p>也确实是太久没玩什么新东西了</p>
+<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
+<p><del>乐鑫的产品线真够乱的（摔</del></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
+<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
+<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
+<p>原理图也很简单</p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
+<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
+<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
+<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
+<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
+<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
+<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
+<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
+<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
+<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
+<p>装完之后随便选一个esp32s3的板子</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
+<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
+<p>于是随便撸了一个hello world试一下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>插上usb，可以自动识别com号，编译，下载</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
+<p>闪灯ok，串口输出ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
+<p>第一步算是跑起来了</p>
+<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
+<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
+<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
+<p>没想着能成功的</p>
+<p>结果一遍就刷进去了 草</p>
+<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
+<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
+<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
+<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
+<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
+<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
+<p>没啥可说的 很简单的玩意</p>
+<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
+<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
+<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
+<p>嗯…这就为后面埋下了大坑</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
+<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
+<p>还没有点亮呢 至少先驱动起来看看</p>
+<p>于是找个普通的st7789驱动库吧</p>
+<p>屏幕卖家自然是带了一些例程代码的</p>
+<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
+<p>都用arduino了，图的不就是不用自己写库么</p>
+<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
+<p>去arduino上搜一搜好了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
+<p>果然出来了一大堆</p>
+<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
+<p>第一个看着就ok，装来试一下吧</p>
+<hr>
+<p>未完待续…</p>
+]]></content>
+      <tags>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>comfyui学习记录</title>
+    <url>/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>补课啊补课</p>
+<p>也是难啃的玩意</p>
+<p>慢慢玩玩看吧</p>
+<span id="more"></span>
+<h1 id="资料区"><a href="#资料区" class="headerlink" title="资料区"></a>资料区</h1><p>先记一下一些学习资料</p>
+<ul>
+<li>官方示例工作流<a href="https://comfyanonymous.github.io/ComfyUI_examples/">https://comfyanonymous.github.io/ComfyUI_examples/</a></li>
+<li>上面那些工作流的github打包下载<a href="https://github.com/comfyanonymous/ComfyUI_examples">https://github.com/comfyanonymous/ComfyUI_examples</a></li>
+<li>官方文档<a href="https://docs.comfy.org/zh-CN">https://docs.comfy.org/zh-CN</a></li>
+<li>一些简单的节点功能介绍（只有自带节点）<a href="https://blenderneko.github.io/ComfyUI-docs/">https://blenderneko.github.io/ComfyUI-docs/</a></li>
+<li>官方推荐的节点包等<a href="https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html">https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html</a></li>
+<li>upscaler的合集资源<a href="https://huggingface.co/wyrde/upscales">https://huggingface.co/wyrde/upscales</a></li>
+<li>alice的工作流（方便使用，很大）<a href="https://github.com/2515448788/ShiQi_Workflow">https://github.com/2515448788/ShiQi_Workflow</a></li>
+<li>一个模型汇总<a href="https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer">https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer</a></li>
+<li>for循环的使用<a href="https://www.bilibili.com/video/BV1KXpheEE2F">https://www.bilibili.com/video/BV1KXpheEE2F</a></li>
+</ul>
+<p>一些workflow模板和下载网址</p>
+<ul>
+<li>学习用，有一些介绍readme <a href="https://github.com/wyrde/wyrde-comfyui-workflows">https://github.com/wyrde/wyrde-comfyui-workflows</a></li>
+<li>一些简单的模板workflow <a href="https://github.com/atlasunified/Templates-ComfyUI-">https://github.com/atlasunified/Templates-ComfyUI-</a></li>
+<li>使用easy use节点包的工作流模板<a href="https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file">https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file</a></li>
+<li>was节点的模板<a href="https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples">https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples</a></li>
+<li>openart 工作流分享 <a href="https://openart.ai/workflows/home">https://openart.ai/workflows/home</a></li>
+<li>另一个工作流分享网站 <a href="https://comfyworkflows.com/">https://comfyworkflows.com/</a></li>
+<li>c站也有一些</li>
+<li>在ui里直接文件 template可以看自带的模板包括第三方节点自带的也可以看</li>
+</ul>
+<h1 id="学习记录"><a href="#学习记录" class="headerlink" title="学习记录"></a>学习记录</h1><p><strong>使用秋叶的包 打了一堆外部节点（</strong></p>
+<h2 id="小tips"><a href="#小tips" class="headerlink" title="小tips"></a>小tips</h2><p>manager里可以下到常用模型，还可以打快照（节点包的状态啥的，防止装崩了可以恢复）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100221772.png" alt="image-20250610022152707"></p>
+<p>右键可以看节点导航和清理显存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222039.png" alt="image-20250610022221021"></p>
+<p>这里可以方便的开关节点，节点组，还可以导航节点，看节点的编号（解决报错信息有用）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222484.png" alt="image-20250610022255462"></p>
+<p>文件保存的通配符</p>
+<p>这里是节点名字.参数名字，节点名右键属性看，参数名把参数拉出来就能看到了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100223268.png" alt="image-20250610022315245"></p>
+<p>打开节点ID和来源的显示</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100232857.png" alt="image-20250610023208824"></p>
+<p>节点模式：设成never就相当于禁用了（不高亮）</p>
+<p>紫色的bypass（跳过）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100233797.png" alt="image-20250610023342746"></p>
+<p>连线样式，隐藏连线</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236431.png" alt="image-20250610023636396"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236942.png" alt="image-20250610023648909"></p>
+<p>load image节点可以直接粘贴图片进去，然后右键可以编辑遮罩（从mask输出，然后用带遮罩的vae编码器编码，进行inpaint）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506102143801.png" alt="image-20250610214339732"></p>
+<p>这个节点提供了所有提示词框的自动补全</p>
+<p>但是需要手动点一下load然后save才能起效</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249408.png" alt="image-20250611024914372"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249750.png" alt="image-20250611024940699"></p>
+<p>右键查看模型信息的功能，也是这个节点提供的（自动匹配c站信息）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110250723.png" alt="image-20250611025044697"></p>
+<p>各种字符串相关的功能：合并字符串，字符串追加、替换等，很多节点都有</p>
+<p>比如string function、show text、concat啥的</p>
+<p><strong>关于a1111和comfy提示词格式</strong></p>
+<p>实际上就是对提示词prompt的权重加权计算方式不同，也就是加括号：1.1这种写法产生的结果不一样，comfy的权重会更重一些，所以一些tag如果用的不好会炸掉</p>
+<p>可以靠切换到a1111提示词模式来避免</p>
+<p><strong>一些快捷键</strong></p>
+<p>ctrl+g 给选中的节点新建一个组</p>
+<p>按shift拖动连线可以把线移动到别的地方（一组也可以一起移动）</p>
+<p>在输出上拖动然后按按住shift松手可以打开搜索节点</p>
+<p>在连线中间的小圆点上点左键可以直接增加节点在中间</p>
+<h2 id="关于高清修复"><a href="#关于高清修复" class="headerlink" title="关于高清修复"></a>关于高清修复</h2><p>怎么在comfy里实现webui一样的高清修复一直没太明白</p>
+<p>研究了下应该是这样</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100304538.png" alt="image-20250610030451472"></p>
+<p>就基本上效果一样了</p>
+<p>实际上是先一次出图，然后用放大模型放大，再二次重采样（图生图）出来的</p>
+<p>所以不是标准的潜空间放大（我没理解错的话）</p>
+<p>但是我这里发现 他这个放大倍数好奇怪</p>
+<p>0.5实际上是放大两倍。。不理解为什么</p>
+<p><strong>后续：我理解了。。这个4x ultrasharp的模型相当于本身就把图像扩大4倍，所以后面要再缩放0.5相当于一共是扩大了2倍。原来如此。webui只是帮你自动处理了这个过程而已。。我完全理解了！</strong></p>
+<p>然后这里种子不一样。。得改下 理论上应该是要种子一致的</p>
+<p>comfy ui可以统计时间（这个是easy use节点的功能，统计节点时间），发现这个hiresfix比起webui的快好多为啥。。。</p>
+<h2 id="关于controlnet和ipadapter"><a href="#关于controlnet和ipadapter" class="headerlink" title="关于controlnet和ipadapter"></a>关于controlnet和ipadapter</h2><p>batch图像节点，可以把几个图合并，作为一个controlnet的参考</p>
+<p>mtb比较节点，可以输出diff图，仔细看两张图的区别</p>
+<p>controlnet的参考图预处理（prepare image）节点可以改变图像裁剪的焦点（ipadapter接收1：1比例的图，所以需要裁剪）</p>
+<p>几个预处理器的效果比较</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110031667.jpeg" alt="参考图"></p>
+<p>在comfyui里使用controlnet</p>
+<p>一般要分开选预处理器和controlnet两个节点</p>
+<p>相当于预处理器先把图像处理成上面的这种输出图的样子，然后塞给controlnet模型</p>
+<p>我们常用的那个union模型，也是搭配不同的预处理后的图片可以实现不同效果（当然也可以用独立controlnet模型，一个预处理器对应一种controlnet模型）</p>
+<p>这里也更好理解controlnet的机制一点</p>
+<p>说起来仔细看comfyui才发现，lora是控制的model和clip（两个都控制，可以分开设置强度），controlnet是控制的正负条件，而ipadapter是控制的model</p>
+<p>还是挺有意思的</p>
+<h2 id="关于批处理"><a href="#关于批处理" class="headerlink" title="关于批处理"></a>关于批处理</h2><p>有两个方法吧</p>
+<p>首先我们知道comfy是异步队列的</p>
+<p>比如你点两下右上角的启动，或者给批次设置成2然后点启动，结果都是一样</p>
+<p>他会根据你的数量加到左边的队列里，然后一个个顺序运行，队列后面的会pending</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120515500.png" alt="image-20250612051551472"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120516091.png" alt="image-20250612051601076"></p>
+<p>然后如果我们工作流里没有控制的东西，就点几下或者一个批次（batch）的启动，除了随机种子别的都不会变就跑几次</p>
+<p>想要实现批处理就要在流里面加上流程控制</p>
+<p>第一个方法就是用batch image节点，他会根据每个batch顺序从文件夹里拿图，在工作流里处理（当然你也可以设置成随机取）</p>
+<p>比如很简单我给controlnet的输入load image改成batch image</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120517234.png" alt="image-20250612051755212"></p>
+<p>然后右上角开一个batch的任务（看你想执行多少次）</p>
+<p>他就会每张图自动从文件夹里取底图给controlnet处理然后出图，这样可以很简单的实现一个批量垫图</p>
+<p>第二个方法是在工作流里用for循环节点，这个看b站讲解吧</p>
+<p>我也还没弄明白</p>
+<p>是比较灵活高级的方法</p>
+<h2 id="关于组和组节点"><a href="#关于组和组节点" class="headerlink" title="关于组和组节点"></a>关于组和组节点</h2><p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120545409.png" alt="image-20250612054503382"></p>
+<p>左上角标是这样的就是组节点</p>
+<p>实际上就是把几个节点复合到一起，然后把一些输入输出暴露出来，作为一个复用块，可以方便调用，在节点库里也能找到这样的节点（只有打开了对应工作流才能看到，不是作为自定义节点一直加载的）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120546631.png" alt="image-20250612054632608"></p>
+<p>右键选这个就能给拆开看到里面是什么结构</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547764.png" alt="image-20250612054714736"></p>
+<p>这种方块底色的是节点组</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547408.png" alt="image-20250612054757365"></p>
+<p>用来标识功能区域，方便管理和开关，然后也可以作为一个组一起拖动</p>
+<p>在组管理器里也能看到这样的层次结构，可以作为一个组一起启用和禁用</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120548180.png" alt="image-20250612054855153"></p>
+<p>右键添加组就可以创建一个</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120549541.png" alt="image-20250612054916520"></p>
+<p>然后把大小调整好，把节点拖进去就自动加入组里了</p>
+<p>也可以改标题和名字</p>
+<p>用shift+G可以给选中的节点打一个组一起</p>
+<p>然后用rg节点的quick bypass可以加一个控制面板快速开关组</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260417240.png" alt="image-20250626041756199"></p>
+<h2 id="everywhere节点的用法"><a href="#everywhere节点的用法" class="headerlink" title="everywhere节点的用法"></a>everywhere节点的用法</h2><p>简单来说就是用来简化复杂的连接线</p>
+<p>随便一个节点的输出连接到anything everywhere节点，然后就等于<strong>其他所有需要这个类型输入的节点都被连到了这个输出上</strong></p>
+<p>比如这里的model，后面所有需要model输入的节点相当于都已经连接到了这里，所以悬空也能使用</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260420868.png" alt="image-20250626042056818"></p>
+<p>当然这样不太灵活，容易乱，所以有下面那个带问号的节点</p>
+<p>这个节点可以手动写名字，就只限定固定的（名字）或者（输入属性名）或者（组名）里面的匹配节点才会被连过去，就不会乱了</p>
+<p>然后下面那些默认不是输入的控件，也可以用这个来输入，在这里选上需要的输入，就出现一个小绿条，然后就可以用输入名给连接过去了。当然我觉得这功能没有那么方便吧。。。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260423772.png" alt="image-20250626042308739"></p>
+<p>在空白处点右键show ue links就可以看到具体的连接关系了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260424484.png" alt="image-20250626042400464"></p>
+<h2 id="自动随机抽卡"><a href="#自动随机抽卡" class="headerlink" title="自动随机抽卡"></a>自动随机抽卡</h2><p>研究了下怎么从一个文本文档里随机抽取一行作为提示词</p>
+<p>这样可以实现随机抽卡</p>
+<p>比如我这有个文档，每行都是一个画师串，随机抽一行</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260426382.png" alt="image-20250626042625350"></p>
+<p>就用这个流就行（上面那个或者下面那个效果一样）</p>
+<p>然后用提示词连接把这字符串附加到你的提示词里，就能自动抽卡了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260426036.png" alt="image-20250626042655996"></p>
+<p>这个流可以随机抽取几行（中间那个节点名字是random prompt。upload你的文本文档，然后改上面的count也就是行数），然后出一个字符串列表，用列表转字符串连到一起，就可以随机抽你想要的几行了（目前没想到怎么用。。但是很有趣）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506260428658.png" alt="image-20250626042821594"></p>
 ]]></content>
       <tags>
         <tag>软件</tag>
       </tags>
   </entry>
   <entry>
-    <title>Lora训练学习笔记</title>
-    <url>/2023/03/19/Lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>也总算是狠下心换了新电脑，主要原因就是之前跑涩图卡的太不爽动不动就爆显存…呃这个理由真的没问题吗</p>
-<p>既然电脑也换了那也不能再摆烂天天拿着别人的lora和模型瞎玩了</p>
-<p>代码学不明白，用脚本训练总能学一下吧…之前教程看了不少但是技术日新月异啊，之前看的现在也过时了不少，在这里感谢b站几个一直更新教程的up们，互联网分享精神永存</p>
-<p>看教程看的头疼到现在也不知道能不能成功总之一步一步跟着来吧，学会多少记多少。感觉上了一年班自己的代码能力啊python啊计算机知识啥的都快还给老师了…还能不能捡的起来呢</p>
+    <title>lora训练学习笔记续_2024</title>
+    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
+    <content><![CDATA[<p>好久没摸了</p>
+<p>快一年了技术迭代很快啊</p>
+<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
+<p>但是也会遇到冷门到模型都找不出的（悲</p>
+<p>所以还是捡起来重新学一遍吧…</p>
 <span id="more"></span>
-<h1 id="配环境"><a href="#配环境" class="headerlink" title="配环境"></a>配环境</h1><p>python和git不多说了，教程推荐3.10.8或者3.10.9，看了下自己的3.10.7，也懒得更新了，估计差别不大吧，先用着，<del>翻车了再来改</del></p>
-<p>lora脚本用的秋叶佬的，虽然听说有lora gui了不过还是先从教程详细的玩起吧~</p>
-<p>建个文件夹脚本git下来不多说</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts</span><br></pre></td></tr></table></figure>
-<p>然后右键用powershell运行一下install.ps1，开始装环境</p>
-<p>好大的pytorch…每个包都要创建一个新的虚拟环境，然后下一遍torch是这样的</p>
-<p>不得不说世界上最大的东西除了node_modules还有python venv（笑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192155395.png" alt="image-20230319215549361"></p>
-<p>最后显示install compete就装完了。不得不说真大啊</p>
-<p>各种报错各种慢 然后我折腾完之后发现有个cn加速的安装脚本（</p>
-<p>我真傻</p>
-<h1 id="整理训练集"><a href="#整理训练集" class="headerlink" title="整理训练集"></a>整理训练集</h1><p>torch没卡我结果一个numpy十几m开始卡下载了，可能是这个没换源吧，也懒得从头来了等一会吧，趁这个时间先整理下训练集。<del>！！记得换源，我被折磨了半小时才想起来确认下我有没有换源我就是个纯纯的。。</del></p>
-<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">pip config <span class="keyword">set</span> <span class="keyword">global</span>.index-url https:<span class="comment">//pypi.tuna.tsinghua.edu.cn/simple</span></span><br></pre></td></tr></table></figure>
-<p>看了各种教程训练集讲究就多了，从画风统一度，裁剪方法，角度服装等等包含的程度，大抵每个炼丹师都应该知道，丹的好坏，训练集是最重要的吧。</p>
-<p>但是这里既然学习流程，就先不想那么多了，找个最简单的人物训练，自动裁切自动打标走一波也不折腾难的了。</p>
-<p>dalao说推荐个人用50张图左右，分辨率就用512*768吧，先找图。</p>
-<p>图片是用Moeloader从d站镜像站上拖下来的单人物tag的图片，随便挑选了看着比较好的70张，放个文件夹。不要用中文路径这个应该不用提了吧（</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192209123.png" alt="image-20230319220956075"></p>
-<p>然后开webui，先切图。设好输入输出目录</p>
-<p>我这里用tagger去打tag，就不开训练里的自动tag了，但是把自动焦点开一下。预处理。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192212605.png" alt="image-20230319221245570"></p>
-<p>切完初步扫了一下效果还ok，没有太离谱的。横向的切出来效果不太好不过也无伤大雅</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192215902.png" alt="image-20230319221504857"></p>
-<p>然后打tag，tag反推，批量操作，阈值按教程用0.3</p>
-<p>tag有各种玩法，这里也复杂得很，没看多明白…还是先用最简单的全标吧，按dalao说法，全标效果倒是也不差</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192219140.png" alt="image-20230319221929092"></p>
-<p>又要下一堆模型emmm 然后反推倒是很快</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231486.png" alt="image-20230319223112453"></p>
-<p>把反推完的tag扔到训练图的文件夹里去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192231385.png" alt="image-20230319223137350"></p>
-<p>到这里训练集就处理完了。待用。</p>
-<h1 id="设置训练参数"><a href="#设置训练参数" class="headerlink" title="设置训练参数"></a>设置训练参数</h1><p>在训练脚本文件夹下面建个train文件夹，再建个本次训练的文件夹，名字随便</p>
-<p>然后下面再建一个X_训练名字 的文件夹，X就是说的那个repeat次数，一个图像重复多少次。我这里写个10。后面名字随便。</p>
-<p>这里其实进阶会用来区分不同的参数来训练，我这里先不管了，就塞一个文件夹，把刚才目录下的训练图片和tag文件都丢进去</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192241972.png" alt="image-20230319224101940"></p>
-<p>然后改train.ps1训练脚本</p>
-<p>这个就有点复杂了，秋叶佬的教程写的比较明白。还是先按简单的通用设置来吧，改的就只有红圈的部分</p>
-<p>底模一般都推荐用full 7.2G原始大模型</p>
-<p>分辨率改一下</p>
-<p>batch按理说可以开大点不过也就是加快点速度所以还是算了</p>
-<p>epoch可以开大点反正就算过拟合了每轮也有保存不影响什么</p>
-<p>dim就不改了 学习率这种进阶的东西也不改了</p>
-<p>优化器用了lion据说效果好一点</p>
-<p>locon没学明白，先不开</p>
-<p>好了保存然后开始训练</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192314544.png" alt="image-20230319231411483"></p>
-<h1 id="训练！"><a href="#训练！" class="headerlink" title="训练！"></a>训练！</h1><p>训练没啥好说的，右键开始就好了（又要下一堆东西 等吧…emmm）</p>
-<p>然后开始欣赏显卡的轰鸣…是真的很慢…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355791.png" alt="image-20230319235551770"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303192355399.png" alt="image-20230319235536361"></p>
-<h1 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h1><p>因为设置了每2个epoch保存一次，所以其实不用等都训练完了，保存一次模型就可以测试一下了</p>
-<p>而且其实也不需要训练40轮这么多 </p>
-<p>按照dalao的经验，数据集差不多够多，打标没问题的情况下，6-8轮10轮以内就很好了，太高了还会过拟合</p>
-<p><del>我自己感觉2轮的甚至都很像模像样了，可能我的训练集比较多吧</del></p>
-<p>我跑了40轮只是测试一下看看这样</p>
-<p>不过感觉lora不好的一点还是每次训练完也没有个预览图，还得自己把模型copy出去然后在webui里测试…这属实是有点不方便</p>
-<p>总之目前还没跑完，先试试10轮的，很满意！</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200002445.png" alt="image-20230320000201974"></p>
-<h1 id="一些小tips"><a href="#一些小tips" class="headerlink" title="一些小tips"></a>一些小tips</h1><p>1.关于打标，打全标最简单，但是很愚蠢的一点就是用的时候必须也调用上一些tags标记，不然就会缺特征，因为打标在tags里的特征其实是不会被包含在lora本身里的，必须自己在调用时候写上去…</p>
-<p>所以其实对于人物lora来说最优的方法是手动删除人物特性相关的打标，但是属实有点麻烦…</p>
-<p>再摆烂点就是不打，但好像是容易过拟合吧…</p>
-<p>等我再研究研究明白再来说</p>
-<p>2.训练尺寸，我的图基本都是竖向的，512*512训练切图其实有点厉害，导致上面画出来的图头顶很多都没了…可能还是得参考原图比例来切图和训练比较好吧</p>
-<p>3.40系卡要不要替换cudnn，我没看有人提过lora要不要换，不过我换了下正常用是没问题，有没有提升没有仔细对比，不知道有没有人清楚了 </p>
-<p>更新下，实测换一下好像还是有提升的，但是也没有很夸张那种。</p>
-<p>4.训练batch数，我们不考虑显存的情况下，肯定越大越快，但是据说开大了会过拟合什么的，看dalao建议是说设成图片轮数（也就是图片数*文件夹名字前面那个repeat数，比如我这个70张图repeat 10就是700）的1/60左右。（这么看我这个数据量有点大了，好像一般推荐2，300这样，可能我应该减一点repeat数）</p>
-<p>5.正则化 没看明白 待我以后再研究研究</p>
-<h1 id="打标那些事"><a href="#打标那些事" class="headerlink" title="打标那些事"></a>打标那些事</h1><p>1.直接打全标感觉拟合效果比较好的，但是用起来很麻烦，还得把那些tag文件里高频的tag都写进去才能正常出图</p>
-<p>2.另一个方法是只打一个触发词，还有留下姿势动作这些tag，这种试了下感觉还可以，用起来方便，但是如果留了姿势的tag，那要开一个keep token 1 不然训练就乱了</p>
-<p>这个方法可以参考dalao的文章，有一个一键处理脚本，很好很方便</p>
-<p><a href="https://www.bilibili.com/read/cv22050074?from=articleDetail">https://www.bilibili.com/read/cv22050074?from=articleDetail</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202303200138727.png" alt="image-20230320013839698"></p>
-<p>3.手动改标…真的好麻烦</p>
-<p>你让我用这种方法我是拒绝的www 懒癌发作了</p>
-<h1 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h1><p>b站：秋叶，星空佬，等等</p>
-<p>参考资料：几个dalao的教程，特别是这个，很详细</p>
-<p><a href="https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click">https://www.bilibili.com/read/cv22274249?spm_id_from=333.999.list.card_opus.click</a></p>
+<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
+<p>全网找不到几张图</p>
+<p>真的是深刻感受到炼丹最难的就是数据集</p>
+<p>数据集处理真是最耗时的事情</p>
+<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
+<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
+<p>于是去找资料…总结几个小tips</p>
+<ul>
+<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
+</li>
+<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
+</li>
+<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
+</li>
+<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
+</li>
+<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
+</li>
+<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
+</li>
+</ul>
+<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
+<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
+<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
+<p>打标阈值0.35什么的 不多说了都老传统</p>
+<p>推荐下标签编辑的小软件</p>
+<p>BooruDatasetTagManager</p>
+<p>超好用 用过的都说好 还有自动翻译标签功能</p>
+<p>比插件的那个编辑器好用多了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
+<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
+<ul>
+<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
+</ul>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
+<p>参考秋叶的说明</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
+<ul>
+<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
+<p>为什么呢 我也不知道呢 </p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
+<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
+</li>
+<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
+<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
+<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
+</li>
+<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
+</li>
+<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
+</li>
+</ul>
+<p>更新：</p>
+<p>嗯。。实际用我这十几张图练了一下 发现了比较明显的过拟合，出图烂掉了（很糊的那种图）</p>
+<p>反复试了试也不知道是优化器的问题还是底模的问题还是训练方法问题还是我训练集太烂</p>
+<p>总之是烂掉了</p>
+<p>回到秋叶训练器用最传统的方法练了下，反而还好一些…（默认参数 传统adam优化器 lora算法，1batch size+5 repeat 50个epoch）真难啊</p>
+<p>重新开始学习。。</p>
+<p>嗯。看到个说法说这个和神童优化器会冲突 或许吧。。有空试试看吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405212353286.png" alt="image-20240521235316257"></p>
+<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
+<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
+<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
+<p>都是很棒的教程</p>
+<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>开启vsc自带的同步功能</title>
+    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
+<p>姑且记录一下</p>
+<p>好吧这有什么需要记的啊。知道了就好了</p>
+<p><code>文件-首选项-打开设置同步</code></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
+<p>然后登陆就ok啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
+<p>这里还是用微软账号省事一点</p>
+<p>然后在打开的浏览器页面登录微软账户ok</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
+<p>然后再看就可以看到显示设置同步已打开啦~</p>
+<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>技巧</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
+    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
+<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
+<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
+<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
+<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
+<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
+<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
+<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
+<p>那么下面就是具体的配置过程啦~</p>
+<span id="more"></span>
+<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
+<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
+<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
+<blockquote>
+<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
+<ul>
+<li>支持拖拽图片上传</li>
+<li>支持快捷键上传剪贴板里第一张图片</li>
+<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
+<li>上传图片后自动复制链接到剪贴板</li>
+<li>支持自定义复制到剪贴板的链接格式</li>
+<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
+<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
+</ul>
+</blockquote>
+<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
+<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
+<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
+<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
+<ul>
+<li><p><code>七牛图床</code> v1.0</p>
+</li>
+<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
+</li>
+<li><p><code>又拍云</code> v1.2.0</p>
+</li>
+<li><p><code>GitHub</code> v1.5.0</p>
+</li>
+<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
+</li>
+<li><p><code>阿里云 OSS</code> v1.6.0</p>
+</li>
+<li><p><code>Imgur</code> v1.6.0</p>
+</li>
+</ul>
+<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
+<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
+<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
+<p>所以就产生了一些无法避免的槽点</p>
+<ul>
+<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
+<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
+</ul>
+<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
+<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
+<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
+<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
+<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
+<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
+<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
+<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
+<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
+<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
+<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
+<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
+<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
+<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
+<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
+<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
+<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
+<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
+<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
+<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
+<blockquote>
+<p>其实有个比较优雅的方案是这样</p>
+<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
+<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
+</blockquote>
+<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
+<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
+<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
+<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>再战zynq无ddr启动</title>
+    <url>/2025/05/20/%E5%86%8D%E6%88%98zynq%E6%97%A0ddr%E5%90%AF%E5%8A%A8/</url>
+    <content><![CDATA[<p>太难了</p>
+<p>fpga真的是太难了</p>
+<p>抓耳挠腮 阴暗的爬行 🐦珠颈斑鸠咕咕叫🐦 🐧咕咕咕嘎嘎🐧jdlajfdlafjlkdjaflkdjaklf</p>
+<p>让我们再来一次…总算跑起来了（身心俱疲</p>
+<p>杀了我吧 xilinx</p>
+<span id="more"></span>
+<p>测试环境 vivado 2018.3 zynq7010</p>
+<p>建一个工程，添加一个zynq核，把ddr关了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201714981.png" alt="image-20250520171434949"></p>
+<p>打开qspi flash用来固化程序（注意，<strong>只能使用qspi flash，sd卡或者nand都会失败</strong> 由于fsbl里的一些机制，我暂时还不知道如何绕过 这就是上篇文章我鼓捣了一天没成功的原因）</p>
+<p>顺便加个emio用来验证ps是否正确工作</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201716435.png" alt="image-20250520171606398"></p>
+<p>加一个简单的计数器闪灯的.v文件验证pl是否正常工作</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201718573.png" alt="image-20250520171851488"></p>
+<p>然后添加规则约束综合实现生成比特流导出sdk不谈</p>
+<p>直接快进到打开sdk</p>
+<p>建一个普通的空工程，写个闪灯</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201730830.png" alt="image-20250520173020743"></p>
+<p>用户代码正常写就行</p>
+<p>然后修改链接脚本，给所有内容改到ram1去</p>
+<p>注意，<strong>ram1只有64k大小</strong>，so。。。基本写不了啥，很容易爆</p>
+<p>因为zynq的内置ram只有256k，前面192k要给fsbl用（本来是256k都给fsbl的，这都已经是挤出来的了）</p>
+<p>所以这点小内存基本上。。当单片机用都不行。毕竟zynq的ps库挺重的 占内存不小</p>
+<p>比较实用的用法可能是只用来引导pl当作一个很便宜的fpga用吧，毕竟zynq拆机片便宜的要死</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201752918.png" alt="image-20250520175213884"></p>
+<p>编译一下</p>
+<p>可以看到空间占用50k（zynq默认不会xip，所以应该是code+data+bss都会加载到内存）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201732275.png" alt="image-20250520173222251"></p>
+<p>然后建一个fsbl</p>
+<p>这东西默认编译出来130k<img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201733347.png" alt="image-20250520173324322"></p>
+<p>然后改fsbl</p>
+<p>下面的内容都是我验证过必须的，网上教程有很多经过验证可做可不做不影响结果的修改，都去掉了</p>
+<p>首先把296行的条件编译改成固定编译（if 1）</p>
+<p>因为没有ddr，默认这个条件编译不启动下面fsbl会直接不执行报错</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201735251.png" alt="image-20250520173506230"></p>
+<p>直接改成if 1强制执行</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201735904.png" alt="image-20250520173524891"></p>
+<p>然后把298到311行的ddr检查注掉</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201737999.png" alt="image-20250520173755980"></p>
+<p>打开fsbl.h，把475行的地址改成0xFFFFFE00</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201739773.png" alt="image-20250520173946748"></p>
+<p>修改链接脚本，给所有内存地址都改到ram0（其实只有最后一个默认是ram1需要改）</p>
+<p>记得保存</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201745630.png" alt="image-20250520174542597"></p>
+<p>重新编译一下</p>
+<p>默认生成一下boot文件</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201741207.png" alt="image-20250520174111168"></p>
+<p>给板子切到jtag启动模式，把boot.bin烧到flash里，选编译出来的boot和fsbl就行了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201743804.png" alt="image-20250520174303782"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201743502.png" alt="image-20250520174341464"></p>
+<p>重新切换回flash启动，上电，可以看到PL和PS的EMIO绑定的两个引脚LED都在闪，说明已经正常启动</p>
+<p>最后说下坑点吧</p>
+<p>首先，<strong>只能用qspi的nor flash，别的都启动不了</strong>。别问我为啥，我之前大概折腾了一天fsbl的代码也没看太明白，应该是加载映像的过程中需要用到ddr内存来搬移，所以就挂掉。。qspi flash不需要这一步（大概</p>
+<p>反正做参考吧，我也没能力改fsbl代码，所以就这样咯，网上的教程也都是用这个的</p>
+<p>然后就是内存小了，本来就只有256k，fsbl占192k，给用户程序只有64k，作为单片机来说可能不小了，但是这玩意是a7，他的bsp库很大，写个闪灯编译出来都50k，还不是xip的，满满的占内存。。</p>
+<p>网上有些dalao做裁剪优化，xip啥的，但是我太搞不太明白，也就暂时只能先这样了</p>
+<p>作为单片机都不太能玩，只用pl当fpga用的话大概还是可以的吧</p>
+<p>毕竟拉ddr是个苦大仇深的活</p>
+<p>大概就这样咯</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
+    <url>/2022/02/18/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>看朋友们都做了自己的blog，所以心血来潮学一下也来做一个…虽然不一定会经常写，但是先做了再说</p>
+<p>作为第一篇文章把整个搭建配置过程的坑什么的记录一下</p>
+<p>也正好作为网站的测试了</p>
+<p>为了省事直接用了GitHub pages和hexo的静态方案，虽然我自己有服务器，但是用经典的wp的话主题啊插件啊各种配置啊实在是麻烦的要死而且发文章也并不方便…还是得在本地用md写完了再去网站上上传</p>
+<p>干脆直接用免费的GitHub pages，然后解析到自己的域名，效果是一样的，GitHub的服务器免费还稳定，又不用担心忘了续费文章丢掉，写文也只需要在本地写完之后用一句命令部署到GitHub就可以自动更新了，倒也挺方便</p>
+<p>至于md的本地写作和图片的图床之类的问题，说起来就是另一个要解决的事了，之后再写文总结一下吧…总之来回来去踩了一堆坑看了一万篇文章试了各种办法，总算是找到了比较方便的写文章+配图+上传的方法了（但是以后会多写吗？大概还是…懒癌没得救 pia~</p>
+<p>总之我最后的整套方案是这样，本地用typora写文章，图片用picGo做自动处理，阿里云oss做图床储存，可以直接复制图片或者截图，然后在typora里粘贴图片，自动上传到图床并且替换图片链接，然后写完之后用hexo命令一键部署到GitHub pages就ok啦…总的来说还是比较方便的</p>
+<p>目前感觉不方便的地方就是新建文章还是需要用命令，然后写完之后还得敲命令部署上传…理论上可以用脚本解决，不过typora好像并不支持插件脚本之类的功能…之后再说啦</p>
+<p>网上查到的各种hexo的配置攻略版本新老不一，经常有一些新版本修改了的地方，所以也是遇到了不少麻烦，包括官方的文档好像也有一些更新不及时的地方…总归自己最后实际使用的可以工作的配置都列了出来，希望能作为参考吧</p>
+<p>那么这里的日期是2022年2月…这样</p>
+<span id="more"></span>
+<h1 id="安装Node-js-Git"><a href="#安装Node-js-Git" class="headerlink" title="安装Node.js,Git"></a>安装Node.js,Git</h1><p>这部分比较简单 官网下载安装就好了</p>
+<p>然后配置一下Git的账户和自己的GitHub账号关联（上传GitHub的ssh密钥）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172054165.png" alt="image-20220217205417118"></p>
+<p>测试一下安装情况</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+<h1 id="安装Hexo框架"><a href="#安装Hexo框架" class="headerlink" title="安装Hexo框架"></a>安装Hexo框架</h1><p>直接用</p>
+<p><code>npm install -g hexo-cli</code></p>
+<p>（npm最好挂梯子 我这里用了clash的TUN模式全局规则代理 不然源很慢 或者你也可以把npm的源换成国内源）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172058745.png" alt=""></p>
+<p>（请无视这里的npm更新提示）</p>
+<p>然后初始化我们的网页</p>
+<p>创建一个网站的目录，cd过去，打开命令行，执行</p>
+<p><code>hexo init myBlog</code></p>
+<p>这里会从hexo的GitHub上下载代码文件 所以比较慢 和刚才一样 最好挂代理</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102227.png" alt="image-20220217210217187"></p>
+<p>初始化完成，这里我的文件夹就叫MyBlog</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102353.png" alt="image-20220217210252332"></p>
+<p>进去看一下 已经自动生成了hexo的文件结构</p>
+<p>然后cd进MyBlog这个文件夹，执行一下（不进入网站文件夹直接执行是没法启动的）</p>
+<p><code>hexo s</code></p>
+<p>这句代码是在本地启动服务器预览网站 Windows防火墙会跳联网提示，记得通过</p>
+<p>然后进浏览器访问localhost:4000就可以看到初始化的hexo页面啦（没加主题，很丑2333）</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172105546.png" alt="image-20220217210548359"></p>
+<p>好了我们测试完按Ctrl+C退出来把本地服务器关掉</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172107794.png" alt="image-20220217210706763"></p>
+<h1 id="配置GitHub-Pages"><a href="#配置GitHub-Pages" class="headerlink" title="配置GitHub Pages"></a>配置GitHub Pages</h1><p>然后把blog部署到github上</p>
+<p>创建一个新的仓库</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172249059.png" alt="image-20220217224945020"></p>
+<p>名字：用户名.github.io 类型公开</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172251597.png" alt="image-20220217225111528"></p>
+<p>看一下设置下面的pages页 当前使用的分支是main 没有问题</p>
+<p>然后安装下hexo的github部署插件</p>
+<p>还是在刚才hexo项目的目录下面执行</p>
+<p><code>npm install hexo-deployer-git --save</code></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172253818.png" alt="image-20220217225314799"></p>
+<p>然后修改下目录下面的_config.yml文件 这个就是hexo全局的配置文件啦</p>
+<p>先改下最基础的GitHub部署设置 网站设置和主题插件啥的之后再说</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172256674.png" alt="image-20220217225604655"></p>
+<p>拉到最下面 加上这些内容</p>
+<p>branch就是刚才设置页面里面的分支（以前的默认都是master 但是现在GitHub的默认分支改成了main，所以这里也要填main…）</p>
+<p>中间那个地址就是刚才创建的GitHub仓库的地址 这里应该是用https格式的和ssh格式的都可以</p>
+<p>但是我发现用ssh链接的话我的代理似乎不能很好的运作…所以push会失败 于是改成用https格式之后部署成功</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172312712.png" alt="image-20220217231228688"></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172258859.png" alt="image-20220217225822828"></p>
+<p>链接在仓库主页面的code下面点ssh或者https然后直接复制就可以</p>
+<p>然后我们保存配置文件</p>
+<p>部署应该就配置好了</p>
+<p>运行一下试试</p>
+<p><code>hexo g -d</code></p>
+<p>这个命令是二合一指令，g是generate，意思是生成静态页面（用来上传到GitHub pages用来访问）然后-d是deploy自动部署到GitHub仓库中</p>
+<p>上传成功~</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313935.png" alt="image-20220217231308902"></p>
+<p>然后我们回到GitHub的仓库页面刷新一下 就可以看到网站文件被上传上去了</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313106.png" alt="image-20220217231359032"></p>
+<p>浏览器输入<a href="https://superhostpopo.github.io/尝试访问一下">https://superhostpopo.github.io/尝试访问一下</a></p>
+<p>ok，已经能够正常访问啦</p>
+<p>那么最后再把这个页面和我的个人域名做一下解析，就可以用自己的域名访问网站啦</p>
+<h1 id="解析个人域名"><a href="#解析个人域名" class="headerlink" title="解析个人域名"></a>解析个人域名</h1><p>这里我的域名在腾讯云购买的，所以进入腾讯云控制台，找到dns设置</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172318134.png" alt="image-20220217231824116"></p>
+<p>直接添加一条CNAME类型的记录，这里我是解析到了主域名下面的二级域名，也就是blog.superhostpopo.cn</p>
+<p>所以主机记录写的blog 记录值当然是指向我们的GitHub pages的链接</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172319272.png" alt="image-20220217231943252"></p>
+<p>如果要使用主域名的话可以直接添加www主机名和@主机名的解析都指向GitHub pages页面即可</p>
+<p>设置完dns解析，接下来要设置GitHub的页面设置把网址指向自己的域名，这里再进入settings页面，直接修改custom domain里面填入我们的个人域名然后save保存</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172322292.png" alt="image-20220217232248248"></p>
+<p>我这里把下面的强制https也打开了，这样访问时候都会使用https链接进行</p>
+<p>看到绿色的小箭头，说明域名指向已经成功了</p>
+<p>试试在浏览器里输入<a href="https://blog.superhostpopo.cn/，也可以成功访问了">https://blog.superhostpopo.cn/，也可以成功访问了</a></p>
+<p>但这里还有个小问题，也就是实际上这个设置，是自动在仓库文件里加入了一个CNAME文件说明了实际网址的指向，但当我们使用hexo g -d重新部署的时候，本地文件会覆盖GitHub仓库，导致cname文件失效，所以我们要把这个文件加入到本地hexo项目的source目录下面，这样在hexo重新生成和部署的时候也会照常将这个文件上传进来</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172326904.png" alt="image-20220217232619877"></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172328652.png" alt="image-20220217232847609"></p>
+<p>直接把这个文件下载保存在source目录下，或者在目录下直接新建一个CNAME文件，里面填上我们的个人域名地址，都是ok的，这样再次部署的时候就不会丢失cname了</p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172330261.png" alt="image-20220217233048241"></p>
+<p>这文件里的内容很简单 只有一行</p>
+<h1 id="测试新建文章"><a href="#测试新建文章" class="headerlink" title="测试新建文章"></a>测试新建文章</h1><p>写一篇文章测试一下</p>
+<p><code>hexo n &quot;测试文章&quot;</code></p>
+<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172332545.png" alt="image-20220217233250525"></p>
+<p>会自动在post目录下生成文章的md文件 然后就可以在里面加入内容啦</p>
+<p>保存一下，然后还是生成上传</p>
+<p><code>hexo g -d</code></p>
+<p>嗯…等了一会就能看到文章啦 不过好丑（</p>
+<p>PS：发现偷懒用GitHub图床的话不爬梯的话看不到图。。GitHub虽然能访问但是GitHub的图片文件就不行 奇奇怪怪的</p>
+<p>算了 明天换阿里云吧 也不省这点钱了</p>
+<p>PPS：尝试了下网上说的<a href="https://cdn.jsdelivr.net加速">https://cdn.jsdelivr.net加速</a> 然后发现这破玩意也得爬梯…这有个什么用啊（摔 反而更不稳定了</p>
+<p>果然还是用阿里云吧</p>
+<p>但是总之网站是部署成功啦 剩下的明天再研究了 摸了</p>
+<h1 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h1><p>氪了点金（9快qwq）换了阿里云oss的图床</p>
+<p>速度快的飞起</p>
+<p>然后开始配主题</p>
+<p>用的是GitHub上star最多的Next主题</p>
+<p>文档写的也很详细：</p>
+<p><a href="http://theme-next.iissnan.com/getting-started.html">http://theme-next.iissnan.com/getting-started.html</a></p>
+<p>这里直接用git安装</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181548371.png" alt="image-20220218154803339"></p>
+<p>直接进入网站目录执行这句</p>
+<p><code>git clone https://github.com/iissnan/hexo-theme-next themes/next</code></p>
+<p>编辑：</p>
+<p>草死 这个文档上写的是老版的next的库 next已经迁移到了新版仓库 这里</p>
+<p><a href="https://github.com/theme-next/hexo-theme-next">https://github.com/theme-next/hexo-theme-next</a></p>
+<p>命令要用这个</p>
+<p><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></p>
+<p>部署的时候才发现提示了一下已经迁移了…喂作者更新一下文档啦！</p>
+<p>然后再编辑根目录的config.yml文件</p>
+<p>把theme改成next就启用主题啦</p>
+<p>然后看一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
+<p>然后刷新一下发现首页只有乱码了啥也没有…</p>
+<p>明明试了下<code>hexo s</code>本地看是可以正常显示的…</p>
+<p>翻了下配置文件，发现原来是没有改网站域名…导致访问不到正确的文件了</p>
+<p>改成自己的域名，再clean然后部署一遍，ok~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601323.png" alt="image-20220218160119297"></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601410.png" alt="image-20220218160145161"></p>
+<p>主题很漂亮嘛~</p>
+<p><strong>然后再做一些细节的主题配置，自己的信息什么的啦</strong></p>
+<p>简单的网站信息设置，不细说了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181651763.png" alt="image-20220218165134738"></p>
+<p>坑：</p>
+<p>首先这里语言的问题</p>
+<p>按照文档上写的把语言改成zh-Hans（简体中文）</p>
+<p>然后发现更新之后语言变的乱七八糟了…草（三声</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181624145.png" alt="image-20220218162440121"></p>
+<p>去网上搜了一下发现…这是个常见问题，原因是…虽然作者在文档里写的都是zh-Hans，但是主题的目录下的语言文件却是zh-CN，所以找不到匹配的文件名自然就乱套啦</p>
+<p>所以我们进入\themes\next\languages目录下面，把zh-CN.yml的文件复制一份然后改名叫zh-Hans.yml，ok~</p>
+<p>（作者更新一下文档啊喂！！ x2）</p>
+<p><strong>然后改一下网站的logo图标</strong></p>
+<p>我们先做好180x180，32x32和16x16分辨率的图标，我在网上查到的教程都说要用ico格式的图标，但是这里其实直接用png格式就可以了，hexo默认的图标也是png的，直接用ps做出来就好了，存到\themes\next\source\images文件夹下面</p>
+<p>改下\themes\next_config.yml配置文件（这个是主题配置，虽然文件名一样，但是和网站配置是不一样的）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181645670.png" alt="image-20220218164535644"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">favicon:</span><br><span class="line">  small: /images/popo2-16x16.png</span><br><span class="line">  medium: /images/popo2-32x32.png</span><br><span class="line">  apple_touch_icon: /images/popo2.png</span><br></pre></td></tr></table></figure>
+<p>分别修改这三个图片文件就好了</p>
+<p><strong>主题的布局：</strong></p>
+<p>Next主题本身内置有三个子风格，可以用在主题配置里切换</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181712124.png" alt="image-20220218171216101"></p>
+<p>我个人比较喜欢比较简洁的这个啦</p>
+<p><strong>侧边栏的头像：</strong></p>
+<p>主题配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Sidebar Avatar</span><br><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/popo.png</span><br><span class="line">  # If true, the avatar will be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar will be rotated with the cursor.</span><br><span class="line">  rotated: false</span><br></pre></td></tr></table></figure>
+<p>把url改成头像文件就行了，这里把头像显示改成了圆形的</p>
+<p><strong>添加阅读量统计功能：</strong></p>
+<p>感谢下@不蒜子 大佬提供的统计api功能啦</p>
+<p>用起来很简单，在主题配置文件里找到这句</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+<p>不需要任何配置，改成true，启用即可，真的非常的简单</p>
+<p>（查了一下其他各种网站提供的统计api真的是…一个比一个复杂，需要各种注册各种绑定id。麻烦死啦。dalao的api只需要一个开关就可以提供统计了，真的很感谢，太厉害啦）</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181725782.png" alt="image-20220218172500760"></p>
+<p>效果也很不错嘛</p>
+<p><strong>加入本地搜索：</strong></p>
+<p>安装插件</p>
+<p><code>npm install hexo-generator-searchdb --save</code></p>
+<p>编辑网站配置文件，加入下面这段在最后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure>
+<p>编辑主题配置文件，搜索这句配置打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Local search</span><br><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
+<p><strong>加入latex公式支持：</strong></p>
+<p>这真的是个大坑…坑了我好半天。查了各种资料 总算成功了</p>
+<p>首先吧我们编辑主题配置文件，打开mathjax选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mathjax:</span><br><span class="line">  enable: true</span><br><span class="line">  # See: https://mhchem.github.io/MathJax-mhchem/</span><br><span class="line">  mhchem: false</span><br></pre></td></tr></table></figure>
+<p>然后默认的渲染器并不能支持mathjax，所以卸载然后替换成另一个兼容的渲染器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
+<p>最后还得在编写的文章的头部加上math支持的开关</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181805704.png" alt="image-20220218180538675"></p>
+<p>然后重新部署运行下，总算可以正常显示latex公式啦~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181806545.png" alt="image-20220218180604350"></p>
+<p>关于其中的坑啊…首先配置文件里面有好几个mathjax的选项卡，但是只有math:下面的那个的enable才是有用的，别改错了</p>
+<p>然后网上的支持渲染器有很多，如果用mathjax的话，就是hexo-renderer-kramed或者hexo-renderer-pandoc，但是后者我用起来会报错，前者是可以成功的</p>
+<p>至于如果你用katex的话，需要选择其他的渲染器，这里我mathjax好不容易调成功了就不费劲去改其他的了所以不管了</p>
+<p>最后记得在文章里打开公式支持…哎，一言难尽啊</p>
+<p><strong>安装字数统计：</strong></p>
+<p>安装插件</p>
+<p><code>npm install hexo-symbols-count-time --save</code></p>
+<p>修改站点配置文件添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: true</span><br><span class="line">  item_text_post: true</span><br><span class="line">  item_text_total: true</span><br></pre></td></tr></table></figure>
+<p>ok啦可以看到阅读时长和文章字数</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181821845.png" alt="image-20220218182136822"></p>
+<p>ps：感觉这个阅读时长功能没个卵用…关掉，只留下了字数统计</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
+<p><strong>配置标签和关于：</strong></p>
+<p>hexo支持标签和分类两个文章分类功能…但是这俩我感觉，功能差不多，有点重复</p>
+<p>所以就只开了标签，分类就不用了</p>
+<p>先创建标签页面：</p>
+<p><code>hexo new page tags</code></p>
+<p>然后修改这个页面，在\source\tags\index.md</p>
+<p>里面改成这样</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: Tags</span><br><span class="line">date: 2022-02-18 19:03:24</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p>关掉保存</p>
+<p>再修改主题配置里面的menu部分，直接把tag行的注释取消即可</p>
+<p><code>tags: /tags/ || fa fa-tags</code></p>
+<p>然后在写文章的时候只要在文章头里打上标签</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 测试文章</span><br><span class="line">date: 2022-02-17 23:32:38</span><br><span class="line">tags:</span><br><span class="line">- 测试</span><br><span class="line">- 网站</span><br></pre></td></tr></table></figure>
+<p>注意这里的格式：</p>
+<p>短横线后面记得加空格</p>
+<p>每一个tag占一行</p>
+<p>一个文章可以有任意个标签</p>
+<p>然后就可以在网站的标签页面里按照标签对文章分类了</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181925854.png" alt="image-20220218192525823"></p>
+<p>然后添加关于页面</p>
+<p>和标签页面相同，先创建about页面</p>
+<p><code>hexo new page about</code></p>
+<p>同样修改about目录下的index.md</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 关于我</span><br><span class="line">date: 2022-02-18 19:03:14</span><br><span class="line">type: &quot;about&quot;</span><br><span class="line">#这里写关于正文内容</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件，打开about行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || fa fa-home</span><br><span class="line">  about: /about/ || fa fa-user</span><br><span class="line">  tags: /tags/ || fa fa-tags</span><br></pre></td></tr></table></figure>
+<p>此时在主页点击关于就可以看到自己的关于页面了</p>
+<p><strong>修改代码高亮风格：</strong></p>
+<p>改成暗色模式，修改主题配置文件如下</p>
+<p>顺便把一键复制代码的功能也打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">codeblock:</span><br><span class="line">  # Code Highlight theme</span><br><span class="line">  # Available values: normal | night | night eighties | night blue | night bright | solarized | solarized dark | galactic</span><br><span class="line">  # See: https://github.com/chriskempson/tomorrow-theme</span><br><span class="line">  highlight_theme: night</span><br><span class="line">  # Add copy button on codeblock</span><br><span class="line">  copy_button:</span><br><span class="line">    enable: true</span><br><span class="line">    # Show text copy result.</span><br><span class="line">    show_result: false</span><br><span class="line">    # Available values: default | flat | mac</span><br><span class="line">    style:</span><br></pre></td></tr></table></figure>
+<p>效果不错~</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181946779.png" alt="image-20220218194659745"></p>
+<p><strong>设置个人信息链接：</strong></p>
+<p>修改主题配置social部分</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  #GitHub: https://github.com/yourname || fab fa-github</span><br><span class="line">  #E-Mail: mailto:yourname@gmail.com || fa fa-envelope</span><br><span class="line">  #Weibo: https://weibo.com/yourname || fab fa-weibo</span><br><span class="line">  #Google: https://plus.google.com/yourname || fab fa-google</span><br><span class="line">  #Twitter: https://twitter.com/yourname || fab fa-twitter</span><br><span class="line">  #FB Page: https://www.facebook.com/yourname || fab fa-facebook</span><br><span class="line">  #StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow</span><br><span class="line">  #YouTube: https://youtube.com/yourname || fab fa-youtube</span><br><span class="line">  #Instagram: https://instagram.com/yourname || fab fa-instagram</span><br><span class="line">  #Skype: skype:yourname?call|chat || fab fa-skype</span><br></pre></td></tr></table></figure>
+<p>自行启用对应条目即可</p>
+<p>我这里设置的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-bilibili</span><br></pre></td></tr></table></figure>
+<p><strong>友情链接：</strong></p>
+<p>修改links部分</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">links:</span><br><span class="line">  #Title: http://yoursite.com</span><br><span class="line">  e萌工作室: https://www.emoe.xyz/</span><br></pre></td></tr></table></figure>
+<p>显示效果是这样的</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181947887.png" alt="image-20220218194759860"></p>
+<p><strong>显示版权信息说明：</strong></p>
+<p>修改主题配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">creative_commons:</span><br><span class="line">  license: by-nc-sa</span><br><span class="line">  sidebar: true</span><br><span class="line">  post: true</span><br><span class="line">  language:</span><br></pre></td></tr></table></figure>
+<p>这是侧边栏和文章底部的版权信息，直接打开就好</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181948582.png" alt="image-20220218194824550"></p>
+<p>follow me功能 这里我和侧边栏信息写的相同的，也可以添加你的rss订阅之类的进去</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">follow_me:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-youtube</span><br><span class="line">  #Twitter: https://twitter.com/username || fab fa-twitter</span><br><span class="line">  #Telegram: https://t.me/channel_name || fab fa-telegram</span><br><span class="line">  #WeChat: /images/wechat_channel.jpg || fab fa-weixin</span><br><span class="line">  #RSS: /atom.xml || fa fa-rss</span><br></pre></td></tr></table></figure>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182001445.png" alt="image-20220218200151416"></p>
+<p><strong>修改网站底部footer：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">footer:</span><br><span class="line">  # Specify the date when the site was setup. If not defined, current year will be used.</span><br><span class="line">  #since: 2015</span><br><span class="line"></span><br><span class="line">  # Icon between year and copyright info.</span><br><span class="line">  icon:</span><br><span class="line">    # Icon name in Font Awesome. See: https://fontawesome.com/icons</span><br><span class="line">    name: fa fa-terminal</span><br><span class="line">    # If you want to animate the icon, set it to true.</span><br><span class="line">    animated: false</span><br><span class="line">    # Change the color of icon, using Hex Code.</span><br><span class="line">    color: &quot;#000000&quot;</span><br></pre></td></tr></table></figure>
+<p>这里把底部的红色爱心图标修改了一下，感觉红心不是很好看。图标可以去这个网站找到代码<a href="https://fontawesome.com/icons">https://fontawesome.com/icons</a></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182019506.png" alt="image-20220218201952480"></p>
+<p>（无视那个访问量 这里因为本地预览所以抽掉了）</p>
+<p><strong>侧边栏：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sidebar:</span><br><span class="line">  # Sidebar Position.</span><br><span class="line">  position: left</span><br><span class="line">  #position: right</span><br><span class="line"></span><br><span class="line">  # Manual define the sidebar width. If commented, will be default for:</span><br><span class="line">  # Muse | Mist: 320</span><br><span class="line">  # Pisces | Gemini: 240</span><br><span class="line">  #width: 300</span><br><span class="line"></span><br><span class="line">  # Sidebar Display (only for Muse | Mist), available values:</span><br><span class="line">  #  - post    expand on posts automatically. Default.</span><br><span class="line">  #  - always  expand for all pages automatically.</span><br><span class="line">  #  - hide    expand only when click on the sidebar toggle icon.</span><br><span class="line">  #  - remove  totally remove sidebar including sidebar toggle.</span><br><span class="line">  display: post</span><br></pre></td></tr></table></figure>
+<p>这里可以修改显示位置（左右） 宽度 </p>
+<p>还有何时显示</p>
+<p>我就不改了都用了默认的</p>
+<p><strong>回到顶部滚动条和阅读进度显示</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">back2top:</span><br><span class="line">  enable: true</span><br><span class="line">  # Back to top in sidebar.</span><br><span class="line">  sidebar: false</span><br><span class="line">  # Scroll percent label in b2t button.</span><br><span class="line">  scrollpercent: true</span><br></pre></td></tr></table></figure>
+<p>把最后那个改成true就好</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182033245.png" alt="image-20220218203349221"></p>
+<p>好啦…这些都在本地调试完了，我这个博客大概就算搞定了~</p>
+<p>最后还是</p>
+<p><code>hexo clean &amp;&amp; hexo g -d</code></p>
+<p>搞定！desu</p>
+]]></content>
+      <tags>
+        <tag>软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>不当爱抖露了！星野爱的重启人生</title>
+    <url>/2023/06/28/%E5%AE%89%E7%A7%91/</url>
+    <content><![CDATA[<blockquote>
+<p>同步更新：</p>
+<p>nga：<a href="https://bbs.nga.cn/read.php?tid=36780513">https://bbs.nga.cn/read.php?tid=36780513</a></p>
+<p>泥潭吞楼太厉害，搞个备份</p>
+</blockquote>
+<p><strong>想要与你相见，此愿我已寄托于星。</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280035446.png" alt="00023-397873791"></p>
+<span id="more"></span>
+<p>大家好~这里是个萌新，纯种的。创作经验莫得，文笔渣，中二病，逻辑乱，ooc，情商低，社畜苦，更新咕…<br>大纲无，存稿无，nga现骰现编中…打下这些字的时候正文真的一点都还没有写…<br>提前说声抱歉对不住读者老爷们的期待如果有读者的话，轻喷啦<br>如果还愿意看下去的话(真的有吗？)</p>
+<p>大概是纯自嗨吧，看了推子第一集之后就一直意难平，如果有另一条世界线该多好，如果那个世界可以再温柔一点该多好。在看了最新话的兄妹相认大药之后冲动再也抑制不住了——</p>
+<p><strong>我要给星野爱完整的一生！</strong></p>
+<p>于是基本就是这样，想要写一个另一条路线的星野爱充满未知的新生活，大体上应该是一个轻松快乐的故事吧 严谨的故事lz这种萌新也写不来啊，没那个能力知道嘛 ，来到各种各样的地方，结识形形色色的人，参与各种各样新奇有趣的冒险什么的~</p>
+<p>也会选择一个温柔的世界观，并且加足够强力的保底机制防止爱小姐的这次人生也变得惨兮兮的 lz向来是过保护的he大团圆爱好者啦</p>
+<p>预计会很混沌，太严肃的内容无，可能会有漫无边际的乱入和梗选项什么的，希望能足够有趣和快乐就好了呢。<br>也欢迎各种各样乱七八糟的安价啦如果真的有人安价的话</p>
+<p>因为是纯纯的萌新搞不明白怎么设计战斗系统也绝对写不好战斗，太难了啦！所以大概不会做战斗系统吧…目前吧？看我学习的成果啦，没准啥时候就觉得自己突然行了什么的</p>
+<p>再一次，愿爱小姐能拥有闪耀而快乐的人生！那么开始投下。</p>
+<p>如果看不到下面就是lz被抓去上班了/神鹤吞了/憋不出来卡文了 大变申</p>
+<p>骰娘啊骰娘 会有观众老爷赏脸嘛？</p>
+<p><strong>ROLL : 1d100</strong>=d100(93)=<strong>93</strong></p>
+<blockquote>
+<p>碎碎念 …</p>
+<p>果然都会有的吧，那种突然涌起的想要写点什么东西的冲动，越想越兴奋越想越兴奋，看的多了创作欲就会不受控的冒出来…然后真的想做的时候发现 寄了 我怎么这么菜写不出来啊卡壳啊这写的都是些啥啊 </p>
+<p>但是为什么还要作死呢。说到底还是冲动吧，想要做什么的冲动是挡不住的，明知道自己不行，明知道会失败，也想要马上去做的悸动吧。不停的踌躇害怕但是最后，还是输给了自己的欲望，不去做的话，热情冷下来的时候，就会后悔，又错过了尝试一件事的勇气，那时候没有尝试的话，以后可能就永远也不会去做了吧。</p>
+<p>了解安科的时间也不长，入坑作和很多人一样都是敬爱的王子海皇，虽然是看了王子新作小说后回去补的烈幻入真的是纯纯萌新中的萌新了。<br>第一次看就被这种 不可预测的命运的舞台 深深的吸引了<br>感觉会很快乐的样子呢！那就尝试一下吧！不试试去做会后悔的吧！失败了也没什么大不了的嘛！ 嗯 反正失败的尝试已经够多啦</p>
+</blockquote>
+<p>在下午上班之前，先按照惯例车个卡吧 虽然好像没多大用的样子，就当是第一次的仪式感吧</p>
+<p><strong>星野爱</strong><br>力量：</p>
+<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
+<p>擅长唱跳，身体能力不错的样子<br>体质：</p>
+<p><strong>ROLL : 1d100</strong>=d100(8)=<strong>8</strong></p>
+<p>差点大失败…体力不差，但是体质低，是有什么罕见的疾病吗？燃烧生命在当偶像吗喂<br>智力：</p>
+<p><strong>ROLL : 1d70</strong>=d70(15)=<strong>15</strong></p>
+<p>(没上过学 -30)<br>爱…我的丈育…有一种纯真的美 不是 符合原作的知识水平!<br>魅力：</p>
+<p><strong>ROLL : 1d100+50</strong>=d100(58)+50=<strong>108</strong></p>
+<p>(天才般的爱抖露sama +50，可突破上限)<br>总算有个不拉的了<strong>这不是全靠加值么</strong><br>意志：</p>
+<p><strong>ROLL : 1d100</strong>=d100(43)=<strong>43</strong></p>
+<p>普普通通平凡人的感觉<br>幸运：</p>
+<p><strong>ROLL : 1d100</strong>=d100(69)=<strong>69</strong></p>
+<p>普通的好运，大概能捡到零钱或者靠直觉避开雨天的程度吧，但是敌不过命运的恶意<br>魔力：0[未解锁]<br>这个世界，有魔法吗？</p>
+<p>lz要去上班了，下班后再见 上班摸鱼构思ing</p>
+<p>晚饭小更一下…没有大失败真好啊，真好啊，好啊，啊 但是这出目<br>怎么感觉会命途多舛啊</p>
+<p>下班啦 继续</p>
+<p>先来骰一下为啥这么惨体质只有8<br>是身体疾病吗</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>(是/否)</p>
+<p>燃烧生命歌唱的病弱少女，我哭死<br>那么是什么病呢</p>
+<p><strong>ROLL : 1d10</strong>=d10(5)=<strong>5</strong></p>
+<p>1-2 和莎莉奈同样的病症<br>3-4 营养不良(什么屑孤儿院)<br>5-6 严重贫血<br>7-8 遗传性心脏病(咚 咚 咚)<br>9 其实是装病(怎么都是屑啊)<br>10 大成功/大失败(<strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>)</p>
+<p>骰娘好温柔 选中了平和的选项<br>区区贫血而已，就用天才偶像大人高达43的意志力克服过去口牙<br>贫血的严重程度(越大越严重 0:多 吃 红 枣 100:临 界 血 限)</p>
+<p><strong>ROLL : 1d100</strong>=d100(99)=<strong>99</strong></p>
+<p>草草草<br>人生第一个大成功为什么会出现在这种地方啊<br>现在就是很后悔 非常后悔</p>
+<p><strong>“不要手贱去丢感觉没什么所谓的骰子”</strong>——必可活用于下一次</p>
+<p>让我冷静下想想该怎么圆…</p>
+<p>明明只是想找下手感象征性的车下卡满足下中二的仪式感啊喂，为什么会变成这样呢…说好的重生呢</p>
+<p>病情 大 成 功<br><strong>危</strong><br>也就是星野爱大失败<br>已经不是一般的贫血了，稍微运动过量可能就会缺氧倒地了吧。</p>
+<p>带着如此的身体，却还在偶像的舞台上闪闪发光，已经是毫无疑问的在燃烧生命了吧。<br>忘我的燃烧，一瞬的闪耀，双瞳中的光芒，如夜空中的长庚星一样点亮了无数人的梦想<br>”一等星寄于你身”，名副其实的，天才般的偶像大人<br>也难怪露比和阿库亚会无可救药的被吸引吧</p>
+<p>大失败是什么：</p>
+<p><strong>ROLL : 1d10</strong>=d10(1)=<strong>1</strong></p>
+<p>1-2 某次live过度劳累重病后被神木光趁虚而入(接 回 原 作)<br>3-4 粉丝线下开门杀时由于惊吓贫血发作而亡(世界线的收束)<br>5-6 其实神木光是活在现代的吸血鬼？<br>7-8 星野爱超人的魅力是血继限界，但代价是贫血<br>9 其实星野爱是超级混血种，血统浓度太高不稳定，表现为贫血(为啥啊)<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>PS：因为主题是重生，所以星野爱的死是已经发生了的事件。但是具体的情况可能会和原作有些微妙的不同？ 本来不想不同的但是骰娘果然是自由的啊…</p>
+<p>感谢版主 总算放出来了<br>人类的本质就是手贱<br>lz为什么又要手贱去改主楼然后被神鹤关了小黑屋</p>
+<p>后一半的梗选项没中，所以还是稳健的原作展开，唐突的大失败只是给小爱惨兮兮的一生又增加了一个注解…大概</p>
+<p>让我们回到主线吧</p>
+<p>小爱打了那个改变命运的电话吗</p>
+<p><strong>ROLL : 1d10</strong>=d10(9)=<strong>9</strong></p>
+<p>1-9 打了(原作展开)<br>10 没打(微妙的剧情变化)</p>
+<p>来个骰娘小爱。愿小爱的新人生也能拥有骰娘的祝福<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057284.jpeg" alt="img"></p>
+<p>一念之差，终归，还是没有逃得开命运<br>在按下通话键之前，在想些什么呢？或许是直觉，或许是超出常人的幸运，或许是不甘于既定的结局，犹豫着，手指微微颤抖。<br>最终，还是按下了恶魔的门铃。<br>给孩子们一个惊喜吧？带着点恶作剧的想着，离开了一人间的电话亭。</p>
+<p>于是那盛大的绽放和渺小的心愿都轰然崩塌。</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057095.jpeg" alt="img"><br>“我爱你们。”<br>“这句话…绝对，不是谎言。”</p>
+<p>说出来了啊。太好了。然后…<br>孩子撕心裂肺的哭喊声似乎逐渐模糊了。视野越来越暗。<br>天黑了吗<br>好多星星。大城市里，也能看到星空吗？<br>好亮，最亮的那一颗，是叫什么…<br>可以许愿吗？<br>好想要，“爱”啊。</p>
+<p>意识，中断了。</p>
+<p>“爱！” “爱！” “爱！！！”<br>……“都是，我的错”</p>
+<p>爱的苏醒(75以上醒来)</p>
+<p><strong>ROLL : 1d100</strong>=d100(2)=<strong>2</strong></p>
+<p>唐 突 大 失 败<br>但是死都死了…放过孩子吧，已经够惨的了，只是想多睡一会有什么错 bushi</p>
+<p>？？？的闹别扭(别扭：小爱你倒是争点气啊&lt;——&gt;温柔：已经很累了，多休息下吧)</p>
+<p><strong>ROLL : d100</strong>=d100(52)=<strong>52</strong></p>
+<p>星野爱的苏醒(75以上醒来，？？？的祝福+25)</p>
+<p><strong>ROLL : d100</strong>=d100(48)=<strong>48</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057885.jpeg" alt="img"></p>
+<p>上一楼忘了写加值了<br>1d100(48)+25=73<br>怎么又在关键时刻差一点拉跨啊</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057168.jpeg" alt="img"><br>？？？(随机立绘)：辛苦啦，真是个粪游戏呀，人生的一周目。受苦了呢，小爱，但是，要全成就通关的吧，二周目？加油！</p>
+<p>星野爱的苏醒(75以上醒来，？？？的祝福+50)</p>
+<p><strong>ROLL : d100+50</strong>=d100(93)+50=<strong>143</strong></p>
+<p>看来鼓励很有效嘛。星野爱，堂堂复活！</p>
+<p>先骰一下状态。<br>二周目小爱醒来时多大了：</p>
+<p><strong>ROLL : 1d6+10</strong>=d6(5)+10=<strong>15</strong></p>
+<p>(？？？：跳关是二周目的一环！孤儿院太受苦了别再折磨孩子了)</p>
+<p>现在的剧情时间点是：(越小越接近被小爱被刺杀时，越大越接近推子原作进度的时间)</p>
+<p><strong>ROLL : 1d100</strong>=d100(3)=<strong>3</strong></p>
+<p>小爱的记忆：(0：我是谁，我在哪？ 100：仿佛从前世的梦中醒来)<br><strong>？？？的祝福：那些痛苦，已经过去了(遗忘痛苦的回忆，不会踏上一周目路线)</strong></p>
+<p><strong>ROLL : 1d100</strong>=d100(95)=<strong>95</strong></p>
+<p>PS：想了想，还是让不要让过去的回忆啊复仇啊神木光什么的再掺和进来了，大赤老师都写不明白我瞎整干啥啊，说好的要给小爱一个开心快乐的故事啊。</p>
+<p>大失败接大成功，骰娘，令人敬畏<br>剧情时间是被刺前后，也就是小爱20岁，阿夸露比才4岁，有点遗憾可能没法很快让原作主角组们出场了。或许mem还有机会？<br>记忆大成功，基本啥都记得，就当是之前的技能点都完美继承了吧。</p>
+<p>好像听到了呼唤。<br>“加油！”<br>该醒了。<br>亮光，刺眼的朝阳，睁开双眼。<br>做了个好长的梦啊…为了成为有名的偶像，努力地练习，一步步地积累人气，那一天，马上就要到了。明天，就要登上东京巨蛋演出了…好幸福…然后…<br>然后怎么了？记忆…想不起来<br>不对！<br>这不是梦！<br>我是…星野爱。<br>我应该，<strong>已经死了啊</strong></p>
+<p>小爱的惊讶：</p>
+<p><strong>ROLL : 1d100</strong>=d100(21)=<strong>21</strong></p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058633.jpeg" alt="img"></p>
+<p>lz看了新一话内心过于激动 已经不知道怎么描述了<br>我发现nga的分隔线在手机端好像不太能显示。还是手动吧</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058042.jpeg" alt="img"><br>诶，难道是传说中的重生剧情？果然我是女主角嘛！</p>
+<p>稍加思考，小爱就充满自信地接受了这个事实<br>至于是怎么死掉的？完全没印象，就当作是live路上救助小女孩然后堂堂泥头车转生吧！做了好事啊，这么想的话，不是大赚特赚了吗？反正女主角是不会死的啦！</p>
+<p>既然是赚来的人生，这次就自由自在一点吧<br>也不用再做偶像了吧。最高峰，差一步就可以登上了。虽然很可惜，但是”谎言“已经表演的够多了。这一次，还是试一下”真实“的自己吧</p>
+<p>小爱还想继续做偶像吗：(做够了，想尝试下新人生-50，也就是目前不会做啦)</p>
+<p><strong>ROLL : 1d50</strong>=d50(17)=<strong>17</strong></p>
+<p>说起来现在是什么情况，既然没有当偶像的话，还在孤儿院吗？(1-9 还在 10 不太一样的情况)</p>
+<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
+<p>如果在的话，和孤儿院关系好吗？</p>
+<p><strong>ROLL : 1d100</strong>=d100(87)=<strong>87</strong></p>
+<p>生活条件怎么样</p>
+<p><strong>ROLL : 1d100</strong>=d100(4)=<strong>4</strong></p>
+<p>这大失败率是不是不正常啊喂<br>还好因为是重生来的所以只是背景板设定，小爱不用再受苦了(跳关万岁！但是按这个设定的话上辈子过的是有多倒霉啊…)</p>
+<p>从小生活的孤儿院，虽然条件不太好，但是孤儿院老奶奶却对孩子们都很用心照顾。对小爱来说，这里是比那个在两世记忆中都没有留下几个片段的”家庭“要温暖的多的地方了。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058010.jpeg" alt="img"><br>”总比挨那个不知道现在出没出狱的老妈揍强多了嘛！”<br>小爱总是一边笑一边这么说。<br>虽说孤儿院的生活还算温馨，但是物质条件上…<br>大失败：</p>
+<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
+<p>1-3 穷困潦倒，乡下孤儿院资助企业倒闭，已经快要维持不下去了<br>4-6 家徒四壁，夏天漏雨冬天挨冻<br>7-9 吃不饱饭，年长的姐姐都会把饭菜让给长身体的小爱一些<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>吞楼好严重 可能还是得找个备份更新的地方了…让我找找<br>————————————<br>倒闭边缘的孤儿院，很王道系的开局</p>
+<p>真怀念啊，这个地方。躺在熟悉的床上，小爱感受到了久违的温暖和放松<br>上一次，也是为了赚钱，才一个人跑到大城市，走上了偶像之路</p>
+<p>“那就再来一次吧，加油！我可是王道系女主角，换一个路线一定也可以的！”<br>拍了拍自己的脸颊，小爱站起身，走出了“存档点”</p>
+<p>要去哪里呢：(1 先在乡下转转 2 出发，去大城市！)</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+<p>顺便一提，重生清除病弱debuff，现在的小爱，感觉自己无敌青春健康，状态好极了<br>重骰下体质，保底60(健康青春少女)</p>
+<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
+<p>智力因为还是并没有上学所以很遗憾…(教育程度低是萌点！)</p>
+<p>曾经无比憧憬的大城市，也早已失去了光鲜亮丽的滤镜。曾经的超人气偶像，这一世也还只是一个普普通通初中年级的少女而已。</p>
+<p>“真的没人认得自己了啊…不过这地方本来也没人认得什么偶像吧？”<br>走在清晨的小路上，下意识地做出了招牌的微笑，随即，又恍然一愣<br>“不用伪装自己，不用营业的笑容，这样的感觉，也不坏嘛”<br>小爱自嘲地想着<br>“毕竟，我已经不是偶像了嘛”</p>
+<p>“总之，女主角就先来拯救这个家吧！”<br>说是这么说…该做点啥呢？</p>
+<p>小爱的决心：(像家一样的存在+30)</p>
+<p><strong>ROLL : 1d70+30</strong>=d70(32)+30=<strong>62</strong></p>
+<p>小爱思路的正经程度：(越大越正经，越小越脱线)</p>
+<p><strong>ROLL : 1d100</strong>=d100(26)=<strong>26</strong></p>
+<p>————————————<br>新手村任务：第一桶金！为了拯救即将废部的…</p>
+<p>还指望她能想出啥靠谱的主意  只能说符合原作了<br>————————————<br>小爱的主意是：</p>
+<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
+<p>1-2 One piece！去孤儿院附近的山里寻宝！<br>3-4 去钓鱼吧，能不能钓上来宝藏？<br>5-6 研究转运仪式(福生玄黄…)<br>7-8 向路边的猫许愿(只是普通的猫吧！)<br>9 这里可以放个安价吗？尝试一下，中了的话没人就重新骰qwq<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(2)=<strong>2</strong></p>
+<p>ps：发现好像不放图就不那么容易被吞的样子…呜呜呜我的立绘我的小表情 再想想有没有其他办法吧</p>
+<p>“赚钱的话，怎么样比较快呢？没准再睡一觉醒来就成了巨~富有的远亲的继承人，也不是没有可能吧？”<br>小爱一边漫无目的地在街上瞎转，一边胡思乱想着。<br>“诶，这长得奇形怪状的猫哪来的？”<br>是一开始就在吗？一只黑猫呆呆地趴在路边。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280134263.jpeg" alt="img"><br>“这种展开，是魔法少女吗？！“<br>思路总是如此跳跃的，小爱不知怎么想起了闲暇时在小书店偷偷翻看过的魔法少女漫画。<br>”是吧是吧绝对是吧！总之先许愿再说！“<br>可能黑猫也被吓住了吧，竟然没有跑开，怔怔的看着小爱跑过来，蹲下，闪着星光的紫瞳和一对黑瞳大眼瞪小眼<br>”我想要花不完的钱！呃…也别太显眼了。孤儿院也修成豪华别墅！啊还有…”</p>
+<p>发生了什么：</p>
+<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
+<p>1-5 喵？喵？喵？(你在说什么我听不懂因为我只是只普通猫咪)<br>6-9 吓跑了(不给我吃的还冲我吼 喵！)<br>10 真不是平常猫？</p>
+<p>加班（哭） 只能稍微更一点了</p>
+<p><strong>话还没说完，黑猫就一溜烟跑不见了<br>虽然很遗憾，猫只是普通的猫而已。<br>不甘心的小爱朝着消失的方向一顿狂奔，理所当然地一无所获。</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/2cfe6338-1d38-48f1-9e64-f0026e0c5535.png" alt="00142-77213927.png" style="zoom:25%;" /></p>
+<p><strong>“什么嘛，果然漫画里都是骗人的”</strong><br>小爱的失望：</p>
+<p><strong>ROLL : 1d100</strong>=d100(14)=<strong>14</strong></p>
+<p><strong>这不是一点也不失望么！你还有点常识啊
+</strong></p>
+<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/1ed14888-c5b3-46e0-902a-f1deb52b4caf.png" alt="00140-1819914487.png" style="zoom:25%;" /></p>
+<p><strong>”事情总不会有这么容易啦…再想想办法吧“<br>一边努力把自己的思维切回正轨，小爱忽然发现</strong></p>
+<p><strong>ROLL : 1d10</strong>=d10(4)=<strong>4</strong></p>
+<p>1-3 跑太远没看路，迷路啦<br>4-6 闯入了电视剧的外景拍摄现场<br>7-9 某个著名偶像团体在开live(为什么会在这种乡下啊喂！)<br>10 大成功/大失败</p>
+<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
+]]></content>
+      <tags>
+        <tag>其他</tag>
+      </tags>
   </entry>
   <entry>
     <title>ZYNQ入门日记</title>
@@ -740,737 +1779,39 @@
 <p>实际上这里还有个坑我很久的点是。。不好意思说出来</p>
 <p>lvgl里定义的屏宽和高，千万别反了（横屏和竖屏）</p>
 <p>不然就全变乱码了…我最开始就是写反了（摔</p>
+<h1 id="Day-N-1-继续来大战Verilog-我又回来了"><a href="#Day-N-1-继续来大战Verilog-我又回来了" class="headerlink" title="Day N+1 继续来大战Verilog 我又回来了"></a>Day N+1 继续来大战Verilog 我又回来了</h1><p>verilog虐我千百遍…</p>
+<p>我…我也不爱这玩意（</p>
+<p>就想开个pll出个时钟都能给我搞出问题 我真是对自己绝望了</p>
+<p>就…切记</p>
+<p><strong>对于例化模块来说，下层模块的输出必须接到上层模块中的wire，不能接到reg</strong></p>
+<p><strong>也就是.output_clk(clk1)这种写法，clk1必须是wire不能是reg</strong></p>
+<p>但是在一个模块内没有这种限制</p>
+<p><strong>另外 对模块进行输入可以用reg</strong> </p>
+<p>.input_sig(signal)这种，signal可以是reg没问题</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506231805625.png" alt="image-20250623180547589"></p>
+<p>不然会报错 各种报错…啊。。。</p>
+<p>特别是写仿真tb的时候也要注意</p>
+<p>总之先贴一些资料在这里：</p>
+<ul>
+<li>fpga用ft232 usb往上位机传输的ip核<a href="https://github.com/WangXuan95/FPGA-ftdi245fifo">https://github.com/WangXuan95/FPGA-ftdi245fifo</a></li>
+<li>axi4讲解<a href="https://badboy2002.xyz/2024/12/27/note/fpga-du-xie-ddr/">https://badboy2002.xyz/2024/12/27/note/fpga-du-xie-ddr/</a></li>
+<li>zip-cpu（有很多fpga资料和教程）<a href="https://zipcpu.com/">https://zipcpu.com/</a></li>
+<li>zipcpu的导航汇总<a href="https://www.eetree.cn/doc/detail/2352">https://www.eetree.cn/doc/detail/2352</a></li>
+</ul>
+<p>慢慢学吧…</p>
+<p>verilog里的变量默认都是unsigned，所以如果需要有符号要额外声明</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506241436192.png" alt="image-20250624143659129"></p>
+<p>异或0就是不变，异或1就是取反</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506241440463.png" alt="image-20250624144044417"></p>
+<p><strong>两条规则：</strong></p>
+<p><strong>不可以出现直接反馈（环路） 也就是无限循环 输出作为输入这种 否则报错</strong></p>
+<p><strong>不可以出现一个变量被多次赋值，因为作为硬件会产生多驱动，报错</strong></p>
+<p>还有这种写法</p>
+<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506241444539.png" alt="image-20250624144403505"></p>
 ]]></content>
       <tags>
         <tag>软件</tag>
         <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>esp32s3&amp;arduino&amp;PlatformIO环境配置&amp;st7789点屏&amp;lvgl学习笔记</title>
-    <url>/2024/02/16/esp32s3%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>翻开一看又是半年没有写什么东西了</p>
-<p>想着行动力行动力但是下班之后就好想睡觉</p>
-<p>彻底变成了社畜的模样</p>
-<p>但是哪怕迷茫也要前进呀</p>
-<p>趁着年前熟悉一下很久就想学但是一直没学两三年没碰都快要忘干净了的一些事吧</p>
-<p>比如怎么用单片机和一块彩屏画出一个好看的UI？也熟悉一下比较新的器件和开发方式吧</p>
-<p>权当是复健咯</p>
-<p>想了想还是尽量写写blog做笔记吧 方便日后又忘得差不多了的时候翻来复习？虽然也有用OneNote来记录的习惯但是还是太零散了 翻找起来也麻烦</p>
-<span id="more"></span>
-<h1 id="关于mcu和开发板"><a href="#关于mcu和开发板" class="headerlink" title="关于mcu和开发板"></a>关于mcu和开发板</h1><p>现在新鲜的mcu真挺多</p>
-<p>有时候感觉自己还在几年前的f103c8t6小蓝板的时代</p>
-<p>也确实是太久没玩什么新东西了</p>
-<p>虽然esp32s3也算不上什么太新的玩意 不过生态也比较成熟 资料挺多 性能也够强，想要推屏幕的话，想着还是要找个主频高内存大的片子，就用它吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161736488.png" alt="image-20240216173601424" style="zoom:50%;" /></p>
-<p><del>乐鑫的产品线真够乱的（摔</del></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161731512.png" alt="img" style="zoom:50%;" /></p>
-<p>去某宝随便买了个看着顺眼的核心板<del>长得很像小蓝板很亲切</del></p>
-<p>这里是资料：<a href="https://wiki.luatos.com/chips/esp32s3/board.html">https://wiki.luatos.com/chips/esp32s3/board.html</a></p>
-<p>原理图也很简单</p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142605987.png" alt="image-20230109142605987"></p>
-<p><img src="https://openluat-luatcommunity.oss-cn-hangzhou.aliyuncs.com/images/image-20230109142929589.png" alt="image-20230109142929589"></p>
-<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><p>esp32主流的开发环境应该算是有两套</p>
-<p>一个是官方的esp-idf的C sdk，功能齐全资料也完善，不过听说在win下配环境比较麻烦，学习起来也略微繁琐</p>
-<p>另一个就是arduino固件的支持，写起来简单，兼容arduino库用起来方便，但是对mcu底层就没那么好操控了</p>
-<p>因为是初步入门复健所以还是先用简单的arduino吧</p>
-<h2 id="arduino-IDE环境"><a href="#arduino-IDE环境" class="headerlink" title="arduino IDE环境"></a>arduino IDE环境</h2><p>下了个最新的arduino IDE</p>
-<p>不得不说虽然2.0的arduino界面变了很多 但是难用这一点上还是一如既往</p>
-<p>配置倒是很简单 点开开发板管理器 搜esp32 然后直接装这个官方的包就好了</p>
-<p>不过要自备魔法手段 网络并不太好 包挺大的得装一会（装不上的话还有各种手段 这里不谈</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161757800.png" alt="image-20240216175723742"></p>
-<p>装完之后随便选一个esp32s3的板子</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161759611.png" alt="image-20240216175937562"></p>
-<p>看下上面的开发板pinmap，GPIO10和11就是两颗LED 想想如果脑子正常的话esp32的gpio和arduino的gpio号应该是一样的吧（应该？）<del>别跟树莓派那样有好几种编号就好</del></p>
-<p>于是随便撸了一个hello world试一下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">setup</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your setup code here, to run once:</span></span><br><span class="line"> Serial.begin(<span class="number">921600</span>);</span><br><span class="line"> Serial.print(<span class="string">&quot;hello world!\n&quot;</span>);</span><br><span class="line"> pinMode(<span class="number">11</span>,OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">loop</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line">  digitalWrite(<span class="number">11</span>,HIGH);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">  digitalWrite(<span class="number">11</span>,LOW);</span><br><span class="line">  delay(<span class="number">500</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>插上usb，可以自动识别com号，编译，下载</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161804003.png" alt="image-20240216180430952"></p>
-<p>闪灯ok，串口输出ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402161805250.png" alt="image-20240216180539203"></p>
-<p>第一步算是跑起来了</p>
-<h3 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h3><p>本来还想的很复杂 因为这块合宙的开发板默认推荐的开发环境是他们自家的sdk（猜应该也是一种上层封装的固件吧，没仔细研究）</p>
-<p>还想着是不是还得需要先去刷入arduino的固件，刷bootloader什么的</p>
-<p>照着网上搜的arduino环境配置方法去先这样直接点了下载也只是想先尝试一下</p>
-<p>没想着能成功的</p>
-<p>结果一遍就刷进去了 草</p>
-<p>看起来似乎这个arduino的工作方式不是以前传统AVR的那种通过bl支持的？是直接用arduino库编译了一个普通的esp32固件然后用串口isp烧录进去就ok了吗</p>
-<p>好吧 先不管了 总之是搞定了 这方面的细节就之后有机会再学习了吧</p>
-<h1 id="尝试点屏"><a href="#尝试点屏" class="headerlink" title="尝试点屏"></a>尝试点屏</h1><h2 id="关于屏幕"><a href="#关于屏幕" class="headerlink" title="关于屏幕"></a>关于屏幕</h2><p>练手就从最简单经典的搞起吧</p>
-<p>去x宝买了块最经典的st7789的2寸320x240全彩tft </p>
-<p>感慨下现在屏幕也挺便宜了 这种全彩的十块上下就能买到了</p>
-<p>还记得以前黑白12864都是珍贵东西要二三十的年代…</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171845236.png" alt="image-20240217184500156"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171843774.png" alt="image-20240217184321744"></p>
-<p>没啥可说的 很简单的玩意</p>
-<p>懒得打板所以顺便搞了个fpc转接板然后用杜邦线连了一下</p>
-<p>这里重要的IO就是SPI的三根线、RST复位、DC数据命令选择这五个</p>
-<p>也没多想直接按着上面的开发板pinmap把SPI接到了14、17、18（屏幕都是从机spi，只用TX单向所以只接了MOSI），剩下RST和DC随便接了IO 0和1</p>
-<p>嗯…这就为后面埋下了大坑</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171848276.jpg" alt="QQ图片20240217184750"></p>
-<h2 id="通用驱动库点亮测试"><a href="#通用驱动库点亮测试" class="headerlink" title="通用驱动库点亮测试"></a>通用驱动库点亮测试</h2><p>直接上lvgl好像有点太快了</p>
-<p>还没有点亮呢 至少先驱动起来看看</p>
-<p>于是找个普通的st7789驱动库吧</p>
-<p>屏幕卖家自然是带了一些例程代码的</p>
-<p>但是翻了一下，不是51的就是stm32的。大概读了一下代码，就是基础的底层驱动，还有画线写字之类的简单图形库。虽然也不是不能把这玩意移植到arduino上，但是这不是懒嘛…</p>
-<p>都用arduino了，图的不就是不用自己写库么</p>
-<p>so放弃卖家的库，想来7789这种烂大街的玩意肯定有一堆开源库，屏幕不太特殊的话应该是可以直接点亮的吧</p>
-<p>去arduino上搜一搜好了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202402171857833.png" alt="image-20240217185716780"></p>
-<p>果然出来了一大堆</p>
-<p>既然只是测试用（之后还是要换lvgl的），也就没太考虑去比较哪个库更好</p>
-<p>第一个看着就ok，装来试一下吧</p>
-<hr>
-<p>未完待续…</p>
-]]></content>
-      <tags>
-        <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>lora训练学习笔记续_2024</title>
-    <url>/2024/05/13/lora%E8%AE%AD%E7%BB%83%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E7%BB%AD-2024/</url>
-    <content><![CDATA[<p>好久没摸了</p>
-<p>快一年了技术迭代很快啊</p>
-<p>已经是xl的时代了 也习惯了直接依赖模型里的人物和去c站找lora了</p>
-<p>但是也会遇到冷门到模型都找不出的（悲</p>
-<p>所以还是捡起来重新学一遍吧…</p>
-<span id="more"></span>
-<h1 id="训练集处理"><a href="#训练集处理" class="headerlink" title="训练集处理"></a>训练集处理</h1><p>啊 真的是 冷门人物就是这样</p>
-<p>全网找不到几张图</p>
-<p>真的是深刻感受到炼丹最难的就是数据集</p>
-<p>数据集处理真是最耗时的事情</p>
-<p>到处找加上视频截图啥的都算上抠了二十几张图吧。最开始随便处理了下tag然后塞进去练，出来的效果惨不忍睹</p>
-<p>除了参数，感觉问题主要还是出在了 数据集的处理上</p>
-<p>于是去找资料…总结几个小tips</p>
-<ul>
-<li><p>下载来的图片有png的jpg的各种各样，但是扔到sd-webui的后期处理里批量跑一下可以统一转换成png，不需要手动拿软件转换了</p>
-</li>
-<li><p>乱七八糟的数据集重命名，advanced renamer是个很好用的小软件</p>
-</li>
-<li><p>最好把图片处理成统一的分辨率和比例，虽然开了arb可以支持不同分辨率比例，但是会造成训练时候分组，听dalao说是不太好。我这里尝试是横图和竖图分别统一放大/裁剪成同样大小</p>
-</li>
-<li><p>sd-webui的后处理真的好用，可以支持自动裁剪宽高比，并且不仅可以放大还可以<strong>自动把大图裁剪、缩小</strong>，总之不管啥图扔进去出来的就是设置好的分辨率的图片了，真的非常方便</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130049791.png" alt="image-20240513004904657"></p>
-</li>
-<li><p>png不要用透明背景，如果有签名、边框、文字什么的最好ps修掉</p>
-</li>
-<li><p>乱七八糟的背景最好手动切掉（ps 选择主体，然后大概切一下，倒是也还简单）</p>
-</li>
-</ul>
-<h2 id="打标"><a href="#打标" class="headerlink" title="打标"></a>打标</h2><p>老生常谈了</p>
-<p>最开头加触发词。人物特征的tag删掉。非共性的可变描述tag保留 之类的这些</p>
-<p>另外如果文字和边框不修掉的话要在tag里体现出来（这样最后出来的图不会有奇怪的东西）</p>
-<p>打标阈值0.35什么的 不多说了都老传统</p>
-<p>推荐下标签编辑的小软件</p>
-<p>BooruDatasetTagManager</p>
-<p>超好用 用过的都说好 还有自动翻译标签功能</p>
-<p>比插件的那个编辑器好用多了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130105947.png" alt="image-20240513010502901"></p>
-<h1 id="训练参数什么的"><a href="#训练参数什么的" class="headerlink" title="训练参数什么的"></a>训练参数什么的</h1><p>这些都是视频的佬教的</p>
-<ul>
-<li>小训练集需要较大的等效的batch_size 嗯就是这两个参数相乘，因为众所周知batch size大点显存猛猛爆所以下面那个调大点可以假装自己batch size大</li>
-</ul>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130232191.png" alt="image-20240513023220165"></p>
-<p>参考秋叶的说明</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130233763.png" alt="image-20240513023321749"></p>
-<ul>
-<li><p>这两个相乘的大小推荐是图片数量的一半（因为图片repeat数推荐是1，所以每个epoch训练数量就是数据集图片数量） 也就是后面是前面2倍（我这里是6倍了）</p>
-<p>为什么呢 我也不知道呢 </p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405130236475.png" alt="image-20240513023630454"></p>
-<p>所以如果保证显存不爆的情况下我可以把梯度累加步数改成3，这样后面的就变成1500了</p>
-</li>
-<li><p>另一个问题是arb桶，假如我设置的训练分辨率是1024x1024，所有大于这个分辨率的，或者不是1：1的图片，都会被切成方形然后变成1024x1024。</p>
-<p>但是如果开了arb桶，他会按分辨率比例去分组图片，然后分开训练，这里有个问题就是分组完了之后，训练的等效batch size就变小了（每组图片少了）</p>
-<p>所以我的理解是，最好就直接用sdwebui的预处理把图切成一样的分辨率完事，这样arb也不会乱分组，或者我觉得一个横向比例一个纵向比例这样分两组应该也还好？</p>
-</li>
-<li><p>嗯于是问题就又回到了上面的数据集预处理问题。果然训练的重点就是数据集啊。</p>
-</li>
-<li><p>lokr的dim值没用，随便填的。prodigy优化器的学习率啥的都没用（大概），随便填之</p>
-</li>
-</ul>
-<p>更新：</p>
-<p>嗯。。实际用我这十几张图练了一下 发现了比较明显的过拟合，出图烂掉了（很糊的那种图）</p>
-<p>反复试了试也不知道是优化器的问题还是底模的问题还是训练方法问题还是我训练集太烂</p>
-<p>总之是烂掉了</p>
-<p>回到秋叶训练器用最传统的方法练了下，反而还好一些…（默认参数 传统adam优化器 lora算法，1batch size+5 repeat 50个epoch）真难啊</p>
-<p>重新开始学习。。</p>
-<p>嗯。看到个说法说这个和神童优化器会冲突 或许吧。。有空试试看吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202405212353286.png" alt="image-20240521235316257"></p>
-<h1 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h1><p><a href="https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora">https://civitai.com/articles/3105/essential-to-advanced-guide-to-training-a-lora</a></p>
-<p><a href="https://www.bilibili.com/video/BV1Ru4m1g7Fo">https://www.bilibili.com/video/BV1Ru4m1g7Fo</a></p>
-<p><a href="https://www.bilibili.com/video/BV1CF4m1N7PU">https://www.bilibili.com/video/BV1CF4m1N7PU</a></p>
-<p>都是很棒的教程</p>
-<p>另外致谢秋叶佬、青龙佬的整合包和教程</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>2022最新hexo+Github Pages个人博客配置全攻略！</title>
-    <url>/2022/02/18/hexo%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>看朋友们都做了自己的blog，所以心血来潮学一下也来做一个…虽然不一定会经常写，但是先做了再说</p>
-<p>作为第一篇文章把整个搭建配置过程的坑什么的记录一下</p>
-<p>也正好作为网站的测试了</p>
-<p>为了省事直接用了GitHub pages和hexo的静态方案，虽然我自己有服务器，但是用经典的wp的话主题啊插件啊各种配置啊实在是麻烦的要死而且发文章也并不方便…还是得在本地用md写完了再去网站上上传</p>
-<p>干脆直接用免费的GitHub pages，然后解析到自己的域名，效果是一样的，GitHub的服务器免费还稳定，又不用担心忘了续费文章丢掉，写文也只需要在本地写完之后用一句命令部署到GitHub就可以自动更新了，倒也挺方便</p>
-<p>至于md的本地写作和图片的图床之类的问题，说起来就是另一个要解决的事了，之后再写文总结一下吧…总之来回来去踩了一堆坑看了一万篇文章试了各种办法，总算是找到了比较方便的写文章+配图+上传的方法了（但是以后会多写吗？大概还是…懒癌没得救 pia~</p>
-<p>总之我最后的整套方案是这样，本地用typora写文章，图片用picGo做自动处理，阿里云oss做图床储存，可以直接复制图片或者截图，然后在typora里粘贴图片，自动上传到图床并且替换图片链接，然后写完之后用hexo命令一键部署到GitHub pages就ok啦…总的来说还是比较方便的</p>
-<p>目前感觉不方便的地方就是新建文章还是需要用命令，然后写完之后还得敲命令部署上传…理论上可以用脚本解决，不过typora好像并不支持插件脚本之类的功能…之后再说啦</p>
-<p>网上查到的各种hexo的配置攻略版本新老不一，经常有一些新版本修改了的地方，所以也是遇到了不少麻烦，包括官方的文档好像也有一些更新不及时的地方…总归自己最后实际使用的可以工作的配置都列了出来，希望能作为参考吧</p>
-<p>那么这里的日期是2022年2月…这样</p>
-<span id="more"></span>
-<h1 id="安装Node-js-Git"><a href="#安装Node-js-Git" class="headerlink" title="安装Node.js,Git"></a>安装Node.js,Git</h1><p>这部分比较简单 官网下载安装就好了</p>
-<p>然后配置一下Git的账户和自己的GitHub账号关联（上传GitHub的ssh密钥）</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172054165.png" alt="image-20220217205417118"></p>
-<p>测试一下安装情况</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git version</span><br><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-<h1 id="安装Hexo框架"><a href="#安装Hexo框架" class="headerlink" title="安装Hexo框架"></a>安装Hexo框架</h1><p>直接用</p>
-<p><code>npm install -g hexo-cli</code></p>
-<p>（npm最好挂梯子 我这里用了clash的TUN模式全局规则代理 不然源很慢 或者你也可以把npm的源换成国内源）</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172058745.png" alt=""></p>
-<p>（请无视这里的npm更新提示）</p>
-<p>然后初始化我们的网页</p>
-<p>创建一个网站的目录，cd过去，打开命令行，执行</p>
-<p><code>hexo init myBlog</code></p>
-<p>这里会从hexo的GitHub上下载代码文件 所以比较慢 和刚才一样 最好挂代理</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102227.png" alt="image-20220217210217187"></p>
-<p>初始化完成，这里我的文件夹就叫MyBlog</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172102353.png" alt="image-20220217210252332"></p>
-<p>进去看一下 已经自动生成了hexo的文件结构</p>
-<p>然后cd进MyBlog这个文件夹，执行一下（不进入网站文件夹直接执行是没法启动的）</p>
-<p><code>hexo s</code></p>
-<p>这句代码是在本地启动服务器预览网站 Windows防火墙会跳联网提示，记得通过</p>
-<p>然后进浏览器访问localhost:4000就可以看到初始化的hexo页面啦（没加主题，很丑2333）</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172105546.png" alt="image-20220217210548359"></p>
-<p>好了我们测试完按Ctrl+C退出来把本地服务器关掉</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172107794.png" alt="image-20220217210706763"></p>
-<h1 id="配置GitHub-Pages"><a href="#配置GitHub-Pages" class="headerlink" title="配置GitHub Pages"></a>配置GitHub Pages</h1><p>然后把blog部署到github上</p>
-<p>创建一个新的仓库</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172249059.png" alt="image-20220217224945020"></p>
-<p>名字：用户名.github.io 类型公开</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172251597.png" alt="image-20220217225111528"></p>
-<p>看一下设置下面的pages页 当前使用的分支是main 没有问题</p>
-<p>然后安装下hexo的github部署插件</p>
-<p>还是在刚才hexo项目的目录下面执行</p>
-<p><code>npm install hexo-deployer-git --save</code></p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172253818.png" alt="image-20220217225314799"></p>
-<p>然后修改下目录下面的_config.yml文件 这个就是hexo全局的配置文件啦</p>
-<p>先改下最基础的GitHub部署设置 网站设置和主题插件啥的之后再说</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172256674.png" alt="image-20220217225604655"></p>
-<p>拉到最下面 加上这些内容</p>
-<p>branch就是刚才设置页面里面的分支（以前的默认都是master 但是现在GitHub的默认分支改成了main，所以这里也要填main…）</p>
-<p>中间那个地址就是刚才创建的GitHub仓库的地址 这里应该是用https格式的和ssh格式的都可以</p>
-<p>但是我发现用ssh链接的话我的代理似乎不能很好的运作…所以push会失败 于是改成用https格式之后部署成功</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172312712.png" alt="image-20220217231228688"></p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172258859.png" alt="image-20220217225822828"></p>
-<p>链接在仓库主页面的code下面点ssh或者https然后直接复制就可以</p>
-<p>然后我们保存配置文件</p>
-<p>部署应该就配置好了</p>
-<p>运行一下试试</p>
-<p><code>hexo g -d</code></p>
-<p>这个命令是二合一指令，g是generate，意思是生成静态页面（用来上传到GitHub pages用来访问）然后-d是deploy自动部署到GitHub仓库中</p>
-<p>上传成功~</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313935.png" alt="image-20220217231308902"></p>
-<p>然后我们回到GitHub的仓库页面刷新一下 就可以看到网站文件被上传上去了</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172313106.png" alt="image-20220217231359032"></p>
-<p>浏览器输入<a href="https://superhostpopo.github.io/尝试访问一下">https://superhostpopo.github.io/尝试访问一下</a></p>
-<p>ok，已经能够正常访问啦</p>
-<p>那么最后再把这个页面和我的个人域名做一下解析，就可以用自己的域名访问网站啦</p>
-<h1 id="解析个人域名"><a href="#解析个人域名" class="headerlink" title="解析个人域名"></a>解析个人域名</h1><p>这里我的域名在腾讯云购买的，所以进入腾讯云控制台，找到dns设置</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172318134.png" alt="image-20220217231824116"></p>
-<p>直接添加一条CNAME类型的记录，这里我是解析到了主域名下面的二级域名，也就是blog.superhostpopo.cn</p>
-<p>所以主机记录写的blog 记录值当然是指向我们的GitHub pages的链接</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172319272.png" alt="image-20220217231943252"></p>
-<p>如果要使用主域名的话可以直接添加www主机名和@主机名的解析都指向GitHub pages页面即可</p>
-<p>设置完dns解析，接下来要设置GitHub的页面设置把网址指向自己的域名，这里再进入settings页面，直接修改custom domain里面填入我们的个人域名然后save保存</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172322292.png" alt="image-20220217232248248"></p>
-<p>我这里把下面的强制https也打开了，这样访问时候都会使用https链接进行</p>
-<p>看到绿色的小箭头，说明域名指向已经成功了</p>
-<p>试试在浏览器里输入<a href="https://blog.superhostpopo.cn/，也可以成功访问了">https://blog.superhostpopo.cn/，也可以成功访问了</a></p>
-<p>但这里还有个小问题，也就是实际上这个设置，是自动在仓库文件里加入了一个CNAME文件说明了实际网址的指向，但当我们使用hexo g -d重新部署的时候，本地文件会覆盖GitHub仓库，导致cname文件失效，所以我们要把这个文件加入到本地hexo项目的source目录下面，这样在hexo重新生成和部署的时候也会照常将这个文件上传进来</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172326904.png" alt="image-20220217232619877"></p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172328652.png" alt="image-20220217232847609"></p>
-<p>直接把这个文件下载保存在source目录下，或者在目录下直接新建一个CNAME文件，里面填上我们的个人域名地址，都是ok的，这样再次部署的时候就不会丢失cname了</p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172330261.png" alt="image-20220217233048241"></p>
-<p>这文件里的内容很简单 只有一行</p>
-<h1 id="测试新建文章"><a href="#测试新建文章" class="headerlink" title="测试新建文章"></a>测试新建文章</h1><p>写一篇文章测试一下</p>
-<p><code>hexo n &quot;测试文章&quot;</code></p>
-<p><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172332545.png" alt="image-20220217233250525"></p>
-<p>会自动在post目录下生成文章的md文件 然后就可以在里面加入内容啦</p>
-<p>保存一下，然后还是生成上传</p>
-<p><code>hexo g -d</code></p>
-<p>嗯…等了一会就能看到文章啦 不过好丑（</p>
-<p>PS：发现偷懒用GitHub图床的话不爬梯的话看不到图。。GitHub虽然能访问但是GitHub的图片文件就不行 奇奇怪怪的</p>
-<p>算了 明天换阿里云吧 也不省这点钱了</p>
-<p>PPS：尝试了下网上说的<a href="https://cdn.jsdelivr.net加速">https://cdn.jsdelivr.net加速</a> 然后发现这破玩意也得爬梯…这有个什么用啊（摔 反而更不稳定了</p>
-<p>果然还是用阿里云吧</p>
-<p>但是总之网站是部署成功啦 剩下的明天再研究了 摸了</p>
-<h1 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h1><p>氪了点金（9快qwq）换了阿里云oss的图床</p>
-<p>速度快的飞起</p>
-<p>然后开始配主题</p>
-<p>用的是GitHub上star最多的Next主题</p>
-<p>文档写的也很详细：</p>
-<p><a href="http://theme-next.iissnan.com/getting-started.html">http://theme-next.iissnan.com/getting-started.html</a></p>
-<p>这里直接用git安装</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181548371.png" alt="image-20220218154803339"></p>
-<p>直接进入网站目录执行这句</p>
-<p><code>git clone https://github.com/iissnan/hexo-theme-next themes/next</code></p>
-<p>编辑：</p>
-<p>草死 这个文档上写的是老版的next的库 next已经迁移到了新版仓库 这里</p>
-<p><a href="https://github.com/theme-next/hexo-theme-next">https://github.com/theme-next/hexo-theme-next</a></p>
-<p>命令要用这个</p>
-<p><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code></p>
-<p>部署的时候才发现提示了一下已经迁移了…喂作者更新一下文档啦！</p>
-<p>然后再编辑根目录的config.yml文件</p>
-<p>把theme改成next就启用主题啦</p>
-<p>然后看一下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-<p>然后刷新一下发现首页只有乱码了啥也没有…</p>
-<p>明明试了下<code>hexo s</code>本地看是可以正常显示的…</p>
-<p>翻了下配置文件，发现原来是没有改网站域名…导致访问不到正确的文件了</p>
-<p>改成自己的域名，再clean然后部署一遍，ok~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601323.png" alt="image-20220218160119297"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181601410.png" alt="image-20220218160145161"></p>
-<p>主题很漂亮嘛~</p>
-<p><strong>然后再做一些细节的主题配置，自己的信息什么的啦</strong></p>
-<p>简单的网站信息设置，不细说了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181651763.png" alt="image-20220218165134738"></p>
-<p>坑：</p>
-<p>首先这里语言的问题</p>
-<p>按照文档上写的把语言改成zh-Hans（简体中文）</p>
-<p>然后发现更新之后语言变的乱七八糟了…草（三声</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181624145.png" alt="image-20220218162440121"></p>
-<p>去网上搜了一下发现…这是个常见问题，原因是…虽然作者在文档里写的都是zh-Hans，但是主题的目录下的语言文件却是zh-CN，所以找不到匹配的文件名自然就乱套啦</p>
-<p>所以我们进入\themes\next\languages目录下面，把zh-CN.yml的文件复制一份然后改名叫zh-Hans.yml，ok~</p>
-<p>（作者更新一下文档啊喂！！ x2）</p>
-<p><strong>然后改一下网站的logo图标</strong></p>
-<p>我们先做好180x180，32x32和16x16分辨率的图标，我在网上查到的教程都说要用ico格式的图标，但是这里其实直接用png格式就可以了，hexo默认的图标也是png的，直接用ps做出来就好了，存到\themes\next\source\images文件夹下面</p>
-<p>改下\themes\next_config.yml配置文件（这个是主题配置，虽然文件名一样，但是和网站配置是不一样的）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181645670.png" alt="image-20220218164535644"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">favicon:</span><br><span class="line">  small: /images/popo2-16x16.png</span><br><span class="line">  medium: /images/popo2-32x32.png</span><br><span class="line">  apple_touch_icon: /images/popo2.png</span><br></pre></td></tr></table></figure>
-<p>分别修改这三个图片文件就好了</p>
-<p><strong>主题的布局：</strong></p>
-<p>Next主题本身内置有三个子风格，可以用在主题配置里切换</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181712124.png" alt="image-20220218171216101"></p>
-<p>我个人比较喜欢比较简洁的这个啦</p>
-<p><strong>侧边栏的头像：</strong></p>
-<p>主题配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Sidebar Avatar</span><br><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/popo.png</span><br><span class="line">  # If true, the avatar will be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar will be rotated with the cursor.</span><br><span class="line">  rotated: false</span><br></pre></td></tr></table></figure>
-<p>把url改成头像文件就行了，这里把头像显示改成了圆形的</p>
-<p><strong>添加阅读量统计功能：</strong></p>
-<p>感谢下@不蒜子 大佬提供的统计api功能啦</p>
-<p>用起来很简单，在主题配置文件里找到这句</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
-<p>不需要任何配置，改成true，启用即可，真的非常的简单</p>
-<p>（查了一下其他各种网站提供的统计api真的是…一个比一个复杂，需要各种注册各种绑定id。麻烦死啦。dalao的api只需要一个开关就可以提供统计了，真的很感谢，太厉害啦）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181725782.png" alt="image-20220218172500760"></p>
-<p>效果也很不错嘛</p>
-<p><strong>加入本地搜索：</strong></p>
-<p>安装插件</p>
-<p><code>npm install hexo-generator-searchdb --save</code></p>
-<p>编辑网站配置文件，加入下面这段在最后</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br></pre></td></tr></table></figure>
-<p>编辑主题配置文件，搜索这句配置打开</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Local search</span><br><span class="line">local_search:</span><br><span class="line">  enable: true</span><br></pre></td></tr></table></figure>
-<p><strong>加入latex公式支持：</strong></p>
-<p>这真的是个大坑…坑了我好半天。查了各种资料 总算成功了</p>
-<p>首先吧我们编辑主题配置文件，打开mathjax选项</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mathjax:</span><br><span class="line">  enable: true</span><br><span class="line">  # See: https://mhchem.github.io/MathJax-mhchem/</span><br><span class="line">  mhchem: false</span><br></pre></td></tr></table></figure>
-<p>然后默认的渲染器并不能支持mathjax，所以卸载然后替换成另一个兼容的渲染器</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
-<p>最后还得在编写的文章的头部加上math支持的开关</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181805704.png" alt="image-20220218180538675"></p>
-<p>然后重新部署运行下，总算可以正常显示latex公式啦~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181806545.png" alt="image-20220218180604350"></p>
-<p>关于其中的坑啊…首先配置文件里面有好几个mathjax的选项卡，但是只有math:下面的那个的enable才是有用的，别改错了</p>
-<p>然后网上的支持渲染器有很多，如果用mathjax的话，就是hexo-renderer-kramed或者hexo-renderer-pandoc，但是后者我用起来会报错，前者是可以成功的</p>
-<p>至于如果你用katex的话，需要选择其他的渲染器，这里我mathjax好不容易调成功了就不费劲去改其他的了所以不管了</p>
-<p>最后记得在文章里打开公式支持…哎，一言难尽啊</p>
-<p><strong>安装字数统计：</strong></p>
-<p>安装插件</p>
-<p><code>npm install hexo-symbols-count-time --save</code></p>
-<p>修改站点配置文件添加</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
-<p>修改主题配置文件打开</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">symbols_count_time:</span><br><span class="line">  separated_meta: true</span><br><span class="line">  item_text_post: true</span><br><span class="line">  item_text_total: true</span><br></pre></td></tr></table></figure>
-<p>ok啦可以看到阅读时长和文章字数</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181821845.png" alt="image-20220218182136822"></p>
-<p>ps：感觉这个阅读时长功能没个卵用…关掉，只留下了字数统计</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 文章字数统计</span><br><span class="line">symbols_count_time:</span><br><span class="line">  symbols: true</span><br><span class="line">  time: true</span><br><span class="line">  total_symbols: true</span><br><span class="line">  total_time: true</span><br></pre></td></tr></table></figure>
-<p><strong>配置标签和关于：</strong></p>
-<p>hexo支持标签和分类两个文章分类功能…但是这俩我感觉，功能差不多，有点重复</p>
-<p>所以就只开了标签，分类就不用了</p>
-<p>先创建标签页面：</p>
-<p><code>hexo new page tags</code></p>
-<p>然后修改这个页面，在\source\tags\index.md</p>
-<p>里面改成这样</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: Tags</span><br><span class="line">date: 2022-02-18 19:03:24</span><br><span class="line">type: &quot;tags&quot;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-<p>关掉保存</p>
-<p>再修改主题配置里面的menu部分，直接把tag行的注释取消即可</p>
-<p><code>tags: /tags/ || fa fa-tags</code></p>
-<p>然后在写文章的时候只要在文章头里打上标签</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 测试文章</span><br><span class="line">date: 2022-02-17 23:32:38</span><br><span class="line">tags:</span><br><span class="line">- 测试</span><br><span class="line">- 网站</span><br></pre></td></tr></table></figure>
-<p>注意这里的格式：</p>
-<p>短横线后面记得加空格</p>
-<p>每一个tag占一行</p>
-<p>一个文章可以有任意个标签</p>
-<p>然后就可以在网站的标签页面里按照标签对文章分类了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181925854.png" alt="image-20220218192525823"></p>
-<p>然后添加关于页面</p>
-<p>和标签页面相同，先创建about页面</p>
-<p><code>hexo new page about</code></p>
-<p>同样修改about目录下的index.md</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title: 关于我</span><br><span class="line">date: 2022-02-18 19:03:14</span><br><span class="line">type: &quot;about&quot;</span><br><span class="line">#这里写关于正文内容</span><br></pre></td></tr></table></figure>
-<p>修改主题配置文件，打开about行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || fa fa-home</span><br><span class="line">  about: /about/ || fa fa-user</span><br><span class="line">  tags: /tags/ || fa fa-tags</span><br></pre></td></tr></table></figure>
-<p>此时在主页点击关于就可以看到自己的关于页面了</p>
-<p><strong>修改代码高亮风格：</strong></p>
-<p>改成暗色模式，修改主题配置文件如下</p>
-<p>顺便把一键复制代码的功能也打开</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">codeblock:</span><br><span class="line">  # Code Highlight theme</span><br><span class="line">  # Available values: normal | night | night eighties | night blue | night bright | solarized | solarized dark | galactic</span><br><span class="line">  # See: https://github.com/chriskempson/tomorrow-theme</span><br><span class="line">  highlight_theme: night</span><br><span class="line">  # Add copy button on codeblock</span><br><span class="line">  copy_button:</span><br><span class="line">    enable: true</span><br><span class="line">    # Show text copy result.</span><br><span class="line">    show_result: false</span><br><span class="line">    # Available values: default | flat | mac</span><br><span class="line">    style:</span><br></pre></td></tr></table></figure>
-<p>效果不错~</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181946779.png" alt="image-20220218194659745"></p>
-<p><strong>设置个人信息链接：</strong></p>
-<p>修改主题配置social部分</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  #GitHub: https://github.com/yourname || fab fa-github</span><br><span class="line">  #E-Mail: mailto:yourname@gmail.com || fa fa-envelope</span><br><span class="line">  #Weibo: https://weibo.com/yourname || fab fa-weibo</span><br><span class="line">  #Google: https://plus.google.com/yourname || fab fa-google</span><br><span class="line">  #Twitter: https://twitter.com/yourname || fab fa-twitter</span><br><span class="line">  #FB Page: https://www.facebook.com/yourname || fab fa-facebook</span><br><span class="line">  #StackOverflow: https://stackoverflow.com/yourname || fab fa-stack-overflow</span><br><span class="line">  #YouTube: https://youtube.com/yourname || fab fa-youtube</span><br><span class="line">  #Instagram: https://instagram.com/yourname || fab fa-instagram</span><br><span class="line">  #Skype: skype:yourname?call|chat || fab fa-skype</span><br></pre></td></tr></table></figure>
-<p>自行启用对应条目即可</p>
-<p>我这里设置的内容：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">social:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-bilibili</span><br></pre></td></tr></table></figure>
-<p><strong>友情链接：</strong></p>
-<p>修改links部分</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">links:</span><br><span class="line">  #Title: http://yoursite.com</span><br><span class="line">  e萌工作室: https://www.emoe.xyz/</span><br></pre></td></tr></table></figure>
-<p>显示效果是这样的</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181947887.png" alt="image-20220218194759860"></p>
-<p><strong>显示版权信息说明：</strong></p>
-<p>修改主题配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">creative_commons:</span><br><span class="line">  license: by-nc-sa</span><br><span class="line">  sidebar: true</span><br><span class="line">  post: true</span><br><span class="line">  language:</span><br></pre></td></tr></table></figure>
-<p>这是侧边栏和文章底部的版权信息，直接打开就好</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202181948582.png" alt="image-20220218194824550"></p>
-<p>follow me功能 这里我和侧边栏信息写的相同的，也可以添加你的rss订阅之类的进去</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">follow_me:</span><br><span class="line">  GitHub: https://github.com/SuperHostPopo || fab fa-github</span><br><span class="line">  bilibili: https://space.bilibili.com/4023159 || fab fa-youtube</span><br><span class="line">  #Twitter: https://twitter.com/username || fab fa-twitter</span><br><span class="line">  #Telegram: https://t.me/channel_name || fab fa-telegram</span><br><span class="line">  #WeChat: /images/wechat_channel.jpg || fab fa-weixin</span><br><span class="line">  #RSS: /atom.xml || fa fa-rss</span><br></pre></td></tr></table></figure>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182001445.png" alt="image-20220218200151416"></p>
-<p><strong>修改网站底部footer：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">footer:</span><br><span class="line">  # Specify the date when the site was setup. If not defined, current year will be used.</span><br><span class="line">  #since: 2015</span><br><span class="line"></span><br><span class="line">  # Icon between year and copyright info.</span><br><span class="line">  icon:</span><br><span class="line">    # Icon name in Font Awesome. See: https://fontawesome.com/icons</span><br><span class="line">    name: fa fa-terminal</span><br><span class="line">    # If you want to animate the icon, set it to true.</span><br><span class="line">    animated: false</span><br><span class="line">    # Change the color of icon, using Hex Code.</span><br><span class="line">    color: &quot;#000000&quot;</span><br></pre></td></tr></table></figure>
-<p>这里把底部的红色爱心图标修改了一下，感觉红心不是很好看。图标可以去这个网站找到代码<a href="https://fontawesome.com/icons">https://fontawesome.com/icons</a></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182019506.png" alt="image-20220218201952480"></p>
-<p>（无视那个访问量 这里因为本地预览所以抽掉了）</p>
-<p><strong>侧边栏：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sidebar:</span><br><span class="line">  # Sidebar Position.</span><br><span class="line">  position: left</span><br><span class="line">  #position: right</span><br><span class="line"></span><br><span class="line">  # Manual define the sidebar width. If commented, will be default for:</span><br><span class="line">  # Muse | Mist: 320</span><br><span class="line">  # Pisces | Gemini: 240</span><br><span class="line">  #width: 300</span><br><span class="line"></span><br><span class="line">  # Sidebar Display (only for Muse | Mist), available values:</span><br><span class="line">  #  - post    expand on posts automatically. Default.</span><br><span class="line">  #  - always  expand for all pages automatically.</span><br><span class="line">  #  - hide    expand only when click on the sidebar toggle icon.</span><br><span class="line">  #  - remove  totally remove sidebar including sidebar toggle.</span><br><span class="line">  display: post</span><br></pre></td></tr></table></figure>
-<p>这里可以修改显示位置（左右） 宽度 </p>
-<p>还有何时显示</p>
-<p>我就不改了都用了默认的</p>
-<p><strong>回到顶部滚动条和阅读进度显示</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">back2top:</span><br><span class="line">  enable: true</span><br><span class="line">  # Back to top in sidebar.</span><br><span class="line">  sidebar: false</span><br><span class="line">  # Scroll percent label in b2t button.</span><br><span class="line">  scrollpercent: true</span><br></pre></td></tr></table></figure>
-<p>把最后那个改成true就好</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202182033245.png" alt="image-20220218203349221"></p>
-<p>好啦…这些都在本地调试完了，我这个博客大概就算搞定了~</p>
-<p>最后还是</p>
-<p><code>hexo clean &amp;&amp; hexo g -d</code></p>
-<p>搞定！desu</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>comfyui学习记录</title>
-    <url>/2025/06/10/comfyui%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>补课啊补课</p>
-<p>也是难啃的玩意</p>
-<p>慢慢玩玩看吧</p>
-<span id="more"></span>
-<h1 id="资料区"><a href="#资料区" class="headerlink" title="资料区"></a>资料区</h1><p>先记一下一些学习资料</p>
-<ul>
-<li>官方示例工作流<a href="https://comfyanonymous.github.io/ComfyUI_examples/">https://comfyanonymous.github.io/ComfyUI_examples/</a></li>
-<li>上面那些工作流的github打包下载<a href="https://github.com/comfyanonymous/ComfyUI_examples">https://github.com/comfyanonymous/ComfyUI_examples</a></li>
-<li>官方文档<a href="https://docs.comfy.org/zh-CN">https://docs.comfy.org/zh-CN</a></li>
-<li>一些简单的节点功能介绍（只有自带节点）<a href="https://blenderneko.github.io/ComfyUI-docs/">https://blenderneko.github.io/ComfyUI-docs/</a></li>
-<li>官方推荐的节点包等<a href="https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html">https://blog.comfyui.ca/comfyui/update/2023/05/18/ComfyUi-is-4-months-old.html</a></li>
-<li>upscaler的合集资源<a href="https://huggingface.co/wyrde/upscales">https://huggingface.co/wyrde/upscales</a></li>
-<li>alice的工作流（方便使用，很大）<a href="https://github.com/2515448788/ShiQi_Workflow">https://github.com/2515448788/ShiQi_Workflow</a></li>
-<li>一个模型汇总<a href="https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer">https://hf-mirror.com/UmeAiRT/ComfyUI-Auto_installer</a></li>
-<li>for循环的使用<a href="https://www.bilibili.com/video/BV1KXpheEE2F">https://www.bilibili.com/video/BV1KXpheEE2F</a></li>
-</ul>
-<p>一些workflow模板和下载网址</p>
-<ul>
-<li>学习用，有一些介绍readme <a href="https://github.com/wyrde/wyrde-comfyui-workflows">https://github.com/wyrde/wyrde-comfyui-workflows</a></li>
-<li>一些简单的模板workflow <a href="https://github.com/atlasunified/Templates-ComfyUI-">https://github.com/atlasunified/Templates-ComfyUI-</a></li>
-<li>使用easy use节点包的工作流模板<a href="https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file">https://github.com/yolain/ComfyUI-Yolain-Workflows?tab=readme-ov-file</a></li>
-<li>was节点的模板<a href="https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples">https://github.com/WASasquatch/was-node-suite-comfyui/wiki/Workflow-Examples</a></li>
-<li>openart 工作流分享 <a href="https://openart.ai/workflows/home">https://openart.ai/workflows/home</a></li>
-<li>另一个工作流分享网站 <a href="https://comfyworkflows.com/">https://comfyworkflows.com/</a></li>
-<li>c站也有一些</li>
-<li>在ui里直接文件 template可以看自带的模板包括第三方节点自带的也可以看</li>
-</ul>
-<h1 id="学习记录"><a href="#学习记录" class="headerlink" title="学习记录"></a>学习记录</h1><p><strong>使用秋叶的包 打了一堆外部节点（</strong></p>
-<h2 id="小tips"><a href="#小tips" class="headerlink" title="小tips"></a>小tips</h2><p>manager里可以下到常用模型，还可以打快照（节点包的状态啥的，防止装崩了可以恢复）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100221772.png" alt="image-20250610022152707"></p>
-<p>右键可以看节点导航和清理显存</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222039.png" alt="image-20250610022221021"></p>
-<p>这里可以方便的开关节点，节点组，还可以导航节点，看节点的编号（解决报错信息有用）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100222484.png" alt="image-20250610022255462"></p>
-<p>文件保存的通配符</p>
-<p>这里是节点名字.参数名字，节点名右键属性看，参数名把参数拉出来就能看到了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100223268.png" alt="image-20250610022315245"></p>
-<p>打开节点ID和来源的显示</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100232857.png" alt="image-20250610023208824"></p>
-<p>节点模式：设成never就相当于禁用了（不高亮）</p>
-<p>紫色的bypass（跳过）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100233797.png" alt="image-20250610023342746"></p>
-<p>连线样式，隐藏连线</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236431.png" alt="image-20250610023636396"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100236942.png" alt="image-20250610023648909"></p>
-<p>load image节点可以直接粘贴图片进去，然后右键可以编辑遮罩（从mask输出，然后用带遮罩的vae编码器编码，进行inpaint）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506102143801.png" alt="image-20250610214339732"></p>
-<p>这个节点提供了所有提示词框的自动补全</p>
-<p>但是需要手动点一下load然后save才能起效</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249408.png" alt="image-20250611024914372"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110249750.png" alt="image-20250611024940699"></p>
-<p>右键查看模型信息的功能，也是这个节点提供的（自动匹配c站信息）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110250723.png" alt="image-20250611025044697"></p>
-<p>各种字符串相关的功能：合并字符串，字符串追加、替换等，很多节点都有</p>
-<p>比如string function、show text、concat啥的</p>
-<p><strong>关于a1111和comfy提示词格式</strong></p>
-<p>实际上就是对提示词prompt的权重加权计算方式不同，也就是加括号：1.1这种写法产生的结果不一样，comfy的权重会更重一些，所以一些tag如果用的不好会炸掉</p>
-<p>可以靠切换到a1111提示词模式来避免</p>
-<h2 id="关于高清修复"><a href="#关于高清修复" class="headerlink" title="关于高清修复"></a>关于高清修复</h2><p>怎么在comfy里实现webui一样的高清修复一直没太明白</p>
-<p>研究了下应该是这样</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506100304538.png" alt="image-20250610030451472"></p>
-<p>就基本上效果一样了</p>
-<p>实际上是先一次出图，然后用放大模型放大，再二次重采样（图生图）出来的</p>
-<p>所以不是标准的潜空间放大（我没理解错的话）</p>
-<p>但是我这里发现 他这个放大倍数好奇怪</p>
-<p>0.5实际上是放大两倍。。不理解为什么</p>
-<p><strong>后续：我理解了。。这个4x ultrasharp的模型相当于本身就把图像扩大4倍，所以后面要再缩放0.5相当于一共是扩大了2倍。原来如此。webui只是帮你自动处理了这个过程而已。。我完全理解了！</strong></p>
-<p>然后这里种子不一样。。得改下 理论上应该是要种子一致的</p>
-<p>comfy ui可以统计时间（这个是easy use节点的功能，统计节点时间），发现这个hiresfix比起webui的快好多为啥。。。</p>
-<h2 id="关于controlnet和ipadapter"><a href="#关于controlnet和ipadapter" class="headerlink" title="关于controlnet和ipadapter"></a>关于controlnet和ipadapter</h2><p>batch图像节点，可以把几个图合并，作为一个controlnet的参考</p>
-<p>wtg比较节点，可以输出diff图，仔细看两张图的区别</p>
-<p>controlnet的参考图预处理（prepare image）节点可以改变图像裁剪的焦点（ipadapter接收1：1比例的图，所以需要裁剪）</p>
-<p>几个预处理器的效果比较</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506110031667.jpeg" alt="参考图"></p>
-<p>在comfyui里使用controlnet</p>
-<p>一般要分开选预处理器和controlnet两个节点</p>
-<p>相当于预处理器先把图像处理成上面的这种输出图的样子，然后塞给controlnet模型</p>
-<p>我们常用的那个union模型，也是搭配不同的预处理后的图片可以实现不同效果（当然也可以用独立controlnet模型，一个预处理器对应一种controlnet模型）</p>
-<p>这里也更好理解controlnet的机制一点</p>
-<p>说起来仔细看comfyui才发现，lora是控制的model和clip（两个都控制，可以分开设置强度），controlnet是控制的正负条件，而ipadapter是控制的model</p>
-<p>还是挺有意思的</p>
-<h2 id="关于批处理"><a href="#关于批处理" class="headerlink" title="关于批处理"></a>关于批处理</h2><p>有两个方法吧</p>
-<p>首先我们知道comfy是异步队列的</p>
-<p>比如你点两下右上角的启动，或者给批次设置成2然后点启动，结果都是一样</p>
-<p>他会根据你的数量加到左边的队列里，然后一个个顺序运行，队列后面的会pending</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120515500.png" alt="image-20250612051551472"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120516091.png" alt="image-20250612051601076"></p>
-<p>然后如果我们工作流里没有控制的东西，就点几下或者一个批次（batch）的启动，除了随机种子别的都不会变就跑几次</p>
-<p>想要实现批处理就要在流里面加上流程控制</p>
-<p>第一个方法就是用batch image节点，他会根据每个batch顺序从文件夹里拿图，在工作流里处理（当然你也可以设置成随机取）</p>
-<p>比如很简单我给controlnet的输入load image改成batch image</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120517234.png" alt="image-20250612051755212"></p>
-<p>然后右上角开一个batch的任务（看你想执行多少次）</p>
-<p>他就会每张图自动从文件夹里取底图给controlnet处理然后出图，这样可以很简单的实现一个批量垫图</p>
-<p>第二个方法是在工作流里用for循环节点，这个看b站讲解吧</p>
-<p>我也还没弄明白</p>
-<p>是比较灵活高级的方法</p>
-<h2 id="关于组和组节点"><a href="#关于组和组节点" class="headerlink" title="关于组和组节点"></a>关于组和组节点</h2><p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120545409.png" alt="image-20250612054503382"></p>
-<p>左上角标是这样的就是组节点</p>
-<p>实际上就是把几个节点复合到一起，然后把一些输入输出暴露出来，作为一个复用块，可以方便调用，在节点库里也能找到这样的节点（只有打开了对应工作流才能看到，不是作为自定义节点一直加载的）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120546631.png" alt="image-20250612054632608"></p>
-<p>右键选这个就能给拆开看到里面是什么结构</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547764.png" alt="image-20250612054714736"></p>
-<p>这种方块底色的是节点组</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120547408.png" alt="image-20250612054757365"></p>
-<p>用来标识功能区域，方便管理和开关，然后也可以作为一个组一起拖动</p>
-<p>在组管理器里也能看到这样的层次结构，可以作为一个组一起启用和禁用</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120548180.png" alt="image-20250612054855153"></p>
-<p>右键添加组就可以创建一个</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202506120549541.png" alt="image-20250612054916520"></p>
-<p>然后把大小调整好，把节点拖进去就自动加入组里了</p>
-<p>也可以改标题和名字</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开启vsc自带的同步功能</title>
-    <url>/2022/02/20/vsc%E5%90%8C%E6%AD%A5/</url>
-    <content><![CDATA[<p>好吧我才知道vsc自己有<strong>同步功能</strong>…每次重装都要自己折腾一遍配置和插件我真的是纯纯的犯傻…</p>
-<p>姑且记录一下</p>
-<p>好吧这有什么需要记的啊。知道了就好了</p>
-<p><code>文件-首选项-打开设置同步</code></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201751243.png" alt="image-20220220175151216"></p>
-<p>然后登陆就ok啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201752696.png" alt="image-20220220175207675"></p>
-<p>这里还是用微软账号省事一点</p>
-<p>然后在打开的浏览器页面登录微软账户ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202201753203.png" alt="image-20220220175324183"></p>
-<p>然后再看就可以看到显示设置同步已打开啦~</p>
-<p>我真傻。真的。这么简单的东西到现在才发现…我真傻</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>技巧</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>再战zynq无ddr启动</title>
-    <url>/2025/05/20/%E5%86%8D%E6%88%98zynq%E6%97%A0ddr%E5%90%AF%E5%8A%A8/</url>
-    <content><![CDATA[<p>太难了</p>
-<p>fpga真的是太难了</p>
-<p>抓耳挠腮 阴暗的爬行 🐦珠颈斑鸠咕咕叫🐦 🐧咕咕咕嘎嘎🐧jdlajfdlafjlkdjaflkdjaklf</p>
-<p>让我们再来一次…总算跑起来了（身心俱疲</p>
-<p>杀了我吧 xilinx</p>
-<span id="more"></span>
-<p>测试环境 vivado 2018.3 zynq7010</p>
-<p>建一个工程，添加一个zynq核，把ddr关了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201714981.png" alt="image-20250520171434949"></p>
-<p>打开qspi flash用来固化程序（注意，<strong>只能使用qspi flash，sd卡或者nand都会失败</strong> 由于fsbl里的一些机制，我暂时还不知道如何绕过 这就是上篇文章我鼓捣了一天没成功的原因）</p>
-<p>顺便加个emio用来验证ps是否正确工作</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201716435.png" alt="image-20250520171606398"></p>
-<p>加一个简单的计数器闪灯的.v文件验证pl是否正常工作</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201718573.png" alt="image-20250520171851488"></p>
-<p>然后添加规则约束综合实现生成比特流导出sdk不谈</p>
-<p>直接快进到打开sdk</p>
-<p>建一个普通的空工程，写个闪灯</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201730830.png" alt="image-20250520173020743"></p>
-<p>用户代码正常写就行</p>
-<p>然后修改链接脚本，给所有内容改到ram1去</p>
-<p>注意，<strong>ram1只有64k大小</strong>，so。。。基本写不了啥，很容易爆</p>
-<p>因为zynq的内置ram只有256k，前面192k要给fsbl用（本来是256k都给fsbl的，这都已经是挤出来的了）</p>
-<p>所以这点小内存基本上。。当单片机用都不行。毕竟zynq的ps库挺重的 占内存不小</p>
-<p>比较实用的用法可能是只用来引导pl当作一个很便宜的fpga用吧，毕竟zynq拆机片便宜的要死</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201752918.png" alt="image-20250520175213884"></p>
-<p>编译一下</p>
-<p>可以看到空间占用50k（zynq默认不会xip，所以应该是code+data+bss都会加载到内存）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201732275.png" alt="image-20250520173222251"></p>
-<p>然后建一个fsbl</p>
-<p>这东西默认编译出来130k<img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201733347.png" alt="image-20250520173324322"></p>
-<p>然后改fsbl</p>
-<p>下面的内容都是我验证过必须的，网上教程有很多经过验证可做可不做不影响结果的修改，都去掉了</p>
-<p>首先把296行的条件编译改成固定编译（if 1）</p>
-<p>因为没有ddr，默认这个条件编译不启动下面fsbl会直接不执行报错</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201735251.png" alt="image-20250520173506230"></p>
-<p>直接改成if 1强制执行</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201735904.png" alt="image-20250520173524891"></p>
-<p>然后把298到311行的ddr检查注掉</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201737999.png" alt="image-20250520173755980"></p>
-<p>打开fsbl.h，把475行的地址改成0xFFFFFE00</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201739773.png" alt="image-20250520173946748"></p>
-<p>修改链接脚本，给所有内存地址都改到ram0（其实只有最后一个默认是ram1需要改）</p>
-<p>记得保存</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201745630.png" alt="image-20250520174542597"></p>
-<p>重新编译一下</p>
-<p>默认生成一下boot文件</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201741207.png" alt="image-20250520174111168"></p>
-<p>给板子切到jtag启动模式，把boot.bin烧到flash里，选编译出来的boot和fsbl就行了</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201743804.png" alt="image-20250520174303782"></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202505201743502.png" alt="image-20250520174341464"></p>
-<p>重新切换回flash启动，上电，可以看到PL和PS的EMIO绑定的两个引脚LED都在闪，说明已经正常启动</p>
-<p>最后说下坑点吧</p>
-<p>首先，<strong>只能用qspi的nor flash，别的都启动不了</strong>。别问我为啥，我之前大概折腾了一天fsbl的代码也没看太明白，应该是加载映像的过程中需要用到ddr内存来搬移，所以就挂掉。。qspi flash不需要这一步（大概</p>
-<p>反正做参考吧，我也没能力改fsbl代码，所以就这样咯，网上的教程也都是用这个的</p>
-<p>然后就是内存小了，本来就只有256k，fsbl占192k，给用户程序只有64k，作为单片机来说可能不小了，但是这玩意是a7，他的bsp库很大，写个闪灯编译出来都50k，还不是xip的，满满的占内存。。</p>
-<p>网上有些dalao做裁剪优化，xip啥的，但是我太搞不太明白，也就暂时只能先这样了</p>
-<p>作为单片机都不太能玩，只用pl当fpga用的话大概还是可以的吧</p>
-<p>毕竟拉ddr是个苦大仇深的活</p>
-<p>大概就这样咯</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-        <tag>嵌入式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>让你的hexo博客像OneNote笔记一样方便！全自动图床和一键部署设置</title>
-    <url>/2022/02/19/%E5%9B%BE%E5%BA%8A%E5%92%8C%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>说来这昨天配置完网站，想了想平时虽然也经常写东西，但是都是在用OneNote，最方便的就是放在副屏，随手新建一个页面，把看到的资料直接复制过去，图片直接截图粘贴在笔记里，再配上文字说明这样啦，很随意很方便的感觉…但是总归就没法拿来分享了</p>
-<p>但如果要写博客的话，首先是图片必须先保存到本地，然后再上传到图床里，再复制图片的图床链接，打开md编辑器，写文章，插入图床链接的图片…写完之后还得去网站里把md文件手动上传发布…</p>
-<p>啊啊想要随手截图记录一些资料和文字都要这么一大堆步骤，真的是折腾的很（真的不是在给一直懒得写文章找借口真的不是啊喂…</p>
-<p>但是既然网站做都做了，已经折腾这么多了，如果之后还是嫌麻烦一直不写东西的话感觉也没啥价值了是吧…那是不是显得就很呆？于是开始到处查找怎么简化写博客的步骤…经过读了各种资料和一通折腾之后，就有了这个~</p>
-<p>效果还是比较满意的啦，现在想记录点什么的话，直接按win+r调出运行，打一条new 文章名，回车，就可以直接启动typora写文章啦</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202202192041327.png" alt="image-20220219204117297"></p>
-<p>文章排版什么的用typora+md其实还是蛮舒服的，图片的话可以直接用qq截图或者复制图片然后在文章内Ctrl+V粘贴就可以自动上传到图床并且即时把链接插入到文章里啦，基本上是达到了OneNote的随手笔记的效果了，而且排版还更舒服不少</p>
-<p>写完之后保存文件，然后win+r，打upload回车，就可以自动把所有博客文章自动同步部署到GitHub Pages上的hexo博客网站里啦~<strong>是不是还挺方便的？</strong></p>
-<p>自我感觉至少大概有个OneNote的8成功力了吧？虽然多平台同步编辑什么的还是做不到…不过无所谓啦，反正想写技术文章的时候基本也都是在工作电脑前的啦所以也没关系了吧</p>
-<p>那么下面就是具体的配置过程啦~</p>
-<span id="more"></span>
-<h1 id="配置全自动图床（阿里云OSS）"><a href="#配置全自动图床（阿里云OSS）" class="headerlink" title="配置全自动图床（阿里云OSS）"></a>配置全自动图床（阿里云OSS）</h1><p>首先是图床这边啦。毕竟技术文章和笔记这类的东西，其实图片是最常用的，自己记笔记的时候也很常用把资料重点的部分截图然后直接贴到Onenote里保存，写文章的话也需要大量的配图讲解，而markdown写文章最麻烦的就是…图片不能保存在文章里，必须把图片上传到一个可以公开访问的云端图床里，然后再在文章里用链接引用图片，才能正常的插入图片显示…</p>
-<p>于是无数的时间就浪费在了<strong>找图，存图，上传图床，复制链接，插入图片</strong>这些无聊到爆的劳动里了…真的不怪我懒啊他实在是太麻烦了啊喂！！不过毕竟md是种基于html的文章格式所以技术限制无可奈何…</p>
-<p>我相信绝对不是只有我一个人觉得这么写文章实在是太痛苦了，我相信偷懒促进技术发展虽然我做不出但是肯定有dalao能优雅的解决这个问题…于是经过各种搜索，果然我找到了这个…一个叫<strong>PicGo</strong>的全自动图床工具~<br><strong><a href="https://github.com/Molunerfinn/PicGo"> PicGo</a></strong>这里是这个工具的GitHub链接，我们搬一下官方的介绍</p>
-<blockquote>
-<p><strong>PicGo: 一个用于快速上传图片并获取图片 URL 链接的工具</strong><br>PicGo 本体支持如下图床：<br>特色功能</p>
-<ul>
-<li>支持拖拽图片上传</li>
-<li>支持快捷键上传剪贴板里第一张图片</li>
-<li>Windows 和 macOS 支持右键图片文件通过菜单上传 (v2.1.0+)</li>
-<li>上传图片后自动复制链接到剪贴板</li>
-<li>支持自定义复制到剪贴板的链接格式</li>
-<li>支持修改快捷键，默认快速上传快捷键：<code>command+shift+p</code>（macOS）| <code>control+shift+p</code>（Windows\Linux)</li>
-<li>支持插件系统，已有插件支持 Gitee、青云等第三方图床</li>
-</ul>
-</blockquote>
-<p>完美满足需求嘛，看来果然前辈们早就感受到了md图片管理的痛苦并且做出了完美的解决方案~唯一的小问题就是这里粘贴图片还是需要先用快捷键上传图片然后再粘贴自动获取的链接插入到md，还是多了一步的小小麻烦，不是那么的丝滑</p>
-<p>那有更好的解决嘛？从上面看下来那自然是找到了的，在网上查了各种教程并且实际配置之后发现typora内置的picgo上传支持可以完美的支持粘贴图片上传的功能，于是我们把PicGo和Typora配置好联合使用之后，就可以<strong>完美 丝滑 不需要任何多余步骤</strong>的 实现在markdown文档里直接Ctrl+V粘贴截图图片然后自动帮你上传修改链接配置好一切啦…一切都像在用OneNote一样，完美！</p>
-<p>那么选好大框架，剩下的就只是图床的选择啦，这就是小问题了（或者说只是钱的问题了？好像完全不是小问题啊草</p>
-<p>先看看PicGo，适配了常用的主流图床，所以我们自然是在以下里面选一个</p>
-<ul>
-<li><p><code>七牛图床</code> v1.0</p>
-</li>
-<li><p><code>腾讯云 COS v4\v5 版本</code> v1.1 &amp; v1.5.0</p>
-</li>
-<li><p><code>又拍云</code> v1.2.0</p>
-</li>
-<li><p><code>GitHub</code> v1.5.0</p>
-</li>
-<li><p><code>SM.MS V2</code> v2.3.0-beta.0</p>
-</li>
-<li><p><code>阿里云 OSS</code> v1.6.0</p>
-</li>
-<li><p><code>Imgur</code> v1.6.0</p>
-</li>
-</ul>
-<p>为了我们的图片安全考虑，我就先排除掉了小平台专门的图床服务（其实也不一定不安全啦…很多都是老牌网站，但是其实我也是嫌麻烦而且懒得再注册新账号和研究怎么使用了就是…到底还是偷懒了）</p>
-<p>那么剩下的，我挑出来的就是GitHub和阿里云了，前者是因为没有限制，可靠而且…免费啊！后者嘛阿里云平台也比较熟悉，另外好几个朋友之前都在用阿里云OSS图床写文章了，评价不错，所以优先考虑</p>
-<p>秉承着能白嫖就一定要白嫖的原则，我是首先尝试了GitHub的，其实配置起来很简单，用起来效果也不错…但是毕竟不是专门的图床服务，<strong>本质上其实是用GitHub的仓库储存图片并且提供链接访问</strong></p>
-<p>所以就产生了一些无法避免的槽点</p>
-<ul>
-<li>图传上去删不掉！因为仓库的commit历史都可以回溯！虽然可以有办法用命令行删除但是如果不小心上传了不安全的图片处理起来还是麻烦的要死！而且仓库必须全公开！</li>
-<li>更麻烦的是，众所周知GitHub的内容访问在国内不稳定！必须时刻爬梯子，共享性上就很烂！</li>
-</ul>
-<p>这俩问题一个比一个严重…所以我还是放弃掉了GitHub图床，选择了氪金解决的阿里云OSS</p>
-<p><strong>实际证明花钱的东西唯一的缺点就只有花钱了！</strong>绝赞，不管是速度还是使用体验，真的超快</p>
-<p>而且其实也不会花多少钱，以我的例子来说，40G容量一年9块（够存一辈子的图片了…只存博客配图的话），再加上一点点流量费用（根本就没有人看，所以也很少呃） 使用体验还是很棒的了</p>
-<p>那么写了一堆废话，实际的配置教程…其实根本不用我写，官方的文档和前辈大佬的配置教程写的详细多了，我也完全没必要再浪费一堆废话了…所以直接上链接啦</p>
-<p><strong>首先是官方的配置手册</strong>，写的很详细：<a href="https://picgo.github.io/PicGo-Doc/zh/guide/config.html#%E9%98%BF%E9%87%8C%E4%BA%91oss">配置手册</a></p>
-<p><strong>然后是阿里云OSS的开通和Pic Go和Typora联合使用的配置教程</strong>，这个更是手把手教学了：<a href="https://segmentfault.com/a/1190000039256231">PicGo + 阿里云OSS 搭建图床工具（附Typora设置）</a></p>
-<p>至于GitHub图床的教程的话，官方配置手册里也写的很详细了，如果不在意上面说的缺点（还是想白嫖）的话可以去读一下，非常的简单，这里就不重复了</p>
-<h1 id="自动新建文章和hexo部署上传"><a href="#自动新建文章和hexo部署上传" class="headerlink" title="自动新建文章和hexo部署上传"></a>自动新建文章和hexo部署上传</h1><p>图床的问题解决了</p>
-<p>那么现在我们想要写一篇文章的话该怎么做呢？</p>
-<p>开终端，进入本地的hexo博客目录，hexo n 文章名 新建文章，关终端，开资源管理器，进博客目录的post文件夹下，打开创建的文章的md文件，然后开始写…</p>
-<p>写完之后呢？还得开终端，再进目录，再hexo clean &amp;&amp; hexo g -d把新写的文章部署上传到GitHub pages上…</p>
-<p>好像还是有点麻烦是不是？我只想像OneNote一样新建，起标题，记完保存关掉就好，有没有办法呀？</p>
-<p>好吧这里我没查到什么好的自动化工具，可能大佬实在还是没有我这么懒吧…</p>
-<p>所以只能自己找点办法了…姑且算是解决了问题，用起来也还凑合…就是方法确实不太优雅就是了</p>
-<p>嘛，毕竟我不是大佬，所以也没办法啦</p>
-<p><strong>首先我们想办法简化下新建文章的步骤</strong>，这里我是直接写了个简单的bat脚本，接收一个新建文章名的参数，然后自动执行新建文章并且用typora打开文章的命令，写的很丑，但是用起来还行…长这样</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@echo off</span><br><span class="line">set type=.md</span><br><span class="line">set name=%1</span><br><span class="line">set file_name=%name%%type%</span><br><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo n %1 &amp;&amp; cd .\source\_posts &amp;&amp; &quot;C:\Program Files\Typora\Typora.exe&quot; %file_name%</span><br></pre></td></tr></table></figure>
-<p>然后把这个脚本存成new.bat，扔到网站根目录下面，再把网站根目录加到系统path里…这样我们就可以按win+R直接输入new 文章名 调用这个脚本自动生成文章然后打开typora开始码字啦~</p>
-<p><strong>再做个一键上传的脚本</strong>，这个就更简单了，还是一个bat，只需要一句</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /D H:\Code\MyBlog</span><br><span class="line">hexo clean &amp;&amp; hexo g -d</span><br></pre></td></tr></table></figure>
-<p>这个我们存成upload.bat，也扔到网站根目录里，写完文章保存之后按win+R打下upload回车就可以自动把文章全部部署上传到网站里喽</p>
-<p>嗯…好吧，我承认这么实现实在是不太优雅实在是有点丑陋，但是方便就好，不是吗，就这样吧</p>
-<blockquote>
-<p>其实有个比较优雅的方案是这样</p>
-<p>用VSC做md编辑器的话，可以写一个插件，在侧栏做出hexo文章新建和本地文章管理的功能，用GUI简单的新建文章，然后做到编辑后自动保存和部署上传博客</p>
-<p><strong>这样使用体验就完全追上OneNote啦！</strong></p>
-</blockquote>
-<p>听起来创意很美好不是吗？呃…但是首先typora并不支持插件功能，虽然vsc写md也不错但是双栏预览的编辑模式感觉还是没有所见即所得写起来舒服一些</p>
-<p>然后嘛…我并不会vsc插件开发呀（pia~被拍飞😢）寄！而且不想折腾了，寄！</p>
-<p>那么就这样吧，也还不算麻烦…不知道以后会不会有大佬做出这样的插件呢？期待一下啦</p>
-<p>那么希望我以后能多写点文章吧…勤奋一点，嗯！</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
       </tags>
   </entry>
   <entry>
@@ -1483,6 +1824,17 @@
 ]]></content>
       <tags>
         <tag>杂项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测试文章</title>
+    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
+<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>测试</tag>
+        <tag>网站</tag>
       </tags>
   </entry>
   <entry>
@@ -1668,302 +2020,6 @@
 ]]></content>
       <tags>
         <tag>硬件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>测试文章</title>
-    <url>/2022/02/17/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/</url>
-    <content><![CDATA[<p>第一篇测试文章<br><img src="https://raw.githubusercontent.com/SuperHostPopo/MyIMG/main/img/202202172335325.jpg" alt=""></p>
-<script type="math/tex; mode=display">S_n = \frac{1}{2}n(a_1 + a_n) = na_1 + \frac{n(n-1)}{2}d, n\in N^*</script><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy</span><br><span class="line"></span><br><span class="line">rad=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">    rad.append(numpy.random.random()*<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">plt.hist(rad, bins=<span class="number">100</span>, color=<span class="string">&#x27;steelblue&#x27;</span>, normed=<span class="literal">True</span> )</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>测试</tag>
-        <tag>网站</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>VtuberStudio配置选择和模型调参</title>
-    <url>/2025/02/14/VtuberStudio%E9%85%8D%E7%BD%AE%E9%80%89%E6%8B%A9%E5%92%8C%E6%A8%A1%E5%9E%8B%E8%B0%83%E5%8F%82/</url>
-    <content><![CDATA[<p>好久没用Vtuber Studio了，最近闲下来了，想掏出来玩点游戏，想起之前用USB摄像头模型效果一直不太好，比较僵硬，还经常丢追，于是去b站搜一下调优方法，看了一晚上，头昏脑胀ing</p>
-<p>这一两年没碰，新技术还挺多的，姑且记录一下调试的过程吧</p>
-<span id="more"></span>
-<h1 id="1-OBS输入源选择"><a href="#1-OBS输入源选择" class="headerlink" title="1. OBS输入源选择"></a>1. OBS输入源选择</h1><p>参考：vts官方wiki</p>
-<p><a href="https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS">https://github.com/Mouwoo/VTubeStudio/wiki/Recording-Streaming-with-OBS</a></p>
-<p>对于win平台，Vtuber Studio（VTS）有几种常用的输出可选</p>
-<ul>
-<li>obs游戏采集vts进程</li>
-<li>obs采集vts虚拟摄像头</li>
-<li>spout2插件输出</li>
-<li>NDI网络接口推流（没用过）</li>
-</ul>
-<p>前面俩比较常用，都是老方法了</p>
-<p>第一种最简单方便，问题在于vts的UI也会被采集到obs，在直播的时候如果要调vts软件设置就不太方便。</p>
-<p>虚拟摄像头需要装个驱动，用起来也比较方便，不会采集到vts UI，据说画质没有第一种好（存疑）</p>
-<p>用法参考wiki，b站也介绍很多</p>
-<p>说下spout2，这个应该是新加的，也没看到啥视频介绍，但是在wiki上官方最推荐这个方法</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141944443.png" alt="image-20250214194459415"></p>
-<p>看起来很棒</p>
-<p>不过需要手动给obs装一个插件</p>
-<p>官方的安装指南：<a href="https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio">https://knowledge.offworld.live/en/spout-plugin-for-obs-studio/how-to-install-the-spout-plugin-for-obs-studio</a></p>
-<ol>
-<li><p>关掉obs</p>
-</li>
-<li><p>下载最新版本：<a href="https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）">https://github.com/Off-World-Live/obs-spout2-plugin/releases（第一个，自动安装的，这玩意很久没更新了啊，适配的还是obs29，不过实测看起来在最新的obs31里用起来是ok的）</a></p>
-</li>
-<li><p>一路next结束</p>
-</li>
-<li><p>在vts里打开spout2输出（和其他方法一样，背景还是依然用纯色+允许透明）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141951181.png" alt="image-20250214195126138"></p>
-</li>
-<li><p>在obs里加一个spout2输入，如图配置一下，ok</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502141953434.png" alt="image-20250214195350401"></p>
-</li>
-</ol>
-<h1 id="2-小技巧"><a href="#2-小技巧" class="headerlink" title="2. 小技巧"></a>2. 小技巧</h1><p>给vts设置为管理员启动（对steam打开也生效）</p>
-<p>wiki说可以增加进程优先级，降低延迟和卡顿（谁知道呢）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202502150012000.png" alt="image-20250215001240940"></p>
-<h1 id="3-追踪方式"><a href="#3-追踪方式" class="headerlink" title="3.追踪方式"></a>3.追踪方式</h1><p>常用的面捕方法有这么几种</p>
-<ul>
-<li>VTS内置追踪直接调用电脑usb摄像头（最简单，效果差）</li>
-<li>电脑usb摄像头输入，VTS调用NVDIA面捕或者Google的面捕（比上面好，但是依然受摄像头限制）</li>
-<li>VTS ios端调用苹果iPhone面捕api，局域网推流面捕数据给电脑本地VTS调用（精度高，效果好）</li>
-<li>VTS ios端面捕，推流给电脑上的VBridger，VB推流给电脑端VTS调用（使用复杂，效果最好，可以实现额外的动作效果）</li>
-</ul>
-<p>其实还有几种其他的搭配，比如电脑摄像头配VB，感觉意义不大就不多提</p>
-<p>这里苹果的面捕api比起电脑摄像头有绝对的优势，这个是硬件差距，包括苹果的面捕摄像头硬件和ios的api生态。实测来看，不管是vts的面捕还是n卡面捕啥的，在我这种双屏常转头+摄像头比较远+摄像头在底侧向上拍的情况下，都无法避免丢追。但是ios的面捕工作稳定。</p>
-<p><strong>所以一般来说都会建议有条件的情况下使用苹果面捕</strong>（我这里是淘汰下来的老iPhone13正好再利用了，用了个手机支架横着放在电脑屏幕下面）</p>
-<p>然后是vb，vb是一个面捕软件，通过接收苹果api的面捕数据，二次计算得到更复杂精细的面部建模和追踪，用来驱动vts。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280030435.png" alt="image-20250328003021305"></p>
-<p>关于用不用vb，当然vb可以实现很多高级的复杂表情识别，但是这个是依赖你的模型建模的，如果你的模型没有做这些高级的输入绑定，那其实vb也无法帮你实现更高级的效果（我的模型就是普通的）</p>
-<p>如果你的模型是适配vb的，那当然肯定要用vb</p>
-<p>但是即使模型是普通的，也还是可以用的，vb是支持兼容普通模型的模式的，只不过就实现不了高级的表情，还占用电脑资源，增加复杂度</p>
-<p>然而我试过之后还是用了手机vts+VB+电脑vts的方案，原因是是啥呢</p>
-<p>首先吧</p>
-<p><strong>你用vb是可以不用买手机版vts的，手机vts要150，vb只要30多</strong></p>
-<p>众所周知如果你直接用手机vts推流电脑vts，如果不买手机端vts，5分钟就会自动断连</p>
-<p>但是如果你用vb，vb是使用第三方客户端连接接口，不通过推流接口，所以并不会受这个影响，是可以正常使用的，也就是其实只用买个vb就好了（这里不涉及破解啥的，完全是正常的功能使用）</p>
-<p>但是其实这是小事，vb还有个好用的地方…他可以调输出曲线！</p>
-<p>这个等会说</p>
-<p>先说下配置</p>
-<h2 id="工作流配置"><a href="#工作流配置" class="headerlink" title="工作流配置"></a>工作流配置</h2><p>首先保证iPhone和电脑在一个路由器局域网下面</p>
-<p>然后装ios的vts，不用装模型，直接开设置，拉到最下面第三方客户端，打开它（不用开pc推流）</p>
-<p>再点下显示ip，记下iPhone的局域网ip备用</p>
-<p>然后打开vb，载入</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037599.png" alt="image-20250328003704492"></p>
-<p>如果你是vb模型可以用前面那些高级的，我是普通模型就用了最后那个兼容配置</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280037391.png" alt="image-20250328003752365"></p>
-<p>把刚才的ip写在这里，连接上iPhone</p>
-<p>这时候vb里的模型应该已经可以动了</p>
-<p>然后打开电脑版vts</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040029.png" alt="image-20250328004016998"></p>
-<p>在设置里给这个打开</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280040969.png" alt="image-20250328004059943"></p>
-<p>去vb下面选vts，点右边的连接</p>
-<p>然后去vts里点同意</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280041156.png" alt="image-20250328004152122"></p>
-<p>这里插件应该连上了，你的模型也会动了</p>
-<p>搞定~</p>
-<p>剩下的就和正常的vts配置一样了，b站教程很多</p>
-<p>注意这么做的情况下，电脑端vts的所有面捕参数都不生效，比如灵敏度啥的</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043442.png" alt="image-20250328004307411"></p>
-<p>这些都不生效，由手机端控制</p>
-<p>同样的，手机端所有模型配置都不生效</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280043406.png" alt="image-20250328004341367"></p>
-<p>包括这些模型参数，表情啥的</p>
-<p>可以理解为现在被拆成了两部分，手机只负责面捕，电脑只负责渲染模型</p>
-<h2 id="关于vb和曲线"><a href="#关于vb和曲线" class="headerlink" title="关于vb和曲线"></a>关于vb和曲线</h2><p>这里就说到为什么要用vb了</p>
-<p>众所周知vts的参数输入映射是一个一次函数</p>
-<p>也就是[x,y]到[i,j]的一个线性映射（前面是你的面捕参数，后面是给模型的驱动参数）</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280110598.png" alt="image-20250328011019567"></p>
-<p>这里怎么调都是线性的，在大部分情况下，通过调这四个值的范围来控制表情的动作幅度，常态表情是什么都是可以实现的</p>
-<p>但是有些时候就会有问题</p>
-<p>比如我这里的睁眼参数</p>
-<p>在我对着主屏幕看的时候，这个参数大概是0.7左右，正常来说我要把这个常态调整到输出给模型的1.0（也就是正常睁眼）</p>
-<p>大概是上面这个映射值</p>
-<p>但是当我稍微转头，看左边的屏幕，就出问题了</p>
-<p>这时候面捕识别到的睁眼参数会下降到0.4~0.5左右，实际上我还是睁眼，但是就会变成这样</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280112523.png" alt="image-20250328011230412"></p>
-<p>输出只有0.7了，变成了半闭眼，就很诡异</p>
-<p>只有我的输入参数到了0.2，0.3，也就是接近闭眼或者眨眼的情况，我才希望模型闭眼，不然就维持在睁眼的状态（比如转头看侧屏的时候应该是睁眼）</p>
-<p>通过这个简单的输入映射，就没法解决这个问题</p>
-<p>一个办法是改模型的控制参数里的变形器绑定，相当于直接修改模型动作，但是很明显模型不好改，一般来说都不会有源文件</p>
-<p><strong>那么用vb的曲线就可以解决这个问题</strong></p>
-<p>首先我们常态的输入是0.7，这时候眼睛的驱动参数是1左右，是正常的</p>
-<p>然后我转头，最差的情况输入下降到了0.4</p>
-<p>我希望在0.4~0.7的输入情况下模型的眼睛都不会明显闭眼，也就是把0.4~0.7的输入都映射到0.7左右的输出</p>
-<p>那么我们改曲线</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280117092.png" alt="image-20250328011709060"></p>
-<p>手动加两个控制点</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202503280127754.png" alt="image-20250328012742732"></p>
-<p>总之修成大概0.4到0.7的区间输出都是0.65左右就好了</p>
-<p>这样也不影响前后段的眼睛动作（比如闭眼，眨眼和睁大眼）</p>
-<p>ok~</p>
-<p>这玩意用法应该还有挺多的，就看怎么开发了</p>
-<p>结</p>
-]]></content>
-      <tags>
-        <tag>软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>不当爱抖露了！星野爱的重启人生</title>
-    <url>/2023/06/28/%E5%AE%89%E7%A7%91/</url>
-    <content><![CDATA[<blockquote>
-<p>同步更新：</p>
-<p>nga：<a href="https://bbs.nga.cn/read.php?tid=36780513">https://bbs.nga.cn/read.php?tid=36780513</a></p>
-<p>泥潭吞楼太厉害，搞个备份</p>
-</blockquote>
-<p><strong>想要与你相见，此愿我已寄托于星。</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280035446.png" alt="00023-397873791"></p>
-<span id="more"></span>
-<p>大家好~这里是个萌新，纯种的。创作经验莫得，文笔渣，中二病，逻辑乱，ooc，情商低，社畜苦，更新咕…<br>大纲无，存稿无，nga现骰现编中…打下这些字的时候正文真的一点都还没有写…<br>提前说声抱歉对不住读者老爷们的期待如果有读者的话，轻喷啦<br>如果还愿意看下去的话(真的有吗？)</p>
-<p>大概是纯自嗨吧，看了推子第一集之后就一直意难平，如果有另一条世界线该多好，如果那个世界可以再温柔一点该多好。在看了最新话的兄妹相认大药之后冲动再也抑制不住了——</p>
-<p><strong>我要给星野爱完整的一生！</strong></p>
-<p>于是基本就是这样，想要写一个另一条路线的星野爱充满未知的新生活，大体上应该是一个轻松快乐的故事吧 严谨的故事lz这种萌新也写不来啊，没那个能力知道嘛 ，来到各种各样的地方，结识形形色色的人，参与各种各样新奇有趣的冒险什么的~</p>
-<p>也会选择一个温柔的世界观，并且加足够强力的保底机制防止爱小姐的这次人生也变得惨兮兮的 lz向来是过保护的he大团圆爱好者啦</p>
-<p>预计会很混沌，太严肃的内容无，可能会有漫无边际的乱入和梗选项什么的，希望能足够有趣和快乐就好了呢。<br>也欢迎各种各样乱七八糟的安价啦如果真的有人安价的话</p>
-<p>因为是纯纯的萌新搞不明白怎么设计战斗系统也绝对写不好战斗，太难了啦！所以大概不会做战斗系统吧…目前吧？看我学习的成果啦，没准啥时候就觉得自己突然行了什么的</p>
-<p>再一次，愿爱小姐能拥有闪耀而快乐的人生！那么开始投下。</p>
-<p>如果看不到下面就是lz被抓去上班了/神鹤吞了/憋不出来卡文了 大变申</p>
-<p>骰娘啊骰娘 会有观众老爷赏脸嘛？</p>
-<p><strong>ROLL : 1d100</strong>=d100(93)=<strong>93</strong></p>
-<blockquote>
-<p>碎碎念 …</p>
-<p>果然都会有的吧，那种突然涌起的想要写点什么东西的冲动，越想越兴奋越想越兴奋，看的多了创作欲就会不受控的冒出来…然后真的想做的时候发现 寄了 我怎么这么菜写不出来啊卡壳啊这写的都是些啥啊 </p>
-<p>但是为什么还要作死呢。说到底还是冲动吧，想要做什么的冲动是挡不住的，明知道自己不行，明知道会失败，也想要马上去做的悸动吧。不停的踌躇害怕但是最后，还是输给了自己的欲望，不去做的话，热情冷下来的时候，就会后悔，又错过了尝试一件事的勇气，那时候没有尝试的话，以后可能就永远也不会去做了吧。</p>
-<p>了解安科的时间也不长，入坑作和很多人一样都是敬爱的王子海皇，虽然是看了王子新作小说后回去补的烈幻入真的是纯纯萌新中的萌新了。<br>第一次看就被这种 不可预测的命运的舞台 深深的吸引了<br>感觉会很快乐的样子呢！那就尝试一下吧！不试试去做会后悔的吧！失败了也没什么大不了的嘛！ 嗯 反正失败的尝试已经够多啦</p>
-</blockquote>
-<p>在下午上班之前，先按照惯例车个卡吧 虽然好像没多大用的样子，就当是第一次的仪式感吧</p>
-<p><strong>星野爱</strong><br>力量：</p>
-<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
-<p>擅长唱跳，身体能力不错的样子<br>体质：</p>
-<p><strong>ROLL : 1d100</strong>=d100(8)=<strong>8</strong></p>
-<p>差点大失败…体力不差，但是体质低，是有什么罕见的疾病吗？燃烧生命在当偶像吗喂<br>智力：</p>
-<p><strong>ROLL : 1d70</strong>=d70(15)=<strong>15</strong></p>
-<p>(没上过学 -30)<br>爱…我的丈育…有一种纯真的美 不是 符合原作的知识水平!<br>魅力：</p>
-<p><strong>ROLL : 1d100+50</strong>=d100(58)+50=<strong>108</strong></p>
-<p>(天才般的爱抖露sama +50，可突破上限)<br>总算有个不拉的了<strong>这不是全靠加值么</strong><br>意志：</p>
-<p><strong>ROLL : 1d100</strong>=d100(43)=<strong>43</strong></p>
-<p>普普通通平凡人的感觉<br>幸运：</p>
-<p><strong>ROLL : 1d100</strong>=d100(69)=<strong>69</strong></p>
-<p>普通的好运，大概能捡到零钱或者靠直觉避开雨天的程度吧，但是敌不过命运的恶意<br>魔力：0[未解锁]<br>这个世界，有魔法吗？</p>
-<p>lz要去上班了，下班后再见 上班摸鱼构思ing</p>
-<p>晚饭小更一下…没有大失败真好啊，真好啊，好啊，啊 但是这出目<br>怎么感觉会命途多舛啊</p>
-<p>下班啦 继续</p>
-<p>先来骰一下为啥这么惨体质只有8<br>是身体疾病吗</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>(是/否)</p>
-<p>燃烧生命歌唱的病弱少女，我哭死<br>那么是什么病呢</p>
-<p><strong>ROLL : 1d10</strong>=d10(5)=<strong>5</strong></p>
-<p>1-2 和莎莉奈同样的病症<br>3-4 营养不良(什么屑孤儿院)<br>5-6 严重贫血<br>7-8 遗传性心脏病(咚 咚 咚)<br>9 其实是装病(怎么都是屑啊)<br>10 大成功/大失败(<strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong>)</p>
-<p>骰娘好温柔 选中了平和的选项<br>区区贫血而已，就用天才偶像大人高达43的意志力克服过去口牙<br>贫血的严重程度(越大越严重 0:多 吃 红 枣 100:临 界 血 限)</p>
-<p><strong>ROLL : 1d100</strong>=d100(99)=<strong>99</strong></p>
-<p>草草草<br>人生第一个大成功为什么会出现在这种地方啊<br>现在就是很后悔 非常后悔</p>
-<p><strong>“不要手贱去丢感觉没什么所谓的骰子”</strong>——必可活用于下一次</p>
-<p>让我冷静下想想该怎么圆…</p>
-<p>明明只是想找下手感象征性的车下卡满足下中二的仪式感啊喂，为什么会变成这样呢…说好的重生呢</p>
-<p>病情 大 成 功<br><strong>危</strong><br>也就是星野爱大失败<br>已经不是一般的贫血了，稍微运动过量可能就会缺氧倒地了吧。</p>
-<p>带着如此的身体，却还在偶像的舞台上闪闪发光，已经是毫无疑问的在燃烧生命了吧。<br>忘我的燃烧，一瞬的闪耀，双瞳中的光芒，如夜空中的长庚星一样点亮了无数人的梦想<br>”一等星寄于你身”，名副其实的，天才般的偶像大人<br>也难怪露比和阿库亚会无可救药的被吸引吧</p>
-<p>大失败是什么：</p>
-<p><strong>ROLL : 1d10</strong>=d10(1)=<strong>1</strong></p>
-<p>1-2 某次live过度劳累重病后被神木光趁虚而入(接 回 原 作)<br>3-4 粉丝线下开门杀时由于惊吓贫血发作而亡(世界线的收束)<br>5-6 其实神木光是活在现代的吸血鬼？<br>7-8 星野爱超人的魅力是血继限界，但代价是贫血<br>9 其实星野爱是超级混血种，血统浓度太高不稳定，表现为贫血(为啥啊)<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>PS：因为主题是重生，所以星野爱的死是已经发生了的事件。但是具体的情况可能会和原作有些微妙的不同？ 本来不想不同的但是骰娘果然是自由的啊…</p>
-<p>感谢版主 总算放出来了<br>人类的本质就是手贱<br>lz为什么又要手贱去改主楼然后被神鹤关了小黑屋</p>
-<p>后一半的梗选项没中，所以还是稳健的原作展开，唐突的大失败只是给小爱惨兮兮的一生又增加了一个注解…大概</p>
-<p>让我们回到主线吧</p>
-<p>小爱打了那个改变命运的电话吗</p>
-<p><strong>ROLL : 1d10</strong>=d10(9)=<strong>9</strong></p>
-<p>1-9 打了(原作展开)<br>10 没打(微妙的剧情变化)</p>
-<p>来个骰娘小爱。愿小爱的新人生也能拥有骰娘的祝福<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057284.jpeg" alt="img"></p>
-<p>一念之差，终归，还是没有逃得开命运<br>在按下通话键之前，在想些什么呢？或许是直觉，或许是超出常人的幸运，或许是不甘于既定的结局，犹豫着，手指微微颤抖。<br>最终，还是按下了恶魔的门铃。<br>给孩子们一个惊喜吧？带着点恶作剧的想着，离开了一人间的电话亭。</p>
-<p>于是那盛大的绽放和渺小的心愿都轰然崩塌。</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057095.jpeg" alt="img"><br>“我爱你们。”<br>“这句话…绝对，不是谎言。”</p>
-<p>说出来了啊。太好了。然后…<br>孩子撕心裂肺的哭喊声似乎逐渐模糊了。视野越来越暗。<br>天黑了吗<br>好多星星。大城市里，也能看到星空吗？<br>好亮，最亮的那一颗，是叫什么…<br>可以许愿吗？<br>好想要，“爱”啊。</p>
-<p>意识，中断了。</p>
-<p>“爱！” “爱！” “爱！！！”<br>……“都是，我的错”</p>
-<p>爱的苏醒(75以上醒来)</p>
-<p><strong>ROLL : 1d100</strong>=d100(2)=<strong>2</strong></p>
-<p>唐 突 大 失 败<br>但是死都死了…放过孩子吧，已经够惨的了，只是想多睡一会有什么错 bushi</p>
-<p>？？？的闹别扭(别扭：小爱你倒是争点气啊&lt;——&gt;温柔：已经很累了，多休息下吧)</p>
-<p><strong>ROLL : d100</strong>=d100(52)=<strong>52</strong></p>
-<p>星野爱的苏醒(75以上醒来，？？？的祝福+25)</p>
-<p><strong>ROLL : d100</strong>=d100(48)=<strong>48</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057885.jpeg" alt="img"></p>
-<p>上一楼忘了写加值了<br>1d100(48)+25=73<br>怎么又在关键时刻差一点拉跨啊</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280057168.jpeg" alt="img"><br>？？？(随机立绘)：辛苦啦，真是个粪游戏呀，人生的一周目。受苦了呢，小爱，但是，要全成就通关的吧，二周目？加油！</p>
-<p>星野爱的苏醒(75以上醒来，？？？的祝福+50)</p>
-<p><strong>ROLL : d100+50</strong>=d100(93)+50=<strong>143</strong></p>
-<p>看来鼓励很有效嘛。星野爱，堂堂复活！</p>
-<p>先骰一下状态。<br>二周目小爱醒来时多大了：</p>
-<p><strong>ROLL : 1d6+10</strong>=d6(5)+10=<strong>15</strong></p>
-<p>(？？？：跳关是二周目的一环！孤儿院太受苦了别再折磨孩子了)</p>
-<p>现在的剧情时间点是：(越小越接近被小爱被刺杀时，越大越接近推子原作进度的时间)</p>
-<p><strong>ROLL : 1d100</strong>=d100(3)=<strong>3</strong></p>
-<p>小爱的记忆：(0：我是谁，我在哪？ 100：仿佛从前世的梦中醒来)<br><strong>？？？的祝福：那些痛苦，已经过去了(遗忘痛苦的回忆，不会踏上一周目路线)</strong></p>
-<p><strong>ROLL : 1d100</strong>=d100(95)=<strong>95</strong></p>
-<p>PS：想了想，还是让不要让过去的回忆啊复仇啊神木光什么的再掺和进来了，大赤老师都写不明白我瞎整干啥啊，说好的要给小爱一个开心快乐的故事啊。</p>
-<p>大失败接大成功，骰娘，令人敬畏<br>剧情时间是被刺前后，也就是小爱20岁，阿夸露比才4岁，有点遗憾可能没法很快让原作主角组们出场了。或许mem还有机会？<br>记忆大成功，基本啥都记得，就当是之前的技能点都完美继承了吧。</p>
-<p>好像听到了呼唤。<br>“加油！”<br>该醒了。<br>亮光，刺眼的朝阳，睁开双眼。<br>做了个好长的梦啊…为了成为有名的偶像，努力地练习，一步步地积累人气，那一天，马上就要到了。明天，就要登上东京巨蛋演出了…好幸福…然后…<br>然后怎么了？记忆…想不起来<br>不对！<br>这不是梦！<br>我是…星野爱。<br>我应该，<strong>已经死了啊</strong></p>
-<p>小爱的惊讶：</p>
-<p><strong>ROLL : 1d100</strong>=d100(21)=<strong>21</strong></p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058633.jpeg" alt="img"></p>
-<p>lz看了新一话内心过于激动 已经不知道怎么描述了<br>我发现nga的分隔线在手机端好像不太能显示。还是手动吧</p>
-<p><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058042.jpeg" alt="img"><br>诶，难道是传说中的重生剧情？果然我是女主角嘛！</p>
-<p>稍加思考，小爱就充满自信地接受了这个事实<br>至于是怎么死掉的？完全没印象，就当作是live路上救助小女孩然后堂堂泥头车转生吧！做了好事啊，这么想的话，不是大赚特赚了吗？反正女主角是不会死的啦！</p>
-<p>既然是赚来的人生，这次就自由自在一点吧<br>也不用再做偶像了吧。最高峰，差一步就可以登上了。虽然很可惜，但是”谎言“已经表演的够多了。这一次，还是试一下”真实“的自己吧</p>
-<p>小爱还想继续做偶像吗：(做够了，想尝试下新人生-50，也就是目前不会做啦)</p>
-<p><strong>ROLL : 1d50</strong>=d50(17)=<strong>17</strong></p>
-<p>说起来现在是什么情况，既然没有当偶像的话，还在孤儿院吗？(1-9 还在 10 不太一样的情况)</p>
-<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
-<p>如果在的话，和孤儿院关系好吗？</p>
-<p><strong>ROLL : 1d100</strong>=d100(87)=<strong>87</strong></p>
-<p>生活条件怎么样</p>
-<p><strong>ROLL : 1d100</strong>=d100(4)=<strong>4</strong></p>
-<p>这大失败率是不是不正常啊喂<br>还好因为是重生来的所以只是背景板设定，小爱不用再受苦了(跳关万岁！但是按这个设定的话上辈子过的是有多倒霉啊…)</p>
-<p>从小生活的孤儿院，虽然条件不太好，但是孤儿院老奶奶却对孩子们都很用心照顾。对小爱来说，这里是比那个在两世记忆中都没有留下几个片段的”家庭“要温暖的多的地方了。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280058010.jpeg" alt="img"><br>”总比挨那个不知道现在出没出狱的老妈揍强多了嘛！”<br>小爱总是一边笑一边这么说。<br>虽说孤儿院的生活还算温馨，但是物质条件上…<br>大失败：</p>
-<p><strong>ROLL : 1d10</strong>=d10(2)=<strong>2</strong></p>
-<p>1-3 穷困潦倒，乡下孤儿院资助企业倒闭，已经快要维持不下去了<br>4-6 家徒四壁，夏天漏雨冬天挨冻<br>7-9 吃不饱饭，年长的姐姐都会把饭菜让给长身体的小爱一些<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>吞楼好严重 可能还是得找个备份更新的地方了…让我找找<br>————————————<br>倒闭边缘的孤儿院，很王道系的开局</p>
-<p>真怀念啊，这个地方。躺在熟悉的床上，小爱感受到了久违的温暖和放松<br>上一次，也是为了赚钱，才一个人跑到大城市，走上了偶像之路</p>
-<p>“那就再来一次吧，加油！我可是王道系女主角，换一个路线一定也可以的！”<br>拍了拍自己的脸颊，小爱站起身，走出了“存档点”</p>
-<p>要去哪里呢：(1 先在乡下转转 2 出发，去大城市！)</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-<p>顺便一提，重生清除病弱debuff，现在的小爱，感觉自己无敌青春健康，状态好极了<br>重骰下体质，保底60(健康青春少女)</p>
-<p><strong>ROLL : 1d100</strong>=d100(63)=<strong>63</strong></p>
-<p>智力因为还是并没有上学所以很遗憾…(教育程度低是萌点！)</p>
-<p>曾经无比憧憬的大城市，也早已失去了光鲜亮丽的滤镜。曾经的超人气偶像，这一世也还只是一个普普通通初中年级的少女而已。</p>
-<p>“真的没人认得自己了啊…不过这地方本来也没人认得什么偶像吧？”<br>走在清晨的小路上，下意识地做出了招牌的微笑，随即，又恍然一愣<br>“不用伪装自己，不用营业的笑容，这样的感觉，也不坏嘛”<br>小爱自嘲地想着<br>“毕竟，我已经不是偶像了嘛”</p>
-<p>“总之，女主角就先来拯救这个家吧！”<br>说是这么说…该做点啥呢？</p>
-<p>小爱的决心：(像家一样的存在+30)</p>
-<p><strong>ROLL : 1d70+30</strong>=d70(32)+30=<strong>62</strong></p>
-<p>小爱思路的正经程度：(越大越正经，越小越脱线)</p>
-<p><strong>ROLL : 1d100</strong>=d100(26)=<strong>26</strong></p>
-<p>————————————<br>新手村任务：第一桶金！为了拯救即将废部的…</p>
-<p>还指望她能想出啥靠谱的主意  只能说符合原作了<br>————————————<br>小爱的主意是：</p>
-<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
-<p>1-2 One piece！去孤儿院附近的山里寻宝！<br>3-4 去钓鱼吧，能不能钓上来宝藏？<br>5-6 研究转运仪式(福生玄黄…)<br>7-8 向路边的猫许愿(只是普通的猫吧！)<br>9 这里可以放个安价吗？尝试一下，中了的话没人就重新骰qwq<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(2)=<strong>2</strong></p>
-<p>ps：发现好像不放图就不那么容易被吞的样子…呜呜呜我的立绘我的小表情 再想想有没有其他办法吧</p>
-<p>“赚钱的话，怎么样比较快呢？没准再睡一觉醒来就成了巨~富有的远亲的继承人，也不是没有可能吧？”<br>小爱一边漫无目的地在街上瞎转，一边胡思乱想着。<br>“诶，这长得奇形怪状的猫哪来的？”<br>是一开始就在吗？一只黑猫呆呆地趴在路边。<br><img src="https://popoimg.oss-cn-beijing.aliyuncs.com/img/202306280134263.jpeg" alt="img"><br>“这种展开，是魔法少女吗？！“<br>思路总是如此跳跃的，小爱不知怎么想起了闲暇时在小书店偷偷翻看过的魔法少女漫画。<br>”是吧是吧绝对是吧！总之先许愿再说！“<br>可能黑猫也被吓住了吧，竟然没有跑开，怔怔的看着小爱跑过来，蹲下，闪着星光的紫瞳和一对黑瞳大眼瞪小眼<br>”我想要花不完的钱！呃…也别太显眼了。孤儿院也修成豪华别墅！啊还有…”</p>
-<p>发生了什么：</p>
-<p><strong>ROLL : 1d10</strong>=d10(7)=<strong>7</strong></p>
-<p>1-5 喵？喵？喵？(你在说什么我听不懂因为我只是只普通猫咪)<br>6-9 吓跑了(不给我吃的还冲我吼 喵！)<br>10 真不是平常猫？</p>
-<p>加班（哭） 只能稍微更一点了</p>
-<p><strong>话还没说完，黑猫就一溜烟跑不见了<br>虽然很遗憾，猫只是普通的猫而已。<br>不甘心的小爱朝着消失的方向一顿狂奔，理所当然地一无所获。</strong></p>
-<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/2cfe6338-1d38-48f1-9e64-f0026e0c5535.png" alt="00142-77213927.png" style="zoom:25%;" /></p>
-<p><strong>“什么嘛，果然漫画里都是骗人的”</strong><br>小爱的失望：</p>
-<p><strong>ROLL : 1d100</strong>=d100(14)=<strong>14</strong></p>
-<p><strong>这不是一点也不失望么！你还有点常识啊
-</strong></p>
-<p><img src="https://gululu-default.obs.cn-north-4.myhuaweicloud.com/2023-06-29/1ed14888-c5b3-46e0-902a-f1deb52b4caf.png" alt="00140-1819914487.png" style="zoom:25%;" /></p>
-<p><strong>”事情总不会有这么容易啦…再想想办法吧“<br>一边努力把自己的思维切回正轨，小爱忽然发现</strong></p>
-<p><strong>ROLL : 1d10</strong>=d10(4)=<strong>4</strong></p>
-<p>1-3 跑太远没看路，迷路啦<br>4-6 闯入了电视剧的外景拍摄现场<br>7-9 某个著名偶像团体在开live(为什么会在这种乡下啊喂！)<br>10 大成功/大失败</p>
-<p><strong>ROLL : 1d2</strong>=d2(1)=<strong>1</strong></p>
-]]></content>
-      <tags>
-        <tag>其他</tag>
       </tags>
   </entry>
   <entry>
